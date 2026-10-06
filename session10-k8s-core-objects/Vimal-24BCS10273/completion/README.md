@@ -53,7 +53,7 @@ container statuses as well as the human-readable listing.
 | 02. Pending | [YAML](lifecycle/02-pending.yaml) | [Transcript](evidence/02-lc-pending.txt) | The 1000-CPU/1-TiB request exceeds this node. FailedScheduling identifies resources as the cause; the container never starts. |
 | 03. Succeeded | [YAML](lifecycle/03-succeeded.yaml) | [Transcript](evidence/03-lc-succeeded.txt) | A one-shot task exits 0 with restartPolicy Never. The table says Completed while the API phase says Succeeded. |
 | 04. Failed | [YAML](lifecycle/04-failed.yaml) | [Transcript](evidence/04-lc-failed.txt) | The task exits 7 with restartPolicy Never. The table says Error and the API phase is Failed; it does not restart. |
-| 05. Crash/restart back-off | [YAML](lifecycle/05-crashloop.yaml) | [Transcript](evidence/05-lc-crashloop.txt) | The same exit-7 process has restartPolicy Always. Restarts accumulate and BackOff events identify the loop. This run displays Error while the API phase remains Running; do not infer the phase from that table cell. |
+| 05. Crash/restart back-off | [YAML](lifecycle/05-crashloop.yaml) | [Transcript](evidence/05-lc-crashloop.txt) | The same exit-7 process has restartPolicy Always. Restarts accumulate and BackOff events identify the loop. This run displays CrashLoopBackOff while the API phase remains Running; do not infer the phase from that table cell. |
 | 06. ImagePullBackOff | [YAML](lifecycle/06-imagepull.yaml) | [Transcript](evidence/06-lc-image-error.txt) | A nonexistent tag fails image resolution. The container stays Waiting, the Pod phase is Pending, and describe records the pull error. |
 | 07. Readiness | [YAML](lifecycle/07-readiness.yaml) | [Transcript](evidence/07-lc-readiness.txt) | The running process begins unready because /tmp/ready is absent. Creating it makes the probe pass without restarting the container. |
 | 08. Liveness | [YAML](lifecycle/08-liveness.yaml) | [Transcript](evidence/08-lc-liveness.txt) | Removing /tmp/healthy makes the probe fail. Kubelet restarts the container, the startup command recreates the file, and the restart count increases. |
@@ -64,9 +64,7 @@ container statuses as well as the human-readable listing.
 
 ## Screenshots
 
-These images render the saved command transcripts in a browser and were captured
-with Playwright/CDP. They preserve observed output; the linked text files remain
-available for inspection and searching.
+These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results.
 
 ### 01. Running
 
