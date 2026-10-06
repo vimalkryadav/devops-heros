@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-code
+  namespace: assignment-s13
+data:
+  app.py: "\"\"\"Local storage/HPA lab server; /work deliberately consumes CPU.\"\"\
+    \"\nimport hashlib\nimport html\nfrom http.server import BaseHTTPRequestHandler,\
+    \ ThreadingHTTPServer\nfrom pathlib import Path\nimport socket\nimport time\n\n\
+    class Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        status\
+    \ = 200\n        if self.path == '/healthz':\n            status = 503 if Path('/tmp/unhealthy').exists()\
+    \ else 200\n            body = 'health check\\n'\n        elif self.path == '/readyz':\n\
+    \            status = 503 if Path('/tmp/unready').exists() else 200\n        \
+    \    body = 'readiness check\\n'\n        elif self.path == '/work':\n       \
+    \     hashlib.pbkdf2_hmac('sha256', b'assignment-load', b'local-lab', 50000)\n\
+    \            body = 'work complete\\n'\n        elif self.path == '/':\n     \
+    \       saved = Path('/data/student.txt')\n            student = saved.read_text()\
+    \ if saved.exists() else 'No record written yet'\n            body = ('<!doctype\
+    \ html><title>Storage lab</title><h1>Session 13 storage lab</h1>'\n          \
+    \          '<p>' + html.escape(student) + '</p><p>Pod: ' + socket.gethostname()\
+    \ + '</p>')\n        else:\n            status, body = 404, 'not found\\n'\n \
+    \       self.send_response(status)\n        self.send_header('Content-Type', 'text/html;\
+    \ charset=utf-8')\n        self.end_headers()\n        self.wfile.write(body.encode())\n\
+    \n    def log_message(self, fmt, *args):\n        # Avoid filling the log with\
+    \ health checks and load-generator requests.\n        if self.path not in ('/healthz',\
+    \ '/readyz', '/work'):\n            super().log_message(fmt, *args)\n\ntime.sleep(8)\
+    \  # Startup probe gives initialization time before other checks run.\nprint('Listening\
+    \ on 0.0.0.0:8080 after initialization', flush=True)\nThreadingHTTPServer(('0.0.0.0',\
+    \ 8080), Handler).serve_forever()\n"

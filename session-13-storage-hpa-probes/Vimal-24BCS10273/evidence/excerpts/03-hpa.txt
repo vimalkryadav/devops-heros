@@ -1,0 +1,57 @@
+Actual output excerpts from 03-hpa.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:16.891155+00:00
+[...]
+  3 | PASS: CPU metrics are available (0.0s)
+[...]
+  6 | web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m15s
+[...]
+ 24 | web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m17s
+[...]
+ 30 | web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m33s
+[...]
+ 36 | web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m48s
+[...]
+ 42 | web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          3m3s
+[...]
+ 48 | web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         2          3m18s
+[...]
+ 55 | web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         3          3m33s
+[...]
+ 62 | web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         3          3m48s
+[...]
+ 69 | web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         3          4m3s
+[...]
+ 76 | web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         3          4m18s
+[...]
+ 84 | web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          4m33s
+[...]
+ 90 | PASS: load scales the web Deployment from 2 to 5 ready replicas (136.2s)
+[...]
+142 |   Normal   SuccessfulRescale             79s                    horizontal-pod-autoscaler  New size: 3; reason: cpu resource utilization (percentage of request) above target
+143 |   Normal   SuccessfulRescale             19s                    horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
+[...]
+149 | web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          4m34s
+[...]
+152 | web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          4m49s
+[...]
+155 | web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          5m4s
+[...]
+158 | web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          5m19s
+[...]
+161 | web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          5m34s
+[...]
+164 | web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          5m49s
+[...]
+167 | web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          6m4s
+[...]
+170 | web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          6m19s
+[...]
+173 | web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          6m35s
+[...]
+176 | web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          6m50s
+[...]
+179 | web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          7m5s
+180 | PASS: removing load scales the Deployment back to 2 replicas (151.1s)
+[...]
+197 | PASS: observed 2 -> 5 -> 2 replicas; CPU target 50%, scale-down window 60 seconds for this lab.
