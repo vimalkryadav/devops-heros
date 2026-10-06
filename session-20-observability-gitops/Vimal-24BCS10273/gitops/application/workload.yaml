@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-monitor
+data:
+  app.py: "#!/usr/bin/env python3\nfrom collections import Counter\nfrom datetime\
+    \ import datetime,timezone\nimport hashlib,json,os,threading,time,uuid\nfrom http.server\
+    \ import BaseHTTPRequestHandler,ThreadingHTTPServer\nfrom pathlib import Path\n\
+    \ncounts=Counter();lock=threading.Lock()\ndef version():return Path('/config/version').read_text().strip()\n\
+    class Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        started=time.monotonic();path=self.path.split('?')[0]\n\
+    \        trace=uuid.uuid4().hex\n        status=200;kind='application/json'\n\
+    \        if path=='/metrics':\n            kind='text/plain; version=0.0.4'\n\
+    \            with lock:samples=list(counts.items())\n            rss=int(Path('/proc/self/statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE')\n\
+    \            lines=['# TYPE lab_http_requests_total counter']\n            lines\
+    \ += [f'lab_http_requests_total{{path=\"{p}\",status=\"{s}\"}} {n}' for (p,s),n\
+    \ in samples]\n            lines += ['# TYPE lab_process_cpu_seconds_total counter',f'lab_process_cpu_seconds_total\
+    \ {time.process_time()}',\n                      '# TYPE lab_process_resident_memory_bytes\
+    \ gauge',f'lab_process_resident_memory_bytes {rss}',\n                      '#\
+    \ TYPE lab_application_up gauge','lab_application_up 1',\n                   \
+    \   '# TYPE lab_build_info gauge',f'lab_build_info{{version=\"{version()}\"}}\
+    \ 1']\n            body=('\\n'.join(lines)+'\\n').encode()\n        else:\n  \
+    \          if path=='/work':hashlib.pbkdf2_hmac('sha256',b'assignment',b'load',100000)\n\
+    \            elif path=='/fail':status=503\n            elif path not in ['/','/healthz']:status=404\n\
+    \            body=json.dumps({'application':'Release Monitor','student':'Vimal\
+    \ Kumar Yadav','version':version(),'status':status,'request_id':trace}).encode()\n\
+    \        self.send_response(status);self.send_header('Content-Type',kind);self.send_header('Content-Length',str(len(body)));self.send_header('X-Request-ID',trace);self.end_headers();self.wfile.write(body)\n\
+    \        with lock:counts[(path if path in ['/','/healthz','/metrics','/work','/fail']\
+    \ else '/unknown',str(status))]+=1\n        if path!='/healthz':print(json.dumps({'timestamp':datetime.now(timezone.utc).isoformat(),'request_id':trace,'path':path,'status':status,'duration_seconds':round(time.monotonic()-started,6)}),flush=True)\n\
+    \    def log_message(self,*args):pass\nThreadingHTTPServer(('0.0.0.0',8000),Handler).serve_forever()\n"
+  version: v1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels: &id001
+      app: release-monitor
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: app
+        image: python:3.14.7-alpine@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01
+        command:
+        - python
+        - -B
+        - /config/app.py
+        ports:
+        - name: http
+          containerPort: 8000
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          requests:
+            cpu: 25m
+            memory: 32Mi
+          limits:
+            cpu: 300m
+            memory: 96Mi
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 3
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 5
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: release-monitor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-monitor
+spec:
+  selector:
+    app: release-monitor
+  ports:
+  - port: 8000
+    targetPort: http
