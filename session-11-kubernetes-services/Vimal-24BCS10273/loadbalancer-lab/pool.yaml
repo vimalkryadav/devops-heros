@@ -1,0 +1,17 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: assignment-s11
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.168.49.230-192.168.49.240
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: assignment-s11
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - assignment-s11

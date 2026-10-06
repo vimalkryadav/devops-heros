@@ -1,0 +1,101 @@
++ set -euo pipefail
+++ dirname worktrees/session11/session-11-kubernetes-services/Vimal-24BCS10273/loadbalancer-lab/run.sh
++ cd worktrees/session11/session-11-kubernetes-services/Vimal-24BCS10273/loadbalancer-lab
++ mkdir -p evidence
++ docker network inspect devops-assignment --format '{{json .IPAM.Config}} {{json .Containers}}'
+[{"Subnet":"192.168.49.0/24","Gateway":"192.168.49.1"}] {"c2fb7138ab65bbdcbdee295f56568b9742d149fbc0246c9a167de35376540e09":{"Name":"devops-assignment","EndpointID":"a140cbd945b88bea0690f5f872ac1a8687c412ca6b62abcde7eefcd7612e1d9f","MacAddress":"9e:d9:f0:0a:2e:b8","IPv4Address":"192.168.49.2/24","IPv6Address":""}}
++ helm repo add metallb https://metallb.github.io/metallb --force-update
+"metallb" has been added to your repositories
++ helm upgrade --install assignment-metallb /var/home/vimal2907/.cache/helm/repository/metallb-0.16.1.tgz --version 0.16.1 --namespace metallb-system --create-namespace --set frrk8s.enabled=false --set speaker.ignoreExcludeLB=true --wait --timeout 10m
+Release "assignment-metallb" has been upgraded. Happy Helming!
+NAME: assignment-metallb
+LAST DEPLOYED: Wed Oct  7 01:42:56 2026
+NAMESPACE: metallb-system
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+NOTES:
+MetalLB is now running in the cluster.
+
+Now you can configure it via its CRs. Please refer to the metallb official docs
+on how to use the CRs.
++ trap cleanup EXIT
++ kubectl apply -f pool.yaml
+ipaddresspool.metallb.io/assignment-s11 created
+l2advertisement.metallb.io/assignment-s11 created
++ kubectl apply -f workload.yaml
+namespace/assignment-s11-lb created
+deployment.apps/campus-web created
+service/campus-web-loadbalancer created
++ kubectl -n assignment-s11-lb rollout status deployment/campus-web --timeout=180s
+Waiting for deployment "campus-web" rollout to finish: 0 of 1 updated replicas are available...
+deployment "campus-web" successfully rolled out
++ kubectl -n assignment-s11-lb wait service/campus-web-loadbalancer '--for=jsonpath={.status.loadBalancer.ingress[0].ip}' --timeout=120s
+service/campus-web-loadbalancer condition met
++ kubectl -n assignment-s11-lb get pods,services -o wide
++ tee evidence/workloads.txt
+NAME                              READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+pod/campus-web-7566949f64-nbxg4   1/1     Running   0          12s   10.244.0.15   devops-assignment   <none>           <none>
+
+NAME                              TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)        AGE   SELECTOR
+service/campus-web-loadbalancer   LoadBalancer   10.101.117.104   192.168.49.230   80:31047/TCP   12s   app=campus-web
++ kubectl -n assignment-s11-lb get service campus-web-loadbalancer -o json
++ kubectl -n metallb-system get ipaddresspool,l2advertisement -o yaml
+++ kubectl -n assignment-s11-lb get service campus-web-loadbalancer -o 'jsonpath={.status.loadBalancer.ingress[0].ip}'
++ address=192.168.49.230
++ printf 'Requesting the assigned external IP: http://%s:80\n' 192.168.49.230
+Requesting the assigned external IP: http://192.168.49.230:80
++ curl --fail --show-error --silent --retry 8 --retry-delay 2 --retry-all-errors --max-time 10 --dump-header evidence/http-headers.txt http://192.168.49.230:80
++ tee evidence/http-body.html
+curl: (7) Failed to connect to 192.168.49.230 port 80 after 3053 ms: Could not connect to server
+curl: (7) Failed to connect to 192.168.49.230 port 80 after 3054 ms: Could not connect to server
+curl: (7) Failed to connect to 192.168.49.230 port 80 after 3054 ms: Could not connect to server
+curl: (7) Failed to connect to 192.168.49.230 port 80 after 3055 ms: Could not connect to server
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
++ cat evidence/http-headers.txt
+HTTP/1.1 200 OK
+Server: nginx/1.28.3
+Date: Tue, 06 Oct 2026 20:13:41 GMT
+Content-Type: text/html
+Content-Length: 615
+Last-Modified: Tue, 24 Mar 2026 19:45:11 GMT
+Connection: keep-alive
+ETag: "69c2e9c7-267"
+Accept-Ranges: bytes
+
++ grep -q 'Welcome to nginx!' evidence/http-body.html
++ kubectl -n metallb-system logs deployment/assignment-metallb-controller --tail=30
++ printf 'PASS: HTTP 200 through the assigned external LoadBalancer IP\n'
+PASS: HTTP 200 through the assigned external LoadBalancer IP
++ cleanup
++ kubectl delete namespace assignment-s11-lb --ignore-not-found --wait=true
+namespace "assignment-s11-lb" deleted
++ kubectl delete -f pool.yaml --ignore-not-found
+ipaddresspool.metallb.io "assignment-s11" deleted from metallb-system namespace
+l2advertisement.metallb.io "assignment-s11" deleted from metallb-system namespace
++ helm uninstall assignment-metallb --namespace metallb-system --wait
+release "assignment-metallb" uninstalled
++ kubectl delete namespace metallb-system --ignore-not-found --wait=true
+namespace "metallb-system" deleted

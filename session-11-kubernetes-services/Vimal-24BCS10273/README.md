@@ -3,6 +3,10 @@
 **Name:** Vimal Kumar Yadav
 **Enrollment Number:** 24BCS10273
 
+The [LoadBalancer follow-up](loadbalancer-lab/README.md) demonstrates an assigned external IP
+and HTTP 200 through that IP on native Linux. It closes the original pending-external-IP gap
+below; the original macOS output is retained as historical evidence.
+
 The original tasks below were run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
 containerd 2.3.4, docker driver, on macOS (Apple silicon). Every code block is the real output from
 that run, and the screenshots are of the same session.

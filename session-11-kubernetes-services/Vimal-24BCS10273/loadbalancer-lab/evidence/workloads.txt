@@ -1,0 +1,5 @@
+NAME                              READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+pod/campus-web-7566949f64-nbxg4   1/1     Running   0          12s   10.244.0.15   devops-assignment   <none>           <none>
+
+NAME                              TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)        AGE   SELECTOR
+service/campus-web-loadbalancer   LoadBalancer   10.101.117.104   192.168.49.230   80:31047/TCP   12s   app=campus-web

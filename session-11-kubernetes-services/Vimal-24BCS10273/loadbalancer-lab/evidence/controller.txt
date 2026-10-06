@@ -1,0 +1,30 @@
+{"caller":"pool_controller.go:53","controller":"PoolReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:53","controller":"PoolStatusReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:75","controller":"PoolStatusReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_controller.go:115","controller":"PoolReconciler","event":"force service reload","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_controller.go:129","controller":"PoolReconciler","event":"config reloaded","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:53","controller":"PoolStatusReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service_controller_reload.go:63","controller":"ServiceReconciler - reprocessAll","level":"info","start reconcile":"metallbreload/reload","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service_controller_reload.go:118","controller":"ServiceReconciler - reprocessAll","end reconcile":"metallbreload/reload","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:84","controller":"PoolStatusReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:53","controller":"PoolStatusReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:75","controller":"PoolStatusReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_controller.go:131","controller":"PoolReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"configuration_state_controller.go:40","controller":"ConfigurationStateReconciler","level":"info","start reconcile":"metallb-system/controller","ts":"2026-10-06T20:13:09Z"}
+{"caller":"configuration_state_controller.go:77","controller":"ConfigurationStateReconciler","event":"ConfigurationState unchanged","level":"info","name":"controller","ts":"2026-10-06T20:13:09Z"}
+{"caller":"configuration_state_controller.go:79","controller":"ConfigurationStateReconciler","end reconcile":"metallb-system/controller","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_controller.go:53","controller":"PoolReconciler","level":"info","start reconcile":"/assignment-s11-lb","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_controller.go:131","controller":"PoolReconciler","end reconcile":"/assignment-s11-lb","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service_controller.go:64","controller":"ServiceReconciler","level":"info","start reconcile":"assignment-s11-lb/campus-web-loadbalancer","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service.go:186","event":"ipAllocated","ip":["192.168.49.230"],"level":"info","msg":"IP address assigned by controller","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:53","controller":"PoolStatusReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"main.go:136","event":"serviceUpdated","level":"info","msg":"updated service object","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service_controller.go:115","controller":"ServiceReconciler","end reconcile":"assignment-s11-lb/campus-web-loadbalancer","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:84","controller":"PoolStatusReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:53","controller":"PoolStatusReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service_controller.go:64","controller":"ServiceReconciler","level":"info","start reconcile":"assignment-s11-lb/campus-web-loadbalancer","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:75","controller":"PoolStatusReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:53","controller":"PoolStatusReconciler","level":"info","start reconcile":"metallb-system/assignment-s11","ts":"2026-10-06T20:13:09Z"}
+{"caller":"pool_status_controller.go:75","controller":"PoolStatusReconciler","end reconcile":"metallb-system/assignment-s11","level":"info","ts":"2026-10-06T20:13:09Z"}
+{"caller":"main.go:136","event":"serviceUpdated","level":"info","msg":"updated service object","ts":"2026-10-06T20:13:09Z"}
+{"caller":"service_controller.go:115","controller":"ServiceReconciler","end reconcile":"assignment-s11-lb/campus-web-loadbalancer","level":"info","ts":"2026-10-06T20:13:09Z"}
