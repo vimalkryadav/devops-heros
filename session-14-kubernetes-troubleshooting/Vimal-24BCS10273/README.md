@@ -54,7 +54,7 @@ The Pod-networking example diagnoses an application listening-address problem. I
 
 The Service exercise needed two runner corrections: empty EndpointSlices may contain JSON `null`, and removing endpoints does not instantly change the node's routing rules. The final transcript retains an HTTP success immediately after the selector change, followed by connection failure once routing caught up. The runner now polls for both the API state and the observed network behavior before declaring a result.
 
-Screenshots are readable renderings of excerpts from these actual transcripts, captured through Playwright/CDP. They are labelled as transcripts and are accompanied by the full text files.
+These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results.
 
 ![Image failure and recovery](evidence/screenshots/01-image.png)
 ![Crash and repair](evidence/screenshots/02-crash.png)
