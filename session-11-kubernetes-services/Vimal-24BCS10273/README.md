@@ -25,7 +25,7 @@ following additions cover Tasks 2–4 and include a separate Linux DNS experimen
 
 ![Same-namespace and cross-namespace DNS checks](dns-lab/evidence/dns.png)
 
-The new image is a Playwright/CDP screenshot of the recorded command transcript.
+These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results.
 
 
 ---
