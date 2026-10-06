@@ -1,0 +1,37 @@
+Actual output excerpts from 01-chart-commands.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:39.576632+00:00
+  2 | $ helm version
+  3 | version.BuildInfo{Version:"v3.22.0", GitCommit:"144ca65f8501953fa8b41cd1d37c7223051c85b7", GitTreeState:"clean", GoVersion:"go1.26.8"}
+  4 | $ helm create .scratch/generated-demo
+  5 | Creating .scratch/generated-demo
+  6 | Generated chart files:
+  7 | .scratch/generated-demo/.helmignore
+  8 | .scratch/generated-demo/Chart.yaml
+  9 | .scratch/generated-demo/templates/NOTES.txt
+ 10 | .scratch/generated-demo/templates/_helpers.tpl
+ 11 | .scratch/generated-demo/templates/deployment.yaml
+ 12 | .scratch/generated-demo/templates/hpa.yaml
+[...]
+ 19 | $ helm repo add examples https://helm.github.io/examples
+ 20 | "examples" has been added to your repositories
+ 21 | $ helm repo update
+ 22 | Hang tight while we grab the latest from your chart repositories...
+ 23 | ...Successfully got an update from the "examples" chart repository
+ 24 | Update Complete. ⎈Happy Helming!⎈
+ 25 | $ helm repo list
+ 26 | NAME    	URL                            
+ 27 | examples	https://helm.github.io/examples
+ 28 | $ helm search repo examples
+ 29 | NAME                	CHART VERSION	APP VERSION	DESCRIPTION                
+ 30 | examples/hello-world	0.1.0        	1.16.0     	A Helm chart for Kubernetes
+ 31 | $ helm lint notes-chart
+ 32 | ==> Linting notes-chart
+ 33 | [INFO] Chart.yaml: icon is recommended
+ 34 | 
+ 35 | 1 chart(s) linted, 0 chart(s) failed
+ 36 | $ helm lint notes-chart -f notes-chart/values-prod.yaml
+ 37 | ==> Linting notes-chart
+ 38 | [INFO] Chart.yaml: icon is recommended
+ 39 | 
+ 40 | 1 chart(s) linted, 0 chart(s) failed
