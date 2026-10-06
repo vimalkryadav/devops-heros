@@ -61,13 +61,11 @@ v2 replicas remained available; `rollout undo` removed that failed revision.
 
 ## Screenshots
 
-These are Playwright/CDP screenshots of excerpts from the saved command output;
-the unabridged transcript is linked above. The application screenshot is a direct
-browser request to the NodePort URL.
+These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results.
 
 ![Cluster and Deployment checks](evidence/cluster.png)
 ![Service access, scale-up and update](evidence/rollout.png)
-![Application response in the browser](evidence/application.png)
+![Recorded application HTTP responses](evidence/application-terminal.png)
 
 ## Cleanup
 
