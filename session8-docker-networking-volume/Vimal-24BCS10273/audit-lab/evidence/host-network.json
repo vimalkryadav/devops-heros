@@ -1,0 +1,6 @@
+{
+  "network_mode": "host",
+  "port": 80,
+  "response": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n<title>It works! Apache httpd</title>\n</head>\n<body>\n<p>It works!</p>\n</body>\n</html>\n",
+  "client": "native Linux host curl"
+}

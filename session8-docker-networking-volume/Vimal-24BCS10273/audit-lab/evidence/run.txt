@@ -1,0 +1,185 @@
+Started: 2026-10-06T20:09:21.643540+00:00
+$ docker pull alpine:3.24@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+docker.io/library/alpine@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6: Pulling from library/alpine
+6d0606d1815c: Download complete
+797dd00a0fc7: Download complete
+Digest: sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+Status: Downloaded newer image for alpine@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+docker.io/library/alpine:3.24@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
+$ docker pull nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+docker.io/library/nginx@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94: Pulling from library/nginx
+22e5a8a110ec: Pulling fs layer
+b27cf3f7c39d: Pulling fs layer
+703c5424632f: Pulling fs layer
+b335b7ac3a40: Pulling fs layer
+6b4dfb2e8f8a: Pulling fs layer
+e3320d02d578: Pulling fs layer
+3d85d110b167: Pulling fs layer
+ee0d72338cd2: Download complete
+22e5a8a110ec: Download complete
+b335b7ac3a40: Download complete
+57e209258aa3: Download complete
+703c5424632f: Download complete
+6b4dfb2e8f8a: Download complete
+3d85d110b167: Download complete
+e3320d02d578: Download complete
+e3320d02d578: Pull complete
+3d85d110b167: Pull complete
+22e5a8a110ec: Pull complete
+6b4dfb2e8f8a: Pull complete
+703c5424632f: Pull complete
+b335b7ac3a40: Pull complete
+b27cf3f7c39d: Download complete
+b27cf3f7c39d: Pull complete
+Digest: sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+Status: Downloaded newer image for nginx@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+docker.io/library/nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+$ docker pull mysql:8.4@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242
+docker.io/library/mysql@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242: Pulling from library/mysql
+1be21a6c94a6: Pulling fs layer
+3a129719b3ee: Pulling fs layer
+e49eff447cf4: Pulling fs layer
+9056f6ecb394: Pulling fs layer
+b23c4a59849a: Pulling fs layer
+1c8d0b814939: Pulling fs layer
+0da02031b810: Pulling fs layer
+442cf3908783: Pulling fs layer
+ff557ec8ac73: Pulling fs layer
+ea066d40f8be: Pulling fs layer
+ead2e45f6d29: Download complete
+1be21a6c94a6: Download complete
+3a129719b3ee: Download complete
+e49eff447cf4: Download complete
+9056f6ecb394: Download complete
+b23c4a59849a: Download complete
+4347f9bd42d8: Download complete
+442cf3908783: Download complete
+ff557ec8ac73: Download complete
+0da02031b810: Download complete
+0da02031b810: Pull complete
+e49eff447cf4: Pull complete
+b23c4a59849a: Pull complete
+442cf3908783: Pull complete
+9056f6ecb394: Pull complete
+ff557ec8ac73: Pull complete
+1c8d0b814939: Download complete
+1c8d0b814939: Pull complete
+3a129719b3ee: Pull complete
+ea066d40f8be: Download complete
+ea066d40f8be: Pull complete
+1be21a6c94a6: Pull complete
+Digest: sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242
+Status: Downloaded newer image for mysql@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242
+docker.io/library/mysql:8.4@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242
+$ docker pull httpd:2.4-alpine@sha256:3440c39d8d6f54fa9ad2549e5a60c19ddd435faadc29c1ad28aa795f71888889
+docker.io/library/httpd@sha256:3440c39d8d6f54fa9ad2549e5a60c19ddd435faadc29c1ad28aa795f71888889: Pulling from library/httpd
+8e97dd6176d7: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+269898e769d0: Pulling fs layer
+db577887d90f: Pulling fs layer
+3c7c286fbbd5: Pulling fs layer
+a61ab206ac8a: Pulling fs layer
+4f4fb700ef54: Already exists
+8e97dd6176d7: Download complete
+269898e769d0: Download complete
+269898e769d0: Pull complete
+3c7c286fbbd5: Download complete
+3c7c286fbbd5: Pull complete
+4f4fb700ef54: Pull complete
+83558117349a: Download complete
+0f1398a8d113: Download complete
+db577887d90f: Download complete
+db577887d90f: Pull complete
+a61ab206ac8a: Download complete
+a61ab206ac8a: Pull complete
+8e97dd6176d7: Pull complete
+Digest: sha256:3440c39d8d6f54fa9ad2549e5a60c19ddd435faadc29c1ad28aa795f71888889
+Status: Downloaded newer image for httpd@sha256:3440c39d8d6f54fa9ad2549e5a60c19ddd435faadc29c1ad28aa795f71888889
+docker.io/library/httpd:2.4-alpine@sha256:3440c39d8d6f54fa9ad2549e5a60c19ddd435faadc29c1ad28aa795f71888889
+$ docker network create --label assignment.session=8 devops-s08-frontend
+0127c3ba44eb24f121fa563f322e41516ae88f49bdb30ef1b32db70f3fe08efd
+$ docker network create --label assignment.session=8 devops-s08-backend
+bb16d81585e6e3839c60c745133d13ca0cdb521a1ccfea7a257f0446a216e079
+$ docker network create --label assignment.session=8 devops-s08-database
+71f30ab7cdec2c975c8362794b2165452b3e154b377c3a002e2347a2473ade7d
+$ docker run -d --name devops-s08-frontend --label assignment.session=8 --network devops-s08-frontend -p 127.0.0.1:18088:80 --mount type=bind,src=/tmp/devops-s08-g5mnqajy/website,dst=/usr/share/nginx/html,readonly nginx:stable-alpine@sha256:0985e772fb9f729e6fa0980da05fca5d9c468e870eed43071545afa9d2e27d94
+111cb1d5b4faa5396e1fad7b0776620fc24101d7dddf019433e2de82c0ef2bf6
+$ docker network connect devops-s08-backend devops-s08-frontend
+$ docker run -d --name devops-s08-backend --label assignment.session=8 --network devops-s08-backend alpine:3.24@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6 sleep infinity
+20bb888c4913912de58cb90642aff57f021495fe4d4331e6a6cef4be741f7f42
+$ docker network connect devops-s08-database devops-s08-backend
+$ docker run -d --name devops-s08-database --label assignment.session=8 --network devops-s08-database -e MYSQL_ROOT_PASSWORD_FILE=/run/secrets/mysql-password --mount type=bind,src=/tmp/devops-s08-g5mnqajy/mysql-password,dst=/run/secrets/mysql-password,readonly mysql:8.4@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242
+c662aee4cd6797f0bc92e3fd07032f089647d2f13685ea28b7e4864169609b89
+$ docker inspect --format '{{json .NetworkSettings.Networks}}' devops-s08-frontend
+{"devops-s08-backend":{"IPAMConfig":{},"Links":null,"Aliases":[],"DriverOpts":{},"GwPriority":0,"NetworkID":"bb16d81585e6e3839c60c745133d13ca0cdb521a1ccfea7a257f0446a216e079","EndpointID":"f87a6250f5fb6649c4cc49c086c7b678c4824e83b4557fa39d486956a9d1e4c3","Gateway":"172.23.0.1","IPAddress":"172.23.0.2","MacAddress":"ea:cc:31:6b:dc:62","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["devops-s08-frontend","111cb1d5b4fa"]},"devops-s08-frontend":{"IPAMConfig":null,"Links":null,"Aliases":null,"DriverOpts":null,"GwPriority":0,"NetworkID":"0127c3ba44eb24f121fa563f322e41516ae88f49bdb30ef1b32db70f3fe08efd","EndpointID":"247eda049ed5ec651b48e04c6e21ce4a136ea2dbe5cc79a20c9c5e681f557d3a","Gateway":"172.22.0.1","IPAddress":"172.22.0.2","MacAddress":"6e:56:9d:6f:9c:55","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["devops-s08-frontend","111cb1d5b4fa"]}}
+$ docker inspect --format '{{json .NetworkSettings.Networks}}' devops-s08-backend
+{"devops-s08-backend":{"IPAMConfig":null,"Links":null,"Aliases":null,"DriverOpts":null,"GwPriority":0,"NetworkID":"bb16d81585e6e3839c60c745133d13ca0cdb521a1ccfea7a257f0446a216e079","EndpointID":"3f973c29d23c65b5da2b5403854b403b280b537f42a3e3f3d48d7e3c95716d81","Gateway":"172.23.0.1","IPAddress":"172.23.0.3","MacAddress":"8a:f6:bc:44:3b:b2","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["devops-s08-backend","20bb888c4913"]},"devops-s08-database":{"IPAMConfig":{},"Links":null,"Aliases":[],"DriverOpts":{},"GwPriority":0,"NetworkID":"71f30ab7cdec2c975c8362794b2165452b3e154b377c3a002e2347a2473ade7d","EndpointID":"7a42e7ad978a709d95e9bd2dab5f16f25032a99bf027bfb2b25cef56c1ca976c","Gateway":"172.24.0.1","IPAddress":"172.24.0.2","MacAddress":"f6:2b:2c:38:44:1a","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["devops-s08-backend","20bb888c4913"]}}
+$ docker inspect --format '{{json .NetworkSettings.Networks}}' devops-s08-database
+{"devops-s08-database":{"IPAMConfig":null,"Links":null,"Aliases":null,"DriverOpts":null,"GwPriority":0,"NetworkID":"71f30ab7cdec2c975c8362794b2165452b3e154b377c3a002e2347a2473ade7d","EndpointID":"a6fb7f02b03a58830bc897a1cf2dd7f586eb3b9d51ad8f434376bb68bd22f7f0","Gateway":"172.24.0.1","IPAddress":"172.24.0.3","MacAddress":"9e:55:f3:58:8e:5f","IPPrefixLen":16,"IPv6Gateway":"","GlobalIPv6Address":"","GlobalIPv6PrefixLen":0,"DNSNames":["devops-s08-database","c662aee4cd67"]}}
+$ docker exec devops-s08-backend ping -c 3 devops-s08-frontend
+PING devops-s08-frontend (172.23.0.2): 56 data bytes
+64 bytes from 172.23.0.2: seq=0 ttl=64 time=0.099 ms
+64 bytes from 172.23.0.2: seq=1 ttl=64 time=0.203 ms
+64 bytes from 172.23.0.2: seq=2 ttl=64 time=0.055 ms
+
+--- devops-s08-frontend ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.055/0.119/0.203 ms
+$ docker exec devops-s08-backend ping -c 3 devops-s08-database
+PING devops-s08-database (172.24.0.3): 56 data bytes
+64 bytes from 172.24.0.3: seq=0 ttl=64 time=0.091 ms
+64 bytes from 172.24.0.3: seq=1 ttl=64 time=0.047 ms
+64 bytes from 172.24.0.3: seq=2 ttl=64 time=0.084 ms
+
+--- devops-s08-database ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.047/0.074/0.091 ms
+$ docker exec devops-s08-frontend getent hosts devops-s08-database
+PASS: backend has exactly two networks; frontend cannot resolve database
+$ docker inspect --format '{{.Id}} {{.State.StartedAt}}' devops-s08-frontend
+111cb1d5b4faa5396e1fad7b0776620fc24101d7dddf019433e2de82c0ef2bf6 2026-10-06T20:13:04.438061591Z
+$ curl --fail --silent --show-error http://127.0.0.1:18088
+Hello students
+$ curl --fail --silent --show-error http://127.0.0.1:18088
+Hello students — bind mount updated
+$ docker inspect --format '{{.Id}} {{.State.StartedAt}}' devops-s08-frontend
+111cb1d5b4faa5396e1fad7b0776620fc24101d7dddf019433e2de82c0ef2bf6 2026-10-06T20:13:04.438061591Z
+PASS: bind-mounted content changed with identical container ID and start time
+$ docker run -d --name devops-s08-apache --label assignment.session=8 --network host httpd:2.4-alpine@sha256:3440c39d8d6f54fa9ad2549e5a60c19ddd435faadc29c1ad28aa795f71888889 sh -c 'sed -i '"'"'s/^Listen 80$/Listen 127.0.0.1:80/'"'"' /usr/local/apache2/conf/httpd.conf; exec httpd-foreground'
+a17ffc2a08209485592a576615db2d23d3df68a914e515f4992a8e3e2302af9c
+$ docker inspect --format 'NetworkMode={{.HostConfig.NetworkMode}} Ports={{json .HostConfig.PortBindings}}' devops-s08-apache
+NetworkMode=host Ports={}
+$ curl --fail --silent --show-error http://localhost:80
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>It works! Apache httpd</title>
+</head>
+<body>
+<p>It works!</p>
+</body>
+</html>
+PASS: host terminal reaches Apache directly on localhost:80
+$ docker ps --filter label=assignment.session=8 --format 'table {{.Names}}	{{.Status}}	{{.Ports}}'
+NAMES                 STATUS          PORTS
+devops-s08-apache     Up 1 second     
+devops-s08-database   Up 13 seconds   3306/tcp, 33060/tcp
+devops-s08-backend    Up 13 seconds   
+devops-s08-frontend   Up 14 seconds   127.0.0.1:18088->80/tcp
+$ docker rm -fv devops-s08-apache
+devops-s08-apache
+$ docker rm -fv devops-s08-database
+devops-s08-database
+$ docker rm -fv devops-s08-backend
+devops-s08-backend
+$ docker rm -fv devops-s08-frontend
+devops-s08-frontend
+$ docker network rm devops-s08-database
+devops-s08-database
+$ docker network rm devops-s08-backend
+devops-s08-backend
+$ docker network rm devops-s08-frontend
+devops-s08-frontend
+$ docker ps -a --filter label=assignment.session=8 --format '{{.Names}}'
+$ docker network ls --filter label=assignment.session=8 --format '{{.Name}}'
+PASS: all lab containers, MySQL anonymous volumes and networks removed

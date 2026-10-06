@@ -3,6 +3,11 @@
 **Name:** Vimal Kumar Yadav
 **Enrollment Number:** 24BCS10273
 
+The [native Linux audit run](audit-lab/README.md) supplies the corrected Task 1 topology:
+the backend joins exactly two networks. It also verifies Apache from the Linux host at
+`localhost:80`, repeats the bind-mount check and records cleanup. The earlier macOS run
+below is retained as historical evidence; its three-network backend is superseded by the audit.
+
 All four tasks were run on Docker Engine 29.6.2 (Docker Desktop, macOS). Every code block
 below is the real output from that run.
 
