@@ -1,0 +1,420 @@
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-06T17:48:13Z
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl version
+Client Version: v1.37.1
+Kustomize Version: v5.8.1
+Server Version: v1.37.1
+
+$ kubectl cluster-info
+Kubernetes control plane is running at https://192.168.49.2:8443
+CoreDNS is running at https://192.168.49.2:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+$ kubectl get nodes -o wide
+NAME                STATUS   ROLES           AGE     VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION                   CONTAINER-RUNTIME
+devops-assignment   Ready    control-plane   4m28s   v1.37.1   192.168.49.2   <none>        Debian GNU/Linux 12 (bookworm)   7.1.10-200.fc44.x86_64 (amd64)   containerd://2.3.4
+
+$ kubectl get pods -n kube-system -o wide
+NAME                                        READY   STATUS    RESTARTS   AGE     IP             NODE                NOMINATED NODE   READINESS GATES
+coredns-559f6c778d-lnmcz                    1/1     Running   0          4m18s   10.244.0.2     devops-assignment   <none>           <none>
+etcd-devops-assignment                      1/1     Running   0          4m26s   192.168.49.2   devops-assignment   <none>           <none>
+kindnet-b77w6                               1/1     Running   0          4m18s   192.168.49.2   devops-assignment   <none>           <none>
+kube-apiserver-devops-assignment            1/1     Running   0          4m26s   192.168.49.2   devops-assignment   <none>           <none>
+kube-controller-manager-devops-assignment   1/1     Running   0          4m26s   192.168.49.2   devops-assignment   <none>           <none>
+kube-proxy-gjjw6                            1/1     Running   0          4m18s   192.168.49.2   devops-assignment   <none>           <none>
+kube-scheduler-devops-assignment            1/1     Running   0          4m26s   192.168.49.2   devops-assignment   <none>           <none>
+storage-provisioner                         1/1     Running   0          4m23s   192.168.49.2   devops-assignment   <none>           <none>
+
+$ kubectl create namespace assignment-s09
+namespace/assignment-s09 created
+
+$ k apply --dry-run=server -f deployment.yaml -f service.yaml
+deployment.apps/kubernetes-bootcamp created (server dry run)
+service/kubernetes-bootcamp created (server dry run)
+
+$ k apply -f deployment.yaml
+deployment.apps/kubernetes-bootcamp created
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment spec update to be observed...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ k get deployment\,replicaset\,pods -o wide
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS            IMAGES                                         SELECTOR
+deployment.apps/kubernetes-bootcamp   1/1     1            1           2s    kubernetes-bootcamp   gcr.io/google-samples/kubernetes-bootcamp:v1   app=kubernetes-bootcamp
+
+NAME                                             DESIRED   CURRENT   READY   AGE   CONTAINERS            IMAGES                                         SELECTOR
+replicaset.apps/kubernetes-bootcamp-7d9fd8c7b5   1         1         1       2s    kubernetes-bootcamp   gcr.io/google-samples/kubernetes-bootcamp:v1   app=kubernetes-bootcamp,pod-template-hash=7d9fd8c7b5
+
+NAME                                       READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+pod/kubernetes-bootcamp-7d9fd8c7b5-pnm55   1/1     Running   0          2s    10.244.0.29   devops-assignment   <none>           <none>
+
+$ k describe pod kubernetes-bootcamp-7d9fd8c7b5-pnm55
+Name:             kubernetes-bootcamp-7d9fd8c7b5-pnm55
+Namespace:        assignment-s09
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:18:14 +0530
+Labels:           app=kubernetes-bootcamp
+                  pod-template-hash=7d9fd8c7b5
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.29
+IPs:
+  IP:           10.244.0.29
+Controlled By:  ReplicaSet/kubernetes-bootcamp-7d9fd8c7b5
+Containers:
+  kubernetes-bootcamp:
+    Container ID:   containerd://e38056e6368086dd65958dd96b0bbbc4cb14dd54e73f3a538443b5dec8d46ace
+    Image:          gcr.io/google-samples/kubernetes-bootcamp:v1
+    Image ID:       gcr.io/google-samples/kubernetes-bootcamp@sha256:0d6b8ee63bb57c5f5b6156f446b3bc3b3c143d233037f3a2f00e279c8fcc64af
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Tue, 06 Oct 2026 23:18:15 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     250m
+      memory:  128Mi
+    Requests:
+      cpu:        25m
+      memory:     32Mi
+    Readiness:    http-get http://:8080/ delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2mtmb (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-2mtmb:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age   From               Message
+  ----     ------     ----  ----               -------
+  Normal   Scheduled  2s    default-scheduler  Successfully assigned assignment-s09/kubernetes-bootcamp-7d9fd8c7b5-pnm55 to devops-assignment
+  Normal   Pulled     2s    kubelet            spec.containers{kubernetes-bootcamp}: Container image "gcr.io/google-samples/kubernetes-bootcamp:v1" already present on machine and can be accessed by the pod
+  Normal   Created    1s    kubelet            spec.containers{kubernetes-bootcamp}: Container created
+  Normal   Started    1s    kubelet            spec.containers{kubernetes-bootcamp}: Container started
+  Warning  Unhealthy  1s    kubelet            spec.containers{kubernetes-bootcamp}: Readiness probe failed: Get "http://10.244.0.29:8080/": dial tcp 10.244.0.29:8080: connect: connection refused
+
+$ k logs kubernetes-bootcamp-7d9fd8c7b5-pnm55
+Kubernetes Bootcamp App Started At: 2026-10-06T17:48:15.269Z | Running On:  kubernetes-bootcamp-7d9fd8c7b5-pnm55 
+
+Running On: kubernetes-bootcamp-7d9fd8c7b5-pnm55 | Total Requests: 1 | App Uptime: 0.732 seconds | Log Time: 2026-10-06T17:48:16.001Z
+
+$ k exec kubernetes-bootcamp-7d9fd8c7b5-pnm55 -- env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=kubernetes-bootcamp-7d9fd8c7b5-pnm55
+NPM_CONFIG_LOGLEVEL=info
+NODE_VERSION=6.3.1
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+HOME=/root
+
+$ k apply -f service.yaml
+service/kubernetes-bootcamp created
+
+$ k get service kubernetes-bootcamp
+NAME                  TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+kubernetes-bootcamp   NodePort   10.108.44.12   <none>        8080:30513/TCP   0s
+
+$ k get endpointslices -l kubernetes.io/service-name=kubernetes-bootcamp
+NAME                        ADDRESSTYPE   PORTS   ENDPOINTS     AGE
+kubernetes-bootcamp-zb2ph   IPv4          8080    10.244.0.29   0s
+
+$ curl --fail --silent --show-error --retry 5 --retry-connrefused --retry-delay 1 --max-time 10 http://192.168.49.2:30513
+curl: (7) Failed to connect to 192.168.49.2 port 30513 after 0 ms: Could not connect to server
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-7d9fd8c7b5-pnm55 | v=1
+
+$ k scale deployment kubernetes-bootcamp --replicas=4
+deployment.apps/kubernetes-bootcamp scaled
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 4 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 4 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 of 4 updated replicas are available...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 2 of 4 updated replicas are available...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 3 of 4 updated replicas are available...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ k get pods -l app=kubernetes-bootcamp -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+kubernetes-bootcamp-7d9fd8c7b5-8b24s   1/1     Running   0          2s    10.244.0.32   devops-assignment   <none>           <none>
+kubernetes-bootcamp-7d9fd8c7b5-gv7tb   1/1     Running   0          2s    10.244.0.30   devops-assignment   <none>           <none>
+kubernetes-bootcamp-7d9fd8c7b5-pnbxf   1/1     Running   0          2s    10.244.0.31   devops-assignment   <none>           <none>
+kubernetes-bootcamp-7d9fd8c7b5-pnm55   1/1     Running   0          5s    10.244.0.29   devops-assignment   <none>           <none>
+
+$ k get endpointslices -l kubernetes.io/service-name=kubernetes-bootcamp
+NAME                        ADDRESSTYPE   PORTS   ENDPOINTS                                         AGE
+kubernetes-bootcamp-zb2ph   IPv4          8080    10.244.0.29,10.244.0.30,10.244.0.31 + 1 more...   3s
+
+$ k scale deployment kubernetes-bootcamp --replicas=2
+deployment.apps/kubernetes-bootcamp scaled
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ k set image deployment/kubernetes-bootcamp kubernetes-bootcamp=docker.io/jocatalin/kubernetes-bootcamp:v2
+deployment.apps/kubernetes-bootcamp image updated
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 old replicas are pending termination...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ k get replicasets\,pods -l app=kubernetes-bootcamp -o wide
+NAME                                             DESIRED   CURRENT   READY   AGE   CONTAINERS            IMAGES                                         SELECTOR
+replicaset.apps/kubernetes-bootcamp-7c78c6bc96   2         2         2       10s   kubernetes-bootcamp   docker.io/jocatalin/kubernetes-bootcamp:v2     app=kubernetes-bootcamp,pod-template-hash=7c78c6bc96
+replicaset.apps/kubernetes-bootcamp-7d9fd8c7b5   0         0         0       15s   kubernetes-bootcamp   gcr.io/google-samples/kubernetes-bootcamp:v1   app=kubernetes-bootcamp,pod-template-hash=7d9fd8c7b5
+
+NAME                                       READY   STATUS        RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+pod/kubernetes-bootcamp-7c78c6bc96-p28rs   1/1     Running       0          3s    10.244.0.37   devops-assignment   <none>           <none>
+pod/kubernetes-bootcamp-7c78c6bc96-zllsp   1/1     Running       0          10s   10.244.0.33   devops-assignment   <none>           <none>
+pod/kubernetes-bootcamp-7d9fd8c7b5-8b24s   1/1     Terminating   0          12s   10.244.0.32   devops-assignment   <none>           <none>
+pod/kubernetes-bootcamp-7d9fd8c7b5-gv7tb   1/1     Terminating   0          12s   10.244.0.30   devops-assignment   <none>           <none>
+pod/kubernetes-bootcamp-7d9fd8c7b5-pnbxf   1/1     Terminating   0          12s   10.244.0.31   devops-assignment   <none>           <none>
+pod/kubernetes-bootcamp-7d9fd8c7b5-pnm55   1/1     Terminating   0          15s   10.244.0.29   devops-assignment   <none>           <none>
+
+$ curl --fail --silent --show-error --retry 5 --retry-connrefused --retry-delay 1 --max-time 10 http://192.168.49.2:30513
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-7d9fd8c7b5-pnm55 | v=1
+
+$ k rollout history deployment/kubernetes-bootcamp
+deployment.apps/kubernetes-bootcamp 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+
+$ k set image deployment/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v10
+deployment.apps/kubernetes-bootcamp image updated
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=45s
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+error: timed out waiting for the condition
+
+$ k get pods -l app=kubernetes-bootcamp
+NAME                                   READY   STATUS             RESTARTS   AGE
+kubernetes-bootcamp-65bb94b4f7-qs6r9   0/1     ImagePullBackOff   0          45s
+kubernetes-bootcamp-7c78c6bc96-p28rs   1/1     Running            0          48s
+kubernetes-bootcamp-7c78c6bc96-zllsp   1/1     Running            0          55s
+
+$ k describe pods -l app=kubernetes-bootcamp
+Name:             kubernetes-bootcamp-65bb94b4f7-qs6r9
+Namespace:        assignment-s09
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:18:29 +0530
+Labels:           app=kubernetes-bootcamp
+                  pod-template-hash=65bb94b4f7
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.38
+IPs:
+  IP:           10.244.0.38
+Controlled By:  ReplicaSet/kubernetes-bootcamp-65bb94b4f7
+Containers:
+  kubernetes-bootcamp:
+    Container ID:   
+    Image:          gcr.io/google-samples/kubernetes-bootcamp:v10
+    Image ID:       
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     250m
+      memory:  128Mi
+    Requests:
+      cpu:        25m
+      memory:     32Mi
+    Readiness:    http-get http://:8080/ delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-h2wd7 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-h2wd7:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             kubernetes-bootcamp-7c78c6bc96-p28rs
+Namespace:        assignment-s09
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:18:26 +0530
+Labels:           app=kubernetes-bootcamp
+                  pod-template-hash=7c78c6bc96
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.37
+IPs:
+  IP:           10.244.0.37
+Controlled By:  ReplicaSet/kubernetes-bootcamp-7c78c6bc96
+Containers:
+  kubernetes-bootcamp:
+    Container ID:   containerd://1831531b2489c2a78129786372fddff92ef4256f0359309e5a4d0597025ede25
+    Image:          docker.io/jocatalin/kubernetes-bootcamp:v2
+    Image ID:       docker.io/jocatalin/kubernetes-bootcamp@sha256:fb1a3ced00cecfc1f83f18ab5cd14199e30adc1b49aa4244f5d65ad3f5feb2a5
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Tue, 06 Oct 2026 23:18:26 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     250m
+      memory:  128Mi
+    Requests:
+      cpu:        25m
+      memory:     32Mi
+    Readiness:    http-get http://:8080/ delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-xjxgv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-xjxgv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+
+Name:             kubernetes-bootcamp-7c78c6bc96-zllsp
+Namespace:        assignment-s09
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:18:19 +0530
+Labels:           app=kubernetes-bootcamp
+                  pod-template-hash=7c78c6bc96
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.33
+IPs:
+  IP:           10.244.0.33
+Controlled By:  ReplicaSet/kubernetes-bootcamp-7c78c6bc96
+Containers:
+  kubernetes-bootcamp:
+    Container ID:   containerd://0a9d0bb69e5ca2f022eda370c0eb6bd4989b6675517c706ef00feb06cbe04733
+    Image:          docker.io/jocatalin/kubernetes-bootcamp:v2
+    Image ID:       docker.io/jocatalin/kubernetes-bootcamp@sha256:fb1a3ced00cecfc1f83f18ab5cd14199e30adc1b49aa4244f5d65ad3f5feb2a5
+    Port:           8080/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Tue, 06 Oct 2026 23:18:25 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     250m
+      memory:  128Mi
+    Requests:
+      cpu:        25m
+      memory:     32Mi
+    Readiness:    http-get http://:8080/ delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-r44bf (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-r44bf:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+$ k rollout undo deployment/kubernetes-bootcamp
+Warning: resource deployments/kubernetes-bootcamp was previously managed with 'kubectl apply'. Rolling back will not update the kubectl.kubernetes.io/last-applied-configuration annotation, which may cause unexpected behavior on future 'kubectl apply' operations. Consider using 'kubectl apply' with your previous configuration file instead.
+deployment.apps/kubernetes-bootcamp rolled back
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment spec update to be observed...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 old replicas are pending termination...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ curl --fail --silent --show-error --retry 5 --retry-connrefused --retry-delay 1 --max-time 10 http://192.168.49.2:30513
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-7c78c6bc96-p28rs | v=2
+
+$ k get deployment kubernetes-bootcamp -o wide
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS            IMAGES                                       SELECTOR
+kubernetes-bootcamp   2/2     2            2           60s   kubernetes-bootcamp   docker.io/jocatalin/kubernetes-bootcamp:v2   app=kubernetes-bootcamp
+
+All six tutorial modules completed. Cleanup: kubectl delete namespace assignment-s09
