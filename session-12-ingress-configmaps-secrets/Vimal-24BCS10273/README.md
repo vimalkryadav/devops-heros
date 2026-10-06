@@ -3,13 +3,27 @@
 **Name:** Vimal Kumar Yadav
 **Enrollment Number:** 24BCS10273
 
-Everything below was run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
+The original tasks below were run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
 containerd 2.3.4, docker driver, ingress-nginx controller v1.15.1, on macOS (Apple silicon). Every
 code block is the real output from that run, and the screenshots are of the same session.
 
 The application is a two-tier campus portal: an nginx frontend and a Python backend, both reading
 their configuration from a ConfigMap and their database credentials from a Secret, with a single
 Ingress routing to both.
+
+
+## Additional homework coverage
+
+The original ConfigMap, Secret, routing and TLS demonstrations are retained below.
+The remaining explicit homework requirements are covered in:
+
+- [Ingress compared with an Ingress controller](ingress-comparison/README.md)
+- [Course troubleshooting exercise: PostgreSQL password failure and fix](troubleshooting/README.md)
+
+The new troubleshooting run uses an isolated Linux Minikube namespace and public
+dummy credentials. Its commands, failed authentication and successful SQL query
+are recorded separately from the earlier macOS evidence.
+
 
 ---
 
