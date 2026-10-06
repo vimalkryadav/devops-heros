@@ -27,7 +27,7 @@ data:
     \        with lock:counts[(path if path in ['/','/healthz','/metrics','/work','/fail']\
     \ else '/unknown',str(status))]+=1\n        if path!='/healthz':print(json.dumps({'timestamp':datetime.now(timezone.utc).isoformat(),'request_id':trace,'path':path,'status':status,'duration_seconds':round(time.monotonic()-started,6)}),flush=True)\n\
     \    def log_message(self,*args):pass\nThreadingHTTPServer(('0.0.0.0',8000),Handler).serve_forever()\n"
-  version: v1
+  version: v2
 ---
 apiVersion: apps/v1
 kind: Deployment
