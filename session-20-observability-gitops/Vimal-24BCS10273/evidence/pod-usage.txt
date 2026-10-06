@@ -1,0 +1,4 @@
+NAME                              CPU(cores)   MEMORY(bytes)   
+grafana-589b7996dd-hll2j          10m          226Mi           
+prometheus-b7bd74db-ljjv9         3m           64Mi            
+release-monitor-dd7cf7689-v9jd7   72m          12Mi            

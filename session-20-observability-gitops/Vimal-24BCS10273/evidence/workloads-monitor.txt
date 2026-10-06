@@ -1,0 +1,14 @@
+NAME                                  READY   STATUS    RESTARTS   AGE    IP            NODE                NOMINATED NODE   READINESS GATES
+pod/grafana-589b7996dd-hll2j          1/1     Running   0          15m    10.244.0.9    devops-assignment   <none>           <none>
+pod/prometheus-b7bd74db-ljjv9         1/1     Running   0          15m    10.244.0.8    devops-assignment   <none>           <none>
+pod/release-monitor-dd7cf7689-v9jd7   1/1     Running   0          7m3s   10.244.0.13   devops-assignment   <none>           <none>
+
+NAME                              READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES                                                                                            SELECTOR
+deployment.apps/grafana           1/1     1            1           15m    grafana      grafana/grafana:13.2.3@sha256:b28bae15e219c998fb0e0424ed724930cc61b1f61fb404d47c862f9a23f9e572    app=grafana
+deployment.apps/prometheus        1/1     1            1           15m    prometheus   prom/prometheus:v3.15.0@sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e   app=prometheus
+deployment.apps/release-monitor   1/1     1            1           7m3s   app          python:3.14.7-alpine@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01      app=release-monitor
+
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE    SELECTOR
+service/grafana           ClusterIP   10.103.149.132   <none>        3000/TCP   15m    app=grafana
+service/prometheus        ClusterIP   10.110.98.203    <none>        9090/TCP   15m    app=prometheus
+service/release-monitor   ClusterIP   10.108.195.27    <none>        8000/TCP   7m3s   app=release-monitor

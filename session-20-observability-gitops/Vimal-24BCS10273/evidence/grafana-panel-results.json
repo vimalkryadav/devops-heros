@@ -1,0 +1,433 @@
+{
+  "HTTP requests per second": {
+    "expression": "sum(rate(lab_http_requests_total{path!=\"/metrics\",path!=\"/healthz\"}[1m]))",
+    "samples": 14,
+    "minimum": 0.6994800000000001,
+    "maximum": 4.5636363636363635,
+    "response": {
+      "results": {
+        "A": {
+          "status": 200,
+          "frames": [
+            {
+              "schema": {
+                "refId": "A",
+                "meta": {
+                  "type": "timeseries-multi",
+                  "typeVersion": [
+                    0,
+                    1
+                  ],
+                  "custom": {
+                    "calculatedMinStep": 5000,
+                    "resultType": "matrix"
+                  },
+                  "executedQueryString": "Expr: sum(rate(lab_http_requests_total{path!=\"/metrics\",path!=\"/healthz\"}[1m]))\nStep: 5s"
+                },
+                "fields": [
+                  {
+                    "name": "Time",
+                    "type": "time",
+                    "typeInfo": {
+                      "frame": "time.Time"
+                    },
+                    "config": {
+                      "interval": 5000
+                    }
+                  },
+                  {
+                    "name": "Value",
+                    "type": "number",
+                    "typeInfo": {
+                      "frame": "float64"
+                    },
+                    "labels": {},
+                    "config": {
+                      "displayNameFromDS": "sum(rate(lab_http_requests_total{path!=\"/metrics\",path!=\"/healthz\"}[1m]))"
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "values": [
+                  [
+                    1791317585000,
+                    1791317590000,
+                    1791317595000,
+                    1791317600000,
+                    1791317605000,
+                    1791317610000,
+                    1791317615000,
+                    1791317620000,
+                    1791317625000,
+                    1791317630000,
+                    1791317635000,
+                    1791317640000,
+                    1791317645000,
+                    1791317650000
+                  ],
+                  [
+                    0.6994800000000001,
+                    1.1707666666666667,
+                    1.5402399999999998,
+                    1.8976666666666662,
+                    2.2773039999999996,
+                    2.6399666666666666,
+                    3.0037733333333327,
+                    3.368295,
+                    3.733293333333333,
+                    4.098625333333333,
+                    4.553527272727273,
+                    4.5636363636363635,
+                    4.454545454545455,
+                    4.4363636363636365
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Application CPU cores": {
+    "expression": "rate(lab_process_cpu_seconds_total[1m])",
+    "samples": 16,
+    "minimum": 0.00013764986609333317,
+    "maximum": 0.09723292072727271,
+    "response": {
+      "results": {
+        "A": {
+          "status": 200,
+          "frames": [
+            {
+              "schema": {
+                "refId": "A",
+                "meta": {
+                  "type": "timeseries-multi",
+                  "typeVersion": [
+                    0,
+                    1
+                  ],
+                  "custom": {
+                    "calculatedMinStep": 5000,
+                    "resultType": "matrix"
+                  },
+                  "executedQueryString": "Expr: rate(lab_process_cpu_seconds_total[1m])\nStep: 5s"
+                },
+                "fields": [
+                  {
+                    "name": "Time",
+                    "type": "time",
+                    "typeInfo": {
+                      "frame": "time.Time"
+                    },
+                    "config": {
+                      "interval": 5000
+                    }
+                  },
+                  {
+                    "name": "Value",
+                    "type": "number",
+                    "typeInfo": {
+                      "frame": "float64"
+                    },
+                    "labels": {
+                      "instance": "release-monitor:8000",
+                      "job": "release-monitor"
+                    },
+                    "config": {
+                      "displayNameFromDS": "{instance=\"release-monitor:8000\", job=\"release-monitor\"}"
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "values": [
+                  [
+                    1791317575000,
+                    1791317580000,
+                    1791317585000,
+                    1791317590000,
+                    1791317595000,
+                    1791317600000,
+                    1791317605000,
+                    1791317610000,
+                    1791317615000,
+                    1791317620000,
+                    1791317625000,
+                    1791317630000,
+                    1791317635000,
+                    1791317640000,
+                    1791317645000,
+                    1791317650000
+                  ],
+                  [
+                    0.00013764986609333317,
+                    0.007303297726853335,
+                    0.015898923337946663,
+                    0.024436899822166663,
+                    0.03244156156616533,
+                    0.04031409176678,
+                    0.04891820815309333,
+                    0.05753868301810999,
+                    0.06574138188906667,
+                    0.07405268762150934,
+                    0.08461640253255273,
+                    0.09250097865101334,
+                    0.09637474274545454,
+                    0.09717977858181819,
+                    0.09688478034545453,
+                    0.09723292072727271
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Resident memory": {
+    "expression": "lab_process_resident_memory_bytes",
+    "samples": 17,
+    "minimum": 22097920,
+    "maximum": 22208512,
+    "response": {
+      "results": {
+        "A": {
+          "status": 200,
+          "frames": [
+            {
+              "schema": {
+                "refId": "A",
+                "meta": {
+                  "type": "timeseries-multi",
+                  "typeVersion": [
+                    0,
+                    1
+                  ],
+                  "custom": {
+                    "calculatedMinStep": 5000,
+                    "resultType": "matrix"
+                  },
+                  "executedQueryString": "Expr: lab_process_resident_memory_bytes\nStep: 5s"
+                },
+                "fields": [
+                  {
+                    "name": "Time",
+                    "type": "time",
+                    "typeInfo": {
+                      "frame": "time.Time"
+                    },
+                    "config": {
+                      "interval": 5000
+                    }
+                  },
+                  {
+                    "name": "lab_process_resident_memory_bytes",
+                    "type": "number",
+                    "typeInfo": {
+                      "frame": "float64"
+                    },
+                    "labels": {
+                      "__name__": "lab_process_resident_memory_bytes",
+                      "instance": "release-monitor:8000",
+                      "job": "release-monitor"
+                    },
+                    "config": {
+                      "displayNameFromDS": "lab_process_resident_memory_bytes{instance=\"release-monitor:8000\", job=\"release-monitor\"}"
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "values": [
+                  [
+                    1791317570000,
+                    1791317575000,
+                    1791317580000,
+                    1791317585000,
+                    1791317590000,
+                    1791317595000,
+                    1791317600000,
+                    1791317605000,
+                    1791317610000,
+                    1791317615000,
+                    1791317620000,
+                    1791317625000,
+                    1791317630000,
+                    1791317635000,
+                    1791317640000,
+                    1791317645000,
+                    1791317650000
+                  ],
+                  [
+                    22097920,
+                    22102016,
+                    22188032,
+                    22188032,
+                    22192128,
+                    22188032,
+                    22188032,
+                    22188032,
+                    22188032,
+                    22192128,
+                    22188032,
+                    22188032,
+                    22208512,
+                    22188032,
+                    22188032,
+                    22188032,
+                    22188032
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Scrape health": {
+    "expression": "up{job=\"release-monitor\"}",
+    "samples": 37,
+    "minimum": 0,
+    "maximum": 1,
+    "response": {
+      "results": {
+        "A": {
+          "status": 200,
+          "frames": [
+            {
+              "schema": {
+                "refId": "A",
+                "meta": {
+                  "type": "timeseries-multi",
+                  "typeVersion": [
+                    0,
+                    1
+                  ],
+                  "custom": {
+                    "calculatedMinStep": 5000,
+                    "resultType": "matrix"
+                  },
+                  "executedQueryString": "Expr: up{job=\"release-monitor\"}\nStep: 5s"
+                },
+                "fields": [
+                  {
+                    "name": "Time",
+                    "type": "time",
+                    "typeInfo": {
+                      "frame": "time.Time"
+                    },
+                    "config": {
+                      "interval": 5000
+                    }
+                  },
+                  {
+                    "name": "up",
+                    "type": "number",
+                    "typeInfo": {
+                      "frame": "float64"
+                    },
+                    "labels": {
+                      "__name__": "up",
+                      "instance": "release-monitor:8000",
+                      "job": "release-monitor"
+                    },
+                    "config": {
+                      "displayNameFromDS": "up{instance=\"release-monitor:8000\", job=\"release-monitor\"}"
+                    }
+                  }
+                ]
+              },
+              "data": {
+                "values": [
+                  [
+                    1791317470000,
+                    1791317475000,
+                    1791317480000,
+                    1791317485000,
+                    1791317490000,
+                    1791317495000,
+                    1791317500000,
+                    1791317505000,
+                    1791317510000,
+                    1791317515000,
+                    1791317520000,
+                    1791317525000,
+                    1791317530000,
+                    1791317535000,
+                    1791317540000,
+                    1791317545000,
+                    1791317550000,
+                    1791317555000,
+                    1791317560000,
+                    1791317565000,
+                    1791317570000,
+                    1791317575000,
+                    1791317580000,
+                    1791317585000,
+                    1791317590000,
+                    1791317595000,
+                    1791317600000,
+                    1791317605000,
+                    1791317610000,
+                    1791317615000,
+                    1791317620000,
+                    1791317625000,
+                    1791317630000,
+                    1791317635000,
+                    1791317640000,
+                    1791317645000,
+                    1791317650000
+                  ],
+                  [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
