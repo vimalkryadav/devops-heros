@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-settings
+  namespace: assignment-s14
+data:
+  OTHER_KEY: present
+  APP_MODE: development

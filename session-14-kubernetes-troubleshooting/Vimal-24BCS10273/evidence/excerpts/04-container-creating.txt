@@ -1,0 +1,22 @@
+Actual output excerpts from 04-container-creating.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:37.249321+00:00
+[...]
+  5 | PASS: Pod waits in ContainerCreating (0.0s)
+  6 | Waiting: FailedMount event identifies the missing ConfigMap
+  7 | PASS: FailedMount event identifies the missing ConfigMap (3.1s)
+  8 | $ kubectl -n assignment-s14 get pod mount-demo -o wide
+  9 | NAME         READY   STATUS              RESTARTS   AGE   IP       NODE                NOMINATED NODE   READINESS GATES
+ 10 | mount-demo   0/1     ContainerCreating   0          3s    <none>   devops-assignment   <none>           <none>
+[...]
+ 68 |   Warning  FailedMount  1s (x3 over 3s)  kubelet            MountVolume.SetUp failed for volume "config" : configmap "mount-settings" not found
+[...]
+ 72 | 1s (x3 over 3s)   Warning   FailedMount   Pod/mount-demo   MountVolume.SetUp failed for volume "config" : configmap "mount-settings" not found
+ 73 | $ kubectl -n assignment-s14 apply -f cases/mount-fixed-config.yaml
+ 74 | configmap/mount-settings created
+[...]
+ 77 | $ kubectl -n assignment-s14 get pod mount-demo
+ 78 | NAME         READY   STATUS    RESTARTS   AGE
+ 79 | mount-demo   1/1     Running   0          4s
+[...]
+ 82 | PASS: supplying the absent mounted ConfigMap allowed container creation.

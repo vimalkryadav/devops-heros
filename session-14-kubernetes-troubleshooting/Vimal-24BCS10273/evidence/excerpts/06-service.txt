@@ -1,0 +1,24 @@
+Actual output excerpts from 06-service.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:49:09.058070+00:00
+[...]
+  3 | PASS: baseline Service is reachable (0.1s)
+[...]
+ 31 | PASS: no ready endpoints match the wrong selector (0.0s)
+[...]
+ 37 |   endpoints: null
+[...]
+ 87 | wget: can't connect to remote host (10.99.32.211): Connection refused
+[...]
+ 89 | PASS: Service traffic fails after routing updates propagate (3.1s)
+[...]
+105 | Selector:                 app=wrong-app
+[...]
+117 | $ kubectl -n assignment-s14 apply -f cases/service-fixed.yaml
+118 | service/troubleshooting-service configured
+[...]
+120 | PASS: two ready backend endpoints return (0.0s)
+[...]
+122 | PASS: Service HTTP recovers (0.1s)
+[...]
+147 | PASS: matching Service selectors and Pod labels restored traffic to two backends.

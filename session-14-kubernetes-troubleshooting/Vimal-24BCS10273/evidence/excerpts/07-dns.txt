@@ -1,0 +1,36 @@
+Actual output excerpts from 07-dns.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:49:12.961577+00:00
+[...]
+  6 | $ kubectl -n assignment-s14 exec dns-demo -- cat /etc/resolv.conf
+  7 | nameserver 127.0.0.1
+  8 | $ kubectl -n assignment-s14 exec dns-demo -- nslookup troubleshooting-service.assignment-s14.svc.cluster.local.
+  9 | ;; connection timed out; no servers could be reached
+ 10 | 
+ 11 | nslookup: write to '127.0.0.1': Connection refused
+ 12 | command terminated with exit code 1
+[...]
+147 | $ kubectl -n assignment-s14 exec client -- nslookup troubleshooting-service.assignment-s14.svc.cluster.local.
+148 | Server:		10.96.0.10
+149 | Address:	10.96.0.10:53
+150 | 
+151 | 
+152 | Name:	troubleshooting-service.assignment-s14.svc.cluster.local
+153 | Address: 10.99.32.211
+[...]
+156 | $ kubectl -n assignment-s14 apply -f cases/dns-fixed.yaml
+157 | pod/dns-demo created
+[...]
+163 | $ kubectl -n assignment-s14 exec dns-demo -- cat /etc/resolv.conf
+164 | search assignment-s14.svc.cluster.local svc.cluster.local cluster.local
+165 | nameserver 10.96.0.10
+166 | options ndots:5
+167 | $ kubectl -n assignment-s14 exec dns-demo -- nslookup troubleshooting-service.assignment-s14.svc.cluster.local.
+168 | Server:		10.96.0.10
+169 | Address:	10.96.0.10:53
+170 | 
+171 | 
+172 | Name:	troubleshooting-service.assignment-s14.svc.cluster.local
+173 | Address: 10.99.32.211
+[...]
+198 | PASS: ClusterFirst replaced the invalid localhost DNS server with cluster DNS.
