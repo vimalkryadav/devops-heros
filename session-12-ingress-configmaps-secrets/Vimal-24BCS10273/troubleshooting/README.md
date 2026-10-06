@@ -49,8 +49,7 @@ successful SQL query. A Deployment would normally use `kubectl rollout restart`
 instead of manually recreating a bare Pod.
 
 The raw [before/after transcript](evidence/secret-fix.txt) contains the actual
-commands and results. The screenshot below is a browser rendering of that saved
-transcript, captured with Playwright/CDP; it is not a reconstructed terminal.
+commands and results. These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results.
 
 ![PostgreSQL rejects the newline password, then accepts the corrected value after Pod recreation](evidence/secret-fix.png)
 
