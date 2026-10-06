@@ -53,7 +53,7 @@ At the instant scale-down completed, three surplus Pods were still terminating a
 ![Measured HPA scaling](evidence/screenshots/03-hpa.png)
 ![Two replicas and cleanup](evidence/screenshots/04-final-and-cleanup.png)
 
-These images are labelled, read-only renderings of actual transcript excerpts captured through Playwright/CDP. Full command output is retained in the linked text files; the screenshots are not terminal-window captures.
+These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results.
 
 ## Cleanup
 
