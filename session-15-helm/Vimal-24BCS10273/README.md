@@ -67,9 +67,9 @@ The three existing healthy replicas continued running during the failed rolling 
 ![Install and production upgrade](evidence/screenshots/02-install-upgrade.png)
 ![Failed upgrade and rollback](evidence/screenshots/03-failed-upgrade-rollback.png)
 
-These three images are labelled transcript excerpts captured using Playwright/CDP. The image below is a **direct browser screenshot** of the running production page after rollback at `http://192.168.49.2:30090`.
+These terminal-only screenshots were captured with Playwright/CDP from real Bash pseudo-terminal sessions. The visible `tty` and `sed` commands inspect the preserved lab transcripts; they do not rerun the completed lab. The full text logs retain the original commands, timestamps and results. The final screenshot shows the recorded HTTP response and healthy replicas after rollback.
 
-![Running Notes page after rollback](evidence/notes-browser.png)
+![Recorded Notes response after rollback](evidence/notes-terminal.png)
 
 ## Cleanup and references
 
