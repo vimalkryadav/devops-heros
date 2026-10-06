@@ -3,7 +3,7 @@
 **Name:** Vimal Kumar Yadav
 **Enrollment Number:** 24BCS10273
 
-Everything below was run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
+The original tasks below were run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
 containerd 2.3.4, docker driver, on macOS (Apple silicon). Every code block is the real output from
 that run, and the screenshots are of the same session.
 
@@ -11,6 +11,22 @@ A Pod's IP is not something you can build on. Pods are replaced on every rollout
 every scale event, and each replacement gets a new address. A Service is the stable name and virtual
 IP that sits in front of a changing set of Pods. The five types below differ only in *who* is allowed
 to reach that name and *how*.
+
+
+## Additional homework coverage
+
+The five Service demonstrations below are retained from the original run. The
+following additions cover Tasks 2–4 and include a separate Linux DNS experiment:
+
+- [Deployment, ReplicaSet, DaemonSet, StatefulSet and Service comparisons](comparisons/README.md)
+- [FQDN and namespace-based names](fqdn/README.md)
+- [CoreDNS configuration and diagnosis](coredns/README.md)
+- [DNS lab commands and actual output](dns-lab/evidence/dns.txt)
+
+![Same-namespace and cross-namespace DNS checks](dns-lab/evidence/dns.png)
+
+The new image is a Playwright/CDP screenshot of the recorded command transcript.
+
 
 ---
 

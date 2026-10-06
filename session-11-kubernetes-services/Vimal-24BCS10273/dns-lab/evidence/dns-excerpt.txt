@@ -1,0 +1,113 @@
+Selected complete command blocks from dns.txt
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-06T17:48:23Z
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl create namespace assignment-s11
+namespace/assignment-s11 created
+
+$ kubectl create namespace assignment-s11-client
+namespace/assignment-s11-client created
+
+$ kubectl -n assignment-s11 apply -f catalog.yaml -f client.yaml
+deployment.apps/catalog created
+service/catalog created
+pod/dns-client created
+
+$ kubectl -n assignment-s11-client apply -f client.yaml
+pod/dns-client created
+
+$ kubectl -n assignment-s11 rollout status deployment/catalog --timeout=180s
+Waiting for deployment "catalog" rollout to finish: 0 of 1 updated replicas are available...
+deployment "catalog" successfully rolled out
+
+$ kubectl -n assignment-s11 wait --for=condition=Ready pod/dns-client --timeout=180s
+pod/dns-client condition met
+
+$ kubectl -n assignment-s11-client wait --for=condition=Ready pod/dns-client --timeout=180s
+pod/dns-client condition met
+
+$ kubectl -n assignment-s11 exec dns-client -- cat /etc/resolv.conf
+search assignment-s11.svc.cluster.local svc.cluster.local cluster.local
+nameserver 10.96.0.10
+options ndots:5
+
+$ kubectl -n assignment-s11 exec dns-client -- nslookup catalog.assignment-s11.svc.cluster.local.
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+
+Name:	catalog.assignment-s11.svc.cluster.local
+Address: 10.100.73.162
+
+
+$ kubectl -n assignment-s11-client exec dns-client -- wget -T 5 -qO- http://catalog
+wget: bad address 'catalog'
+command terminated with exit code 1
+Expected: no catalog Service in assignment-s11-client.
+
+$ kubectl -n assignment-s11-client exec dns-client -- nslookup catalog.assignment-s11.svc.cluster.local.
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+
+Name:	catalog.assignment-s11.svc.cluster.local
+Address: 10.100.73.162
+
+
+$ kubectl -n assignment-s11 get service catalog -o wide
+NAME      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+catalog   ClusterIP   10.100.73.162   <none>        80/TCP    5s    app=catalog
+
+$ kubectl -n assignment-s11 get endpointslices -l kubernetes.io/service-name=catalog
+NAME            ADDRESSTYPE   PORTS   ENDPOINTS     AGE
+catalog-xp8mt   IPv4          80      10.244.0.34   5s
+
+$ kubectl -n kube-system get configmap coredns -o jsonpath=\{.data.Corefile\}
+.:53 {
+    log
+    errors
+    health {
+       lameduck 5s
+    }
+    ready
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    prometheus :9153
+    hosts {
+       192.168.49.1 host.minikube.internal
+       fallthrough
+    }
+    forward . /etc/resolv.conf {
+       max_concurrent 1000
+    }
+    cache 30 {
+       disable success cluster.local
+       disable denial cluster.local
+    }
+    loop
+    reload
+    loadbalance
+}
+
+$ kubectl -n kube-system get deployment coredns
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+coredns   1/1     1            1           4m38s
+
+$ kubectl -n kube-system get pods -l k8s-app=kube-dns -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP           NODE                NOMINATED NODE   READINESS GATES
+coredns-559f6c778d-lnmcz   1/1     Running   0          4m32s   10.244.0.2   devops-assignment   <none>           <none>
+
+$ kubectl -n kube-system get service kube-dns
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   4m38s
+
+$ kubectl -n kube-system get endpointslices -l kubernetes.io/service-name=kube-dns
+NAME             ADDRESSTYPE   PORTS        ENDPOINTS    AGE
+kube-dns-trxv7   IPv4          53,53,9153   10.244.0.2   4m32s
