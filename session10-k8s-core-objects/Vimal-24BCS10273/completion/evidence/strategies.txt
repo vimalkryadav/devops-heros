@@ -1,0 +1,94 @@
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-06T17:45:54Z
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl create namespace assignment-s10-strategies
+namespace/assignment-s10-strategies created
+
+$ k apply -f strategies/workloads.yaml
+deployment.apps/portal-blue created
+deployment.apps/portal-green created
+deployment.apps/portal-stable created
+deployment.apps/portal-canary created
+service/portal-active created
+service/portal-release created
+pod/traffic-client created
+
+$ k rollout status deployment/portal-blue --timeout=180s
+Waiting for deployment "portal-blue" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "portal-blue" rollout to finish: 1 of 2 updated replicas are available...
+deployment "portal-blue" successfully rolled out
+
+$ k rollout status deployment/portal-green --timeout=180s
+Waiting for deployment "portal-green" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "portal-green" rollout to finish: 1 of 2 updated replicas are available...
+deployment "portal-green" successfully rolled out
+
+$ k rollout status deployment/portal-stable --timeout=180s
+Waiting for deployment "portal-stable" rollout to finish: 0 of 4 updated replicas are available...
+Waiting for deployment "portal-stable" rollout to finish: 1 of 4 updated replicas are available...
+Waiting for deployment "portal-stable" rollout to finish: 2 of 4 updated replicas are available...
+Waiting for deployment "portal-stable" rollout to finish: 3 of 4 updated replicas are available...
+deployment "portal-stable" successfully rolled out
+
+$ k rollout status deployment/portal-canary --timeout=180s
+deployment "portal-canary" successfully rolled out
+
+$ k wait --for=condition=Ready pod/traffic-client --timeout=180s
+pod/traffic-client condition met
+
+$ k get deployments\,pods\,services -o wide
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES         SELECTOR
+deployment.apps/portal-blue     2/2     2            2           22s   web          busybox:1.37   app=portal-switch,version=blue-v1
+deployment.apps/portal-canary   1/1     1            1           22s   web          busybox:1.37   app=portal-canary,version=canary-v2
+deployment.apps/portal-green    2/2     2            2           22s   web          busybox:1.37   app=portal-switch,version=green-v2
+deployment.apps/portal-stable   4/4     4            4           22s   web          busybox:1.37   app=portal-canary,version=stable-v1
+
+NAME                                 READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+pod/portal-blue-78d7f55b7c-b6j9g     1/1     Running   0          22s   10.244.0.5    devops-assignment   <none>           <none>
+pod/portal-blue-78d7f55b7c-m4nvv     1/1     Running   0          22s   10.244.0.4    devops-assignment   <none>           <none>
+pod/portal-canary-6467886c4f-x5l89   1/1     Running   0          22s   10.244.0.12   devops-assignment   <none>           <none>
+pod/portal-green-584d4f5db9-bnc7c    1/1     Running   0          22s   10.244.0.6    devops-assignment   <none>           <none>
+pod/portal-green-584d4f5db9-hs68n    1/1     Running   0          22s   10.244.0.7    devops-assignment   <none>           <none>
+pod/portal-stable-6ff9d7f97c-2dzx8   1/1     Running   0          22s   10.244.0.10   devops-assignment   <none>           <none>
+pod/portal-stable-6ff9d7f97c-7mjsm   1/1     Running   0          22s   10.244.0.11   devops-assignment   <none>           <none>
+pod/portal-stable-6ff9d7f97c-csrq2   1/1     Running   0          22s   10.244.0.8    devops-assignment   <none>           <none>
+pod/portal-stable-6ff9d7f97c-tfmj7   1/1     Running   0          22s   10.244.0.9    devops-assignment   <none>           <none>
+pod/traffic-client                   1/1     Running   0          22s   10.244.0.13   devops-assignment   <none>           <none>
+
+NAME                     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+service/portal-active    ClusterIP   10.101.237.17   <none>        80/TCP    22s   app=portal-switch,version=blue-v1
+service/portal-release   ClusterIP   10.106.88.146   <none>        80/TCP    22s   app=portal-canary
+
+$ k exec traffic-client -- wget -qO- http://portal-active
+blue-v1
+
+$ k patch service portal-active --type=merge -p \{\"spec\":\{\"selector\":\{\"app\":\"portal-switch\"\,\"version\":\"green-v2\"\}\}\}
+service/portal-active patched
+
+$ k get endpointslices -l kubernetes.io/service-name=portal-active -o wide
+NAME                  ADDRESSTYPE   PORTS   ENDPOINTS               AGE
+portal-active-fp5zr   IPv4          8080    10.244.0.6,10.244.0.7   23s
+
+$ k exec traffic-client -- wget -qO- http://portal-active
+green-v2
+
+$ k patch service portal-active --type=merge -p \{\"spec\":\{\"selector\":\{\"app\":\"portal-switch\"\,\"version\":\"blue-v1\"\}\}\}
+service/portal-active patched
+
+$ k exec traffic-client -- wget -qO- http://portal-active
+blue-v1
+
+$ k get endpointslices -l kubernetes.io/service-name=portal-release -o wide
+NAME                   ADDRESSTYPE   PORTS   ENDPOINTS                                        AGE
+portal-release-kwlzv   IPv4          8080    10.244.0.10,10.244.0.8,10.244.0.11 + 2 more...   23s
+
+$ k exec traffic-client -- sh -c for\ i\ in\ \$\(seq\ 1\ 100\)\;\ do\ wget\ -qO-\ http://portal-release\ \|\|\ exit\ 1\;\ done\ \>\ /tmp/responses\;\ sort\ /tmp/responses\ \|\ uniq\ -c\;\ test\ \"\$\(grep\ -c\ canary-v2\ /tmp/responses\)\"\ -gt\ 0\;\ test\ \"\$\(grep\ -c\ stable-v1\ /tmp/responses\)\"\ -gt\ 0
+     14 canary-v2
+     86 stable-v1
+
+Both versions received traffic. Four stable endpoints and one canary endpoint imply an approximate 20% share, not an exact request quota.
+Cleanup: kubectl delete namespace assignment-s10-strategies
