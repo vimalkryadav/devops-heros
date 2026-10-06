@@ -1,0 +1,25 @@
+{
+  "region": "us-east-1",
+  "bucket": "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9",
+  "public_access_block": {
+    "BlockPublicAcls": true,
+    "IgnorePublicAcls": true,
+    "BlockPublicPolicy": true,
+    "RestrictPublicBuckets": true
+  },
+  "encryption": {
+    "Rules": [
+      {
+        "ApplyServerSideEncryptionByDefault": {
+          "SSEAlgorithm": "AES256"
+        },
+        "BucketKeyEnabled": false,
+        "BlockedEncryptionTypes": {
+          "EncryptionType": [
+            "SSE-C"
+          ]
+        }
+      }
+    ]
+  }
+}
