@@ -1,0 +1,80 @@
+2026-10-06T17:49:12.860300+00:00
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl -n assignment-s10-lifecycle apply -f /var/home/vimal2907/assignment/devops-assignment/worktrees/session10/session10-k8s-core-objects/Vimal-24BCS10273/completion/lifecycle/06-imagepull.yaml
+pod/lc-image-error unchanged
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-image-error -o wide
+NAME             READY   STATUS             RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+lc-image-error   0/1     ImagePullBackOff   0          19s   10.244.0.39   devops-assignment   <none>           <none>
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-image-error -o 'jsonpath={.status.phase}{"\n"}{.status.containerStatuses}{"\n"}'
+Pending
+[{"image":"busybox:assignment-tag-does-not-exist","imageID":"","lastState":{},"name":"app","ready":false,"restartCount":0,"started":false,"state":{"waiting":{"message":"Back-off pulling image \"busybox:assignment-tag-does-not-exist\": ErrImagePull: rpc error: code = NotFound desc = failed to pull and unpack image \"docker.io/library/busybox:assignment-tag-does-not-exist\": failed to resolve reference \"docker.io/library/busybox:assignment-tag-does-not-exist\": docker.io/library/busybox:assignment-tag-does-not-exist: not found","reason":"ImagePullBackOff"}},"volumeMounts":[{"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount","name":"kube-api-access-888wd","readOnly":true,"recursiveReadOnly":"Disabled"}]}]
+
+$ kubectl -n assignment-s10-lifecycle describe pod lc-image-error
+Name:             lc-image-error
+Namespace:        assignment-s10-lifecycle
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:19:04 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.39
+IPs:
+  IP:  10.244.0.39
+Containers:
+  app:
+    Container ID:  
+    Image:         busybox:assignment-tag-does-not-exist
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      sleep 7200
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     100m
+      memory:  32Mi
+    Requests:
+      cpu:        5m
+      memory:     8Mi
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-888wd (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-888wd:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age               From               Message
+  ----     ------     ----              ----               -------
+  Normal   Scheduled  19s               default-scheduler  Successfully assigned assignment-s10-lifecycle/lc-image-error to devops-assignment
+  Warning  Failed     17s               kubelet            spec.containers{app}: Failed to pull image "busybox:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/busybox:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/busybox:assignment-tag-does-not-exist": docker.io/library/busybox:assignment-tag-does-not-exist: not found
+  Warning  Failed     17s               kubelet            spec.containers{app}: Error: ErrImagePull
+  Normal   BackOff    16s               kubelet            spec.containers{app}: Back-off pulling image "busybox:assignment-tag-does-not-exist"
+  Warning  Failed     16s               kubelet            spec.containers{app}: Error: ImagePullBackOff
+  Normal   Pulling    2s (x2 over 18s)  kubelet            spec.containers{app}: Pulling image "busybox:assignment-tag-does-not-exist"

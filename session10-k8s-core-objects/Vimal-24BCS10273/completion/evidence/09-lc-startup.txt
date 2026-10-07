@@ -1,0 +1,93 @@
+2026-10-06T17:49:36.345720+00:00
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl -n assignment-s10-lifecycle apply -f /var/home/vimal2907/assignment/devops-assignment/worktrees/session10/session10-k8s-core-objects/Vimal-24BCS10273/completion/lifecycle/09-startup.yaml
+pod/lc-startup created
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-startup
+NAME         READY   STATUS    RESTARTS   AGE
+lc-startup   0/1     Running   0          2s
+
+$ kubectl -n assignment-s10-lifecycle logs lc-startup
+loading data
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-startup -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+lc-startup   1/1     Running   0          23s   10.244.0.42   devops-assignment   <none>           <none>
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-startup -o 'jsonpath={.status.phase}{"\n"}{.status.containerStatuses}{"\n"}'
+Running
+[{"allocatedResources":{"cpu":"5m","memory":"8Mi"},"containerID":"containerd://6c0f4e6d41ab172530f294abe9c83f30be090bb3c7ed641f3eb72ab887d82e20","image":"docker.io/library/busybox:1.37","imageID":"docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e","lastState":{},"name":"app","ready":true,"resources":{"limits":{"cpu":"100m","memory":"32Mi"},"requests":{"cpu":"5m","memory":"8Mi"}},"restartCount":0,"started":true,"state":{"running":{"startedAt":"2026-10-06T17:49:37Z"}},"user":{"linux":{"gid":0,"supplementalGroups":[0,10],"uid":0}},"volumeMounts":[{"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount","name":"kube-api-access-2hprd","readOnly":true,"recursiveReadOnly":"Disabled"}]}]
+
+$ kubectl -n assignment-s10-lifecycle describe pod lc-startup
+Name:             lc-startup
+Namespace:        assignment-s10-lifecycle
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:19:36 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.42
+IPs:
+  IP:  10.244.0.42
+Containers:
+  app:
+    Container ID:  containerd://6c0f4e6d41ab172530f294abe9c83f30be090bb3c7ed641f3eb72ab887d82e20
+    Image:         busybox:1.37
+    Image ID:      docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo "loading data"; sleep 20; touch /tmp/started; echo "startup complete"; sleep 7200
+    State:          Running
+      Started:      Tue, 06 Oct 2026 23:19:37 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     100m
+      memory:  32Mi
+    Requests:
+      cpu:        5m
+      memory:     8Mi
+    Liveness:     exec [test -f /tmp/started] delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Readiness:    exec [test -f /tmp/started] delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Startup:      exec [test -f /tmp/started] delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=20
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2hprd (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-2hprd:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                From               Message
+  ----     ------     ----               ----               -------
+  Normal   Scheduled  23s                default-scheduler  Successfully assigned assignment-s10-lifecycle/lc-startup to devops-assignment
+  Normal   Pulled     22s                kubelet            spec.containers{app}: Container image "busybox:1.37" already present on machine and can be accessed by the pod
+  Normal   Created    22s                kubelet            spec.containers{app}: Container created
+  Normal   Started    22s                kubelet            spec.containers{app}: Container started
+  Warning  Unhealthy  3s (x10 over 21s)  kubelet            spec.containers{app}: Startup probe failed:
+
+$ kubectl -n assignment-s10-lifecycle logs lc-startup
+loading data
+startup complete
