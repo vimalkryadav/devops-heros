@@ -1,0 +1,40 @@
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ cat evidence/verification.json evidence/cleanup.json
+[?2004l{
+  "result": "PASS",
+  "checked_at": "2026-10-07T15:46:44.769674+00:00",
+  "managed_resources": 6,
+  "outputs": {
+    "internet_gateway_id": "igw-06595473ccbc2e00f",
+    "region": "us-east-1",
+    "route_association_id": "rtbassoc-03229e6b5077df782",
+    "route_table_id": "rtb-035075b151c9bc39c",
+    "security_group_id": "sg-073e80459534fb5e2",
+    "subnet_cidr": "10.83.1.0/24",
+    "subnet_id": "subnet-0d5355ca89961d200",
+    "vpc_cidr": "10.83.0.0/16",
+    "vpc_id": "vpc-014f1871eba198cbf"
+  },
+  "checks": [
+    "VPC available",
+    "public subnet in lab VPC",
+    "gateway attached",
+    "active default route",
+    "subnet route association",
+    "HTTP/HTTPS restricted to operator",
+    "assignment tags"
+  ],
+  "ec2_instances_created": 0,
+  "s3_buckets_created": 0
+}
+{
+  "terraform_state_empty": true,
+  "finished_at": "2026-10-07T15:47:37.454037+00:00",
+  "vpc_deleted": true,
+  "subnet_deleted": true,
+  "internet_gateway_deleted": true,
+  "route_table_deleted": true,
+  "security_group_deleted": true,
+  "no_session19_vpcs": true,
+  "result": "PASS"
+}
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ 

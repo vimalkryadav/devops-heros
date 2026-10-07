@@ -1,53 +1,83 @@
-# Session 19: cloud infrastructure with Terraform
+# Session 19: cloud networking with Terraform
 
 Vimal Kumar Yadav · 24BCS10273
 
-Current status: initialization, validation and the 14-resource plan passed on 7 October 2026.
-After the [first permission failure](evidence/attempts/01-instance-permissions/README.md) was
-resolved, AWS rejected t4g.nano under the account's Free Tier restriction. Both attempts created
-and then destroyed 13 networking/storage resources; no instance was launched. Independent AWS
-checks confirmed deletion. The [second attempt](evidence/attempts/02-free-tier-restriction/README.md)
-is retained. The default now uses the eligible ARM t4g.micro; its IAM launch condition must allow
-that type before retrying. Successful EC2/HTTP verification and final submission remain pending.
+The six-resource AWS lab completed on 7 October 2026: **6 created, verified, and destroyed**.
+Independent AWS reads confirmed the VPC, subnet, internet gateway, route table and security group
+were gone, and Terraform state was empty. No EC2 instance or S3 bucket is part of this final lab.
 
-The [Terraform project](terraform-cloud-demo/README.md) defines a VPC, public subnet, Internet Gateway, routes, security group, small Linux EC2 server and private S3 bucket. EC2 serves an original assignment page; S3 stores a small private assignment record. This covers compute and storage as well as networking.
+The scope follows [Aryen’s network lab](https://github.com/aryen1101/Learn_DEVOPS/tree/bc73ce6b8663b92b8ac7310418fa5ac7f4c39afd/Class_Assignments/Cloud_and_Terraform_in_Action).
+The homework lists EC2 and S3 under **Suggested Architecture**; its required concepts are providers,
+variables, resources, outputs, dependencies, AWS infrastructure, state, plan, apply and destroy.
+This implementation covers those concepts with a dedicated network in `us-east-1`, our own names
+and CIDR, and web ingress restricted to the operator’s IPv4 `/32`.
+
+## Architecture and dependencies
 
 ```mermaid
-flowchart LR
-    User[Operator public IPv4 /32] -->|HTTP 8080| IGW[Internet Gateway]
-    subgraph VPC[10.83.0.0/16]
-      IGW --> Route[Public subnet route table]
-      Route --> SG[Security group]
-      SG --> EC2[t4g.micro: non-root Python HTTP service]
-      EC2 --- EBS[Encrypted 8 GiB gp3 root disk]
-    end
-    CLI[Authenticated operator] --> S3[Private S3 bucket and assignment object]
+flowchart TD
+    VPC[Dedicated VPC 10.83.0.0/16] --> Subnet[Public subnet 10.83.1.0/24]
+    VPC --> IGW[Internet gateway]
+    VPC --> SG[Security group: operator-only HTTP and HTTPS]
+    VPC --> RT[Public route table]
+    IGW --> RT
+    RT --> Association[Route-table association]
+    Subnet --> Association
 ```
 
-## Run and verify
+References between Terraform resources determine the creation and reverse destruction order.
+The route table has a default route to the internet gateway. The subnet enables automatic public
+IPv4 assignment for potential instances; this run does not launch an instance or allocate its IP.
+The security group permits TCP 80/443 from the operator address and outbound IPv4 traffic.
 
-Set `TF_VAR_operator_cidr` to your current public IPv4 followed by `/32`. The example `203.0.113.10/32` is documentation space, not an address to deploy unchanged. Then follow the project's commands or run `python scripts/run-lab.py` with Terraform on PATH and an external AWS profile configured.
+## Requirement mapping
 
-The runner verifies HTTP 200 and the student identifier, reads the S3 record, checks the running instance and records the subnet/VPC IDs. It then destroys the managed resources and verifies an empty Terraform state, bucket deletion, instance termination and VPC deletion.
+| Requirement | Implementation/evidence |
+|---|---|
+| Provider | Terraform 1.16.x; locked AWS provider 6.67.0 in `terraform-cloud-demo/provider.tf` |
+| Variables | Region, VPC CIDR and operator IPv4 CIDR |
+| Resources | VPC, subnet, gateway, route table, association, security group |
+| Outputs | Region, network CIDRs and actual resource IDs |
+| Dependencies | Terraform references shown in the architecture diagram |
+| AWS infrastructure | Actual AWS apply plus independent API assertions |
+| State | Six managed resource addresses; empty state after destruction |
+| Plan/apply/destroy | Preserved real command logs linked below |
+| Screenshots | Real Bash PTYs captured with Playwright/CDP |
 
-## Dependencies and state
+## Run
 
-The subnet, gateway, security group and route table reference the VPC. The route-table association references both the subnet and route table. EC2 references its subnet/security group and explicitly waits for the route association. The S3 object references its bucket. These dependencies determine ordering without shell sleeps between Terraform resources.
+Follow the [project instructions](terraform-cloud-demo/README.md). Configure AWS credentials through
+an external profile and export `TF_VAR_operator_cidr` with your current public IPv4 `/32`.
+The example address in `terraform.tfvars.example` must be replaced.
 
-Outputs expose resource IDs and the HTTP URL. The private state records Terraform's ownership mapping; `terraform state list` shows addresses, while `terraform show` explains their attributes. Editing state manually is not the workflow for changing infrastructure.
+```bash
+export AWS_PROFILE=YOUR_EXISTING_PROFILE
+export AWS_REGION=us-east-1
+export TF_VAR_operator_cidr=YOUR_PUBLIC_IPV4/32
+python3 scripts/run-lab.py
+```
 
-## Cost and access choices
+The runner validates and plans exactly six resources, applies them, checks AWS relationships and
+tags, records state/outputs, and destroys the lab in a `finally` block. It refuses a nonempty
+initial state. If teardown fails, preserve the private state and run `terraform destroy` from
+this exact project directory before removing any local files.
 
-One small ARM instance serves a static page. CPU credits use Standard mode to avoid surplus-credit charges. HTTP access is restricted to the operator address; SSH is not exposed. The instance requires IMDSv2, encrypts its root disk and deletes that disk on termination. A boot-time shutdown scheduled for twenty minutes terminates the instance as a fallback; normal teardown happens immediately after verification. S3 uses SSE-S3 and blocks public access. No NAT Gateway, load balancer, KMS customer key or managed database is needed for this lab.
+## Actual results
 
-Region `us-east-1` is a low-cost demonstration choice. Actual charges depend on runtime, EBS, IPv4 and S3 requests; no free-tier credit is assumed. The self-termination fallback does not remove the VPC or bucket, so Terraform cleanup remains mandatory.
+- [Initialization and validation](evidence/01-validation.txt)
+- [Six-resource plan](evidence/02-plan.txt)
+- [Successful AWS apply](evidence/03-apply.txt)
+- [State and outputs](evidence/04-verification.txt), [AWS assertions](evidence/verification.json)
+- [Destroy plan and successful teardown](evidence/05-destroy.txt)
+- [Independent absence checks](evidence/cleanup.json)
 
-Sources: [EC2 pricing](https://aws.amazon.com/ec2/pricing/on-demand/), [public IPv4 pricing](https://aws.amazon.com/vpc/pricing/), [EBS pricing](https://aws.amazon.com/ebs/pricing/), [S3 pricing](https://aws.amazon.com/s3/pricing/).
+![Validation and empty state](screenshots/01-validation-and-empty-state.png)
+![AWS verification and cleanup](screenshots/02-verification-and-cleanup.png)
+![Six-resource lifecycle](screenshots/03-network-lifecycle.png)
 
-## Current terminal evidence
+The screenshots contain only real terminals. Visible `cat`, `tail` and `rg` commands identify
+when preserved execution records are being inspected. They do not reuse another student's output.
 
-- [Validation and empty state](screenshots/01-validation-and-empty-state.png) — commands executed in a real PTY.
-- [Latest blocker and verified cleanup](screenshots/02-blocker-and-cleanup.png) — a real PTY displaying the saved AWS attempt logs with visible `cat` and `tail` commands.
-- [Current t4g.micro plan](evidence/current-plan.txt) — fresh read-only plan after updating the default type.
-
-Screenshots were captured using Playwright connected to Chromium through CDP. They contain only the terminal; saved attempt output is not presented as a new apply.
+Earlier experiments with a larger EC2/S3 design are retained under [attempts](evidence/attempts).
+Both partial attempts were cleaned up; their old EC2 access restrictions do not block this
+completed network-only submission. Those historical records are not the current lab result.

@@ -1,148 +1,106 @@
 #!/usr/bin/env python3
-"""Run the complete temporary Terraform lab and always attempt teardown."""
-import argparse
+"""Apply and verify the six-resource network lab, then always attempt teardown."""
 from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
 import shlex
 import subprocess
-import sys
-import time
-import urllib.request
 
 import boto3
 from botocore.exceptions import ClientError
 
-parser=argparse.ArgumentParser()
-parser.add_argument('--project',default='terraform-cloud-demo')
-args=parser.parse_args()
-student=Path(__file__).resolve().parent.parent
-project=(student/args.project).resolve()
-evidence=student/'evidence'
+student = Path(__file__).resolve().parent.parent
+project = student / 'terraform-cloud-demo'
+evidence = student / 'evidence'
 evidence.mkdir(exist_ok=True)
-region=os.environ.get('AWS_REGION','us-east-1')
-session=boto3.Session(region_name=region)
+session = boto3.Session(region_name=os.environ.get('AWS_REGION', 'us-east-1'))
+ec2 = session.client('ec2')
 session.client('sts').get_caller_identity()
-env=os.environ|{'TF_IN_AUTOMATION':'1','AWS_PAGER':''}
-output=None
+env = os.environ | {'TF_IN_AUTOMATION': '1', 'AWS_PAGER': ''}
+started = datetime.now(timezone.utc).isoformat()
+for name in ['01-validation', '02-plan', '03-apply', '04-verification', '05-destroy', '06-cleanup']:
+    (evidence / f'{name}.txt').write_text(f'Run started: {started}\n')
 
-def run(log,*command,check=True,timeout=480):
-    line='$ '+shlex.join(command)
-    print(line,flush=True)
-    with log.open('a') as stream:
-        stream.write('\n'+line+'\n');stream.flush()
-        result=subprocess.run(command,cwd=project,env=env,stdout=subprocess.PIPE,
-                              stderr=subprocess.STDOUT,text=True,timeout=timeout)
-        stream.write(result.stdout);stream.flush()
-    print(result.stdout,end='',flush=True)
-    if check and result.returncode:raise RuntimeError(f'Command exited {result.returncode}: {line}')
-    return result
+def run(log, *command):
+    line = '$ ' + shlex.join(command)
+    print(line, flush=True)
+    result = subprocess.run(command, cwd=project, env=env, capture_output=True, text=True, timeout=480)
+    with (evidence / f'{log}.txt').open('a') as stream:
+        stream.write('\n' + line + '\n' + result.stdout + result.stderr)
+    print(result.stdout + result.stderr, end='', flush=True)
+    if result.returncode:
+        raise RuntimeError(f'{line}: exit {result.returncode}')
+    return result.stdout
 
-def tf(log,*arguments,**kwargs):return run(log,'terraform',*arguments,'-no-color',**kwargs)
+def tf(log, action, *args):
+    return run(log, 'terraform', action, '-no-color', *args)
 
-started=datetime.now(timezone.utc).isoformat()
-for name in [
-    '00-access-check.txt',
-    '01-validation.txt',
-    '02-plan.txt',
-    '03-apply.txt',
-    '04-verification.txt',
-    '05-destroy.txt',
-    '06-cleanup.txt',
-]:
-    (evidence/name).write_text('Run started: '+started+'\n')
+# Check before entering the cleanup block: never destroy a pre-existing state.
+if (project / 'terraform.tfstate').exists():
+    assert not run('01-validation', 'terraform', 'state', 'list').strip(), 'Use an empty dedicated state'
+outputs = {}
 try:
-    # These unscoped EC2 reads are required by the provider even before HTTP verification.
-    # Check them before creating the VPC and bucket. Instance-specific and launch checks
-    # still depend on real, tagged resources and cannot be proven with a fake instance ID.
-    ec2 = session.client('ec2')
-    for action, method in [
-        ('ec2:DescribeInstanceTypes', 'describe_instance_types'),
-        ('ec2:DescribeVolumes', 'describe_volumes'),
-        ('ec2:DescribeInstanceCreditSpecifications', 'describe_instance_credit_specifications'),
-    ]:
-        try:
-            getattr(ec2, method)(DryRun=True)
-        except ClientError as error:
-            code = error.response['Error']['Code']
-            with (evidence/'00-access-check.txt').open('a') as stream:
-                stream.write(f'{action}: {code}\n')
-            if code != 'DryRunOperation':
-                raise
-        else:
-            raise RuntimeError(f'{action}: expected a dry-run response')
-    tf(evidence/'01-validation.txt','init','-input=false')
-    run(evidence/'01-validation.txt','terraform','fmt','-check')
-    tf(evidence/'01-validation.txt','validate')
-    tf(evidence/'02-plan.txt','plan','-input=false','-out=assignment.tfplan')
-    tf(evidence/'03-apply.txt','apply','-input=false','assignment.tfplan')
-    tf(evidence/'04-verification.txt','show')
-    # The output and state subcommands accept global formatting flags before their arguments.
-    result=run(evidence/'04-verification.txt','terraform','output','-json')
-    output={name:value['value'] for name,value in json.loads(result.stdout).items()}
-    (evidence/'outputs.json').write_text(json.dumps(output,indent=2)+'\n')
-    run(evidence/'04-verification.txt','terraform','state','list')
-    verification={'region':region,'bucket':output['bucket_name']}
-    s3=session.client('s3')
-    s3.head_bucket(Bucket=output['bucket_name'])
-    verification['public_access_block']=s3.get_public_access_block(Bucket=output['bucket_name'])['PublicAccessBlockConfiguration']
-    verification['encryption']=s3.get_bucket_encryption(Bucket=output['bucket_name'])['ServerSideEncryptionConfiguration']
-    assert all(verification['public_access_block'].values())
-    assert verification['encryption']['Rules'][0]['ApplyServerSideEncryptionByDefault']['SSEAlgorithm']=='AES256'
-    if 'instance_id' in output:
-        deadline=time.monotonic()+300
-        while True:
-            try:
-                with urllib.request.urlopen(output['http_url'],timeout=8) as response:
-                    html=response.read().decode()
-                    assert response.status==200 and '24BCS10273' in html
-                verification['http_status']=200;verification['http_response']=html
-                break
-            except (OSError,AssertionError):
-                if time.monotonic()>deadline:raise
-                time.sleep(5)
-        body=s3.get_object(Bucket=output['bucket_name'],Key='assignment.txt')['Body'].read().decode()
-        assert '24BCS10273' in body
-        verification['s3_object']=body
-        ec2=session.client('ec2')
-        info=ec2.describe_instances(InstanceIds=[output['instance_id']])['Reservations'][0]['Instances'][0]
-        verification['instance']={key:info[key] for key in ['InstanceId','InstanceType','State','ImageId','SubnetId','VpcId']}
-        assert info['State']['Name']=='running'
-    (evidence/'verification.json').write_text(json.dumps(verification,indent=2,default=str)+'\n')
-    print(json.dumps(verification,indent=2,default=str),flush=True)
-    print('PASS: AWS resources and required behavior verified.',flush=True)
+    tf('01-validation', 'init', '-input=false')
+    run('01-validation', 'terraform', 'fmt', '-check')
+    tf('01-validation', 'validate')
+    tf('02-plan', 'plan', '-input=false', '-out=assignment.tfplan')
+    plan = json.loads(subprocess.check_output(['terraform', 'show', '-json', 'assignment.tfplan'], cwd=project, env=env))
+    additions = [r for r in plan['resource_changes'] if r['mode'] == 'managed' and r['change']['actions'] == ['create']]
+    assert len(additions) == 6, 'Expected exactly six network resources'
+    tf('03-apply', 'apply', '-input=false', 'assignment.tfplan')
+    tf('04-verification', 'show')
+    raw = json.loads(run('04-verification', 'terraform', 'output', '-json'))
+    outputs = {key: value['value'] for key, value in raw.items()}
+    (evidence / 'outputs.json').write_text(json.dumps(outputs, indent=2) + '\n')
+    state = run('04-verification', 'terraform', 'state', 'list').splitlines()
+    assert len([line for line in state if not line.startswith('data.')]) == 6
+    vpc = ec2.describe_vpcs(VpcIds=[outputs['vpc_id']])['Vpcs'][0]
+    subnet = ec2.describe_subnets(SubnetIds=[outputs['subnet_id']])['Subnets'][0]
+    gateway = ec2.describe_internet_gateways(InternetGatewayIds=[outputs['internet_gateway_id']])['InternetGateways'][0]
+    routes = ec2.describe_route_tables(RouteTableIds=[outputs['route_table_id']])['RouteTables'][0]
+    group = ec2.describe_security_groups(GroupIds=[outputs['security_group_id']])['SecurityGroups'][0]
+    assert vpc['State'] == 'available' and vpc['CidrBlock'] == outputs['vpc_cidr']
+    assert subnet['VpcId'] == vpc['VpcId'] and subnet['MapPublicIpOnLaunch']
+    assert any(a['VpcId'] == vpc['VpcId'] for a in gateway['Attachments'])
+    assert any(r.get('DestinationCidrBlock') == '0.0.0.0/0' and r.get('GatewayId') == outputs['internet_gateway_id'] and r['State'] == 'active' for r in routes['Routes'])
+    assert any(a.get('SubnetId') == outputs['subnet_id'] for a in routes['Associations'])
+    assert {p['FromPort'] for p in group['IpPermissions']} == {80, 443}
+    assert all(r['CidrIp'] == os.environ['TF_VAR_operator_cidr'] for p in group['IpPermissions'] for r in p['IpRanges'])
+    for resource in [vpc, subnet, gateway, routes, group]:
+        tags = {t['Key']: t['Value'] for t in resource['Tags']}
+        assert tags['Project'] == 'devops-assignment' and tags['Session'] == '19'
+    verification = {'result': 'PASS', 'checked_at': datetime.now(timezone.utc).isoformat(), 'managed_resources': 6,
+                    'outputs': outputs, 'checks': ['VPC available', 'public subnet in lab VPC', 'gateway attached',
+                    'active default route', 'subnet route association', 'HTTP/HTTPS restricted to operator', 'assignment tags'],
+                    'ec2_instances_created': 0, 's3_buckets_created': 0}
+    (evidence / 'verification.json').write_text(json.dumps(verification, indent=2) + '\n')
+    print(json.dumps(verification, indent=2), flush=True)
 finally:
-    # This directory owns only this lab. Never import or destroy pre-existing resources.
-    if (project/'.terraform').exists():
-        try:
-            tf(evidence/'05-destroy.txt','plan','-destroy','-input=false','-out=destroy.tfplan')
-            tf(evidence/'05-destroy.txt','apply','-input=false','destroy.tfplan')
-            # Explicit destroy command demonstrates that cleanup is idempotent.
-            tf(evidence/'05-destroy.txt','destroy','-auto-approve','-input=false')
-            state=run(evidence/'06-cleanup.txt','terraform','state','list')
-            assert not state.stdout.strip(),'Managed resources remain in state'
-            cleanup={'terraform_state_empty':True,'finished_at':datetime.now(timezone.utc).isoformat()}
-            if output:
-                try:
-                    session.client('s3').head_bucket(Bucket=output['bucket_name'])
-                    raise AssertionError('S3 bucket still exists')
-                except ClientError as error:
-                    assert error.response['Error']['Code'] in ['404','NoSuchBucket'],error
-                    cleanup['bucket_deleted']=True
-                if 'instance_id' in output:
-                    ec2=session.client('ec2')
-                    ec2.get_waiter('instance_terminated').wait(InstanceIds=[output['instance_id']],WaiterConfig={'Delay':5,'MaxAttempts':30})
-                    cleanup['instance_terminated']=True
-                    try:
-                        ec2.describe_vpcs(VpcIds=[output['vpc_id']])
-                        raise AssertionError('VPC still exists')
-                    except ClientError as error:
-                        assert error.response['Error']['Code']=='InvalidVpcID.NotFound',error
-                        cleanup['vpc_deleted']=True
-            (evidence/'cleanup.json').write_text(json.dumps(cleanup,indent=2)+'\n')
-            with (evidence/'06-cleanup.txt').open('a') as stream:stream.write(json.dumps(cleanup,indent=2)+'\n')
-            print(json.dumps(cleanup,indent=2),flush=True)
-        except Exception:
-            print('Cleanup failed. Preserve the private state and run terraform destroy in this exact project directory.',file=sys.stderr)
-            raise
+    if (project / '.terraform').exists():
+        tf('05-destroy', 'plan', '-destroy', '-input=false', '-out=destroy.tfplan')
+        tf('05-destroy', 'destroy', '-auto-approve', '-input=false')
+        assert not run('06-cleanup', 'terraform', 'state', 'list').strip(), 'State is not empty'
+        cleanup = {'terraform_state_empty': True, 'finished_at': datetime.now(timezone.utc).isoformat()}
+        for output, method, parameter, absent_code in [
+            ('vpc_id', 'describe_vpcs', 'VpcIds', 'InvalidVpcID.NotFound'),
+            ('subnet_id', 'describe_subnets', 'SubnetIds', 'InvalidSubnetID.NotFound'),
+            ('internet_gateway_id', 'describe_internet_gateways', 'InternetGatewayIds', 'InvalidInternetGatewayID.NotFound'),
+            ('route_table_id', 'describe_route_tables', 'RouteTableIds', 'InvalidRouteTableID.NotFound'),
+            ('security_group_id', 'describe_security_groups', 'GroupIds', 'InvalidGroup.NotFound')
+        ]:
+            if output not in outputs:
+                continue
+            try:
+                getattr(ec2, method)(**{parameter: [outputs[output]]})
+                raise AssertionError(f'{output} still exists')
+            except ClientError as error:
+                assert error.response['Error']['Code'] == absent_code, error
+                cleanup[output.replace('_id', '_deleted')] = True
+        assert not ec2.describe_vpcs(Filters=[{'Name': 'tag:Project', 'Values': ['devops-assignment']}, {'Name': 'tag:Session', 'Values': ['19']}])['Vpcs']
+        cleanup['no_session19_vpcs'] = True
+        cleanup['result'] = 'PASS'
+        (evidence / 'cleanup.json').write_text(json.dumps(cleanup, indent=2) + '\n')
+        with (evidence / '06-cleanup.txt').open('a') as stream:
+            stream.write(json.dumps(cleanup, indent=2) + '\n')
+        print(json.dumps(cleanup, indent=2), flush=True)

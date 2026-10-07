@@ -12,8 +12,12 @@ variable "operator_cidr" {
     error_message = "Provide a valid single-address IPv4 CIDR ending in /32."
   }
 }
-variable "instance_type" {
-  description = "Small ARM instance for the static HTTP demonstration."
+variable "vpc_cidr" {
+  description = "Dedicated /16 network for the temporary lab."
   type        = string
-  default     = "t4g.micro"
+  default     = "10.83.0.0/16"
+  validation {
+    condition     = can(cidrhost(var.vpc_cidr, 0)) && endswith(var.vpc_cidr, "/16")
+    error_message = "Supply a valid IPv4 /16 CIDR."
+  }
 }

@@ -1,3 +1,5 @@
+> Historical expanded-compute attempt. The final submission is the successfully executed six-resource network lab in the [main README](../../../README.md).
+
 # Second apply: account Free Tier restriction
 
 Actual AWS run on 7 October 2026, after the required EC2 read permissions were added.
