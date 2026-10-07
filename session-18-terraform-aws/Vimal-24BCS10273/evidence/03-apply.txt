@@ -1,0 +1,20 @@
+Run started: 2026-10-06T19:50:03.902516+00:00
+
+$ terraform apply -input=false assignment.tfplan -no-color
+aws_s3_bucket.assignment: Creating...
+aws_s3_bucket.assignment: Still creating... [00m10s elapsed]
+aws_s3_bucket.assignment: Creation complete after 10s [id=vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9]
+aws_s3_bucket_public_access_block.assignment: Creating...
+aws_s3_bucket_ownership_controls.assignment: Creating...
+aws_s3_bucket_server_side_encryption_configuration.assignment: Creating...
+aws_s3_bucket_server_side_encryption_configuration.assignment: Creation complete after 2s [id=vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9]
+aws_s3_bucket_ownership_controls.assignment: Creation complete after 2s [id=vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9]
+aws_s3_bucket_public_access_block.assignment: Creation complete after 2s [id=vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9]
+
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+bucket_arn = "arn:aws:s3:::vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+bucket_name = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+region = "us-east-1"
