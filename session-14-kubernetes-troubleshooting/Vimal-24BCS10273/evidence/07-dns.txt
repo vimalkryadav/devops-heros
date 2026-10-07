@@ -1,0 +1,198 @@
+2026-10-06T18:49:12.961577+00:00
+$ kubectl -n assignment-s14 apply -f cases/dns-broken.yaml
+pod/dns-demo created
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/dns-demo --timeout=90s
+pod/dns-demo condition met
+$ kubectl -n assignment-s14 exec dns-demo -- cat /etc/resolv.conf
+nameserver 127.0.0.1
+$ kubectl -n assignment-s14 exec dns-demo -- nslookup troubleshooting-service.assignment-s14.svc.cluster.local.
+;; connection timed out; no servers could be reached
+
+nslookup: write to '127.0.0.1': Connection refused
+command terminated with exit code 1
+$ kubectl -n assignment-s14 get pod dns-demo -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"dns-demo","namespace":"assignment-s14"},"spec":{"containers":[{"command":["sh","-c","sleep 3600"],"image":"busybox:1.36","name":"app"}],"dnsConfig":{"nameservers":["127.0.0.1"]},"dnsPolicy":"None"}}
+  creationTimestamp: "2026-10-06T18:49:13Z"
+  generation: 1
+  name: dns-demo
+  namespace: assignment-s14
+  resourceVersion: "4670"
+  uid: 32089654-66df-402c-a238-8dc108328e9a
+spec:
+  containers:
+  - command:
+    - sh
+    - -c
+    - sleep 3600
+    image: busybox:1.36
+    imagePullPolicy: IfNotPresent
+    name: app
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-tljgt
+      readOnly: true
+  dnsConfig:
+    nameservers:
+    - 127.0.0.1
+  dnsPolicy: None
+  enableServiceLinks: true
+  nodeName: devops-assignment
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-tljgt
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2026-10-06T18:49:13Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodReadyToStartContainers
+  - lastProbeTime: null
+    lastTransitionTime: "2026-10-06T18:49:13Z"
+    observedGeneration: 1
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2026-10-06T18:49:13Z"
+    observedGeneration: 1
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2026-10-06T18:49:13Z"
+    observedGeneration: 1
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2026-10-06T18:49:13Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://d492fb300eafd70cb44d9c501f40645ed732479cc146681a39a991abba2f0e73
+    image: docker.io/library/busybox:1.36
+    imageID: docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    lastState: {}
+    name: app
+    ready: true
+    resources: {}
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2026-10-06T18:49:13Z"
+    user:
+      linux:
+        gid: 0
+        supplementalGroups:
+        - 0
+        - 10
+        uid: 0
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-tljgt
+      readOnly: true
+      recursiveReadOnly: Disabled
+  hostIP: 192.168.49.2
+  hostIPs:
+  - ip: 192.168.49.2
+  observedGeneration: 1
+  phase: Running
+  podIP: 10.244.0.30
+  podIPs:
+  - ip: 10.244.0.30
+  qosClass: BestEffort
+  resources: {}
+  startTime: "2026-10-06T18:49:13Z"
+$ kubectl -n assignment-s14 exec client -- nslookup troubleshooting-service.assignment-s14.svc.cluster.local.
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+
+Name:	troubleshooting-service.assignment-s14.svc.cluster.local
+Address: 10.99.32.211
+$ kubectl -n assignment-s14 delete pod dns-demo --wait=true
+pod "dns-demo" deleted from assignment-s14 namespace
+$ kubectl -n assignment-s14 apply -f cases/dns-fixed.yaml
+pod/dns-demo created
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/dns-demo --timeout=120s
+pod/dns-demo condition met
+$ kubectl -n assignment-s14 get pod dns-demo
+NAME       READY   STATUS    RESTARTS   AGE
+dns-demo   1/1     Running   0          1s
+$ kubectl -n assignment-s14 exec dns-demo -- cat /etc/resolv.conf
+search assignment-s14.svc.cluster.local svc.cluster.local cluster.local
+nameserver 10.96.0.10
+options ndots:5
+$ kubectl -n assignment-s14 exec dns-demo -- nslookup troubleshooting-service.assignment-s14.svc.cluster.local.
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+
+Name:	troubleshooting-service.assignment-s14.svc.cluster.local
+Address: 10.99.32.211
+$ kubectl -n assignment-s14 exec dns-demo -- wget -q -O - http://troubleshooting-service
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+PASS: ClusterFirst replaced the invalid localhost DNS server with cluster DNS.

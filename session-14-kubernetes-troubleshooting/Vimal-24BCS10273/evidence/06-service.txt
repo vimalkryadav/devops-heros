@@ -1,0 +1,147 @@
+2026-10-06T18:49:09.058070+00:00
+Waiting: baseline Service is reachable
+PASS: baseline Service is reachable (0.1s)
+$ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://troubleshooting-service
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+$ kubectl -n assignment-s14 apply -f cases/service-broken.yaml
+service/troubleshooting-service configured
+Waiting: no ready endpoints match the wrong selector
+PASS: no ready endpoints match the wrong selector (0.0s)
+$ kubectl -n assignment-s14 get endpointslices -l kubernetes.io/service-name=troubleshooting-service -o yaml
+apiVersion: v1
+items:
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints: null
+  kind: EndpointSlice
+  metadata:
+    creationTimestamp: "2026-10-06T18:46:32Z"
+    generateName: troubleshooting-service-
+    generation: 10
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: troubleshooting-service
+    name: troubleshooting-service-8nctc
+    namespace: assignment-s14
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: troubleshooting-service
+      uid: 2ae56e9c-bf63-4b0f-a86b-6e24c3052e30
+    resourceVersion: "4653"
+    uid: 0df45c32-fded-4193-ab18-ef29ef5e24d1
+  ports: null
+kind: List
+metadata:
+  resourceVersion: ""
+Waiting: Service traffic fails after routing updates propagate
+$ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://troubleshooting-service
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+$ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://troubleshooting-service
+wget: can't connect to remote host (10.99.32.211): Connection refused
+command terminated with exit code 1
+PASS: Service traffic fails after routing updates propagate (3.1s)
+$ kubectl -n assignment-s14 get pods --show-labels
+NAME                                   READY   STATUS    RESTARTS   AGE     LABELS
+client                                 1/1     Running   0          2m40s   <none>
+config-demo                            1/1     Running   0          90s     <none>
+crash-demo                             1/1     Running   0          97s     <none>
+mount-demo                             1/1     Running   0          95s     <none>
+pending-demo                           1/1     Running   0          96s     <none>
+project-broken-pod                     1/1     Running   0          2m1s    <none>
+troubleshooting-app-687fb98df4-dv5wr   1/1     Running   0          2m40s   app=troubleshooting-app,pod-template-hash=687fb98df4
+troubleshooting-app-687fb98df4-lnhcc   1/1     Running   0          2m40s   app=troubleshooting-app,pod-template-hash=687fb98df4
+$ kubectl -n assignment-s14 describe service troubleshooting-service
+Name:                     troubleshooting-service
+Namespace:                assignment-s14
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=wrong-app
+Type:                     ClusterIP
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.99.32.211
+IPs:                      10.99.32.211
+Port:                     <unset>  80/TCP
+TargetPort:               80/TCP
+Endpoints:                
+Session Affinity:         None
+Internal Traffic Policy:  Cluster
+Events:                   <none>
+$ kubectl -n assignment-s14 apply -f cases/service-fixed.yaml
+service/troubleshooting-service configured
+Waiting: two ready backend endpoints return
+PASS: two ready backend endpoints return (0.0s)
+Waiting: Service HTTP recovers
+PASS: Service HTTP recovers (0.1s)
+$ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://troubleshooting-service
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+PASS: matching Service selectors and Pod labels restored traffic to two backends.

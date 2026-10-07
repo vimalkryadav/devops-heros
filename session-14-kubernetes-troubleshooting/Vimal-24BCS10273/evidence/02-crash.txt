@@ -1,0 +1,93 @@
+2026-10-06T18:47:29.271026+00:00
+$ kubectl -n assignment-s14 apply -f cases/crash-broken.yaml
+pod/crash-demo created
+Waiting: CrashLoopBackOff is observed
+PASS: CrashLoopBackOff is observed (4.2s)
+$ kubectl -n assignment-s14 get pod crash-demo -o wide
+NAME         READY   STATUS             RESTARTS     AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+crash-demo   0/1     CrashLoopBackOff   1 (2s ago)   4s    10.244.0.17   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 describe pod crash-demo
+Name:             crash-demo
+Namespace:        assignment-s14
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:17:29 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.17
+IPs:
+  IP:  10.244.0.17
+Containers:
+  app:
+    Container ID:  containerd://fde96fd474386f8ffe269fc70c9215aa2116745910215f9edeea257fa39cceaf
+    Image:         busybox:1.36
+    Image ID:      docker.io/library/busybox@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo "START_MODE=$START_MODE"; if [ "$START_MODE" != serve ]; then echo "invalid start mode"; exit 7; fi; exec sleep 3600
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    7
+      Started:      Wed, 07 Oct 2026 00:17:31 +0530
+      Finished:     Wed, 07 Oct 2026 00:17:31 +0530
+    Ready:          False
+    Restart Count:  1
+    Environment:
+      START_MODE:  fail
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-8ckbk (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-8ckbk:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age              From               Message
+  ----     ------     ----             ----               -------
+  Normal   Scheduled  4s               default-scheduler  Successfully assigned assignment-s14/crash-demo to devops-assignment
+  Normal   Pulled     2s (x2 over 4s)  kubelet            spec.containers{app}: Container image "busybox:1.36" already present on machine and can be accessed by the pod
+  Normal   Created    2s (x2 over 3s)  kubelet            spec.containers{app}: Container created
+  Normal   Started    2s (x2 over 3s)  kubelet            spec.containers{app}: Container started
+  Warning  BackOff    0s (x2 over 1s)  kubelet            spec.containers{app}: Back-off restarting failed container app in pod crash-demo_assignment-s14(8a5df017-c45d-4c40-afd2-d95067ee8512)
+$ kubectl -n assignment-s14 events --for pod/crash-demo
+LAST SEEN         TYPE      REASON      OBJECT           MESSAGE
+4s                Normal    Scheduled   Pod/crash-demo   Successfully assigned assignment-s14/crash-demo to devops-assignment
+2s (x2 over 4s)   Normal    Pulled      Pod/crash-demo   Container image "busybox:1.36" already present on machine and can be accessed by the pod
+2s (x2 over 3s)   Normal    Created     Pod/crash-demo   Container created
+2s (x2 over 3s)   Normal    Started     Pod/crash-demo   Container started
+0s (x2 over 1s)   Warning   BackOff     Pod/crash-demo   Back-off restarting failed container app in pod crash-demo_assignment-s14(8a5df017-c45d-4c40-afd2-d95067ee8512)
+$ kubectl -n assignment-s14 logs crash-demo --previous
+START_MODE=fail
+invalid start mode
+$ kubectl -n assignment-s14 delete pod crash-demo --wait=true
+pod "crash-demo" deleted from assignment-s14 namespace
+$ kubectl -n assignment-s14 apply -f cases/crash-fixed.yaml
+pod/crash-demo created
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/crash-demo --timeout=120s
+pod/crash-demo condition met
+$ kubectl -n assignment-s14 get pod crash-demo
+NAME         READY   STATUS    RESTARTS   AGE
+crash-demo   1/1     Running   0          0s
+$ kubectl -n assignment-s14 logs crash-demo
+START_MODE=serve
+PASS: the process exited 7 due to an invalid start mode; the corrected mode keeps it running.

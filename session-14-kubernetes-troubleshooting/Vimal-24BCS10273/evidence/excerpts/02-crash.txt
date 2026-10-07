@@ -1,0 +1,22 @@
+Actual output excerpts from 02-crash.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:29.271026+00:00
+[...]
+  5 | PASS: CrashLoopBackOff is observed (4.2s)
+  6 | $ kubectl -n assignment-s14 get pod crash-demo -o wide
+  7 | NAME         READY   STATUS             RESTARTS     AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+  8 | crash-demo   0/1     CrashLoopBackOff   1 (2s ago)   4s    10.244.0.17   devops-assignment   <none>           <none>
+[...]
+ 79 | $ kubectl -n assignment-s14 logs crash-demo --previous
+ 80 | START_MODE=fail
+ 81 | invalid start mode
+[...]
+ 84 | $ kubectl -n assignment-s14 apply -f cases/crash-fixed.yaml
+ 85 | pod/crash-demo created
+[...]
+ 88 | $ kubectl -n assignment-s14 get pod crash-demo
+ 89 | NAME         READY   STATUS    RESTARTS   AGE
+ 90 | crash-demo   1/1     Running   0          0s
+ 91 | $ kubectl -n assignment-s14 logs crash-demo
+ 92 | START_MODE=serve
+ 93 | PASS: the process exited 7 due to an invalid start mode; the corrected mode keeps it running.

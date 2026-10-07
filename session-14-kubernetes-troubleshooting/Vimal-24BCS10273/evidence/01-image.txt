@@ -1,0 +1,107 @@
+2026-10-06T18:47:11.683359+00:00
+$ kubectl -n assignment-s14 apply -f cases/image-broken.yaml
+pod/project-broken-pod created
+Waiting: ErrImagePull is observed
+PASS: ErrImagePull is observed (4.2s)
+$ kubectl -n assignment-s14 get pod project-broken-pod
+NAME                 READY   STATUS         RESTARTS   AGE
+project-broken-pod   0/1     ErrImagePull   0          5s
+Waiting: image retries enter ImagePullBackOff
+PASS: image retries enter ImagePullBackOff (10.5s)
+$ kubectl -n assignment-s14 get pod project-broken-pod -o wide
+NAME                 READY   STATUS             RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+project-broken-pod   0/1     ImagePullBackOff   0          15s   10.244.0.12   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 describe pod project-broken-pod
+Name:             project-broken-pod
+Namespace:        assignment-s14
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:17:11 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.12
+IPs:
+  IP:  10.244.0.12
+Containers:
+  app:
+    Container ID:   
+    Image:          nginx:assignment-tag-does-not-exist
+    Image ID:       
+    Port:           <none>
+    Host Port:      <none>
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-fwlhw (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-fwlhw:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age               From               Message
+  ----     ------     ----              ----               -------
+  Normal   Scheduled  14s               default-scheduler  Successfully assigned assignment-s14/project-broken-pod to devops-assignment
+  Warning  Failed     12s               kubelet            spec.containers{app}: Failed to pull image "nginx:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/nginx:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/nginx:assignment-tag-does-not-exist": docker.io/library/nginx:assignment-tag-does-not-exist: not found
+  Warning  Failed     12s               kubelet            spec.containers{app}: Error: ErrImagePull
+  Normal   BackOff    12s               kubelet            spec.containers{app}: Back-off pulling image "nginx:assignment-tag-does-not-exist"
+  Warning  Failed     12s               kubelet            spec.containers{app}: Error: ImagePullBackOff
+  Normal   Pulling    0s (x2 over 14s)  kubelet            spec.containers{app}: Pulling image "nginx:assignment-tag-does-not-exist"
+$ kubectl -n assignment-s14 events --for pod/project-broken-pod
+LAST SEEN          TYPE      REASON      OBJECT                   MESSAGE
+14s                Normal    Scheduled   Pod/project-broken-pod   Successfully assigned assignment-s14/project-broken-pod to devops-assignment
+12s                Warning   Failed      Pod/project-broken-pod   Failed to pull image "nginx:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/nginx:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/nginx:assignment-tag-does-not-exist": docker.io/library/nginx:assignment-tag-does-not-exist: not found
+12s                Warning   Failed      Pod/project-broken-pod   Error: ErrImagePull
+12s                Normal    BackOff     Pod/project-broken-pod   Back-off pulling image "nginx:assignment-tag-does-not-exist"
+12s                Warning   Failed      Pod/project-broken-pod   Error: ImagePullBackOff
+0s (x2 over 14s)   Normal    Pulling     Pod/project-broken-pod   Pulling image "nginx:assignment-tag-does-not-exist"
+$ kubectl -n assignment-s14 apply -f cases/image-fixed.yaml
+pod/project-broken-pod configured
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/project-broken-pod --timeout=120s
+pod/project-broken-pod condition met
+$ kubectl -n assignment-s14 get pod project-broken-pod
+NAME                 READY   STATUS    RESTARTS   AGE
+project-broken-pod   1/1     Running   0          18s
+$ kubectl -n assignment-s14 exec project-broken-pod -- wget -q -O - http://localhost
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+PASS: an unavailable image tag caused ErrImagePull and ImagePullBackOff; a valid tag recovered the Pod.

@@ -1,0 +1,182 @@
+2026-10-06T18:46:32.583916+00:00
+$ kubectl version
+Client Version: v1.37.1
+Kustomize Version: v5.8.1
+Server Version: v1.37.1
+$ kubectl -n assignment-s14 apply -f manifests/namespace.yaml
+namespace/assignment-s14 created
+$ kubectl -n assignment-s14 apply -f manifests/web.yaml
+deployment.apps/troubleshooting-app created
+service/troubleshooting-service created
+pod/client created
+$ kubectl -n assignment-s14 rollout status deployment/troubleshooting-app --timeout=180s
+Waiting for deployment "troubleshooting-app" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "troubleshooting-app" rollout to finish: 1 of 2 updated replicas are available...
+deployment "troubleshooting-app" successfully rolled out
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/client --timeout=90s
+pod/client condition met
+$ kubectl -n assignment-s14 get pods -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+client                                 1/1     Running   0          30s   10.244.0.11   devops-assignment   <none>           <none>
+troubleshooting-app-687fb98df4-dv5wr   1/1     Running   0          30s   10.244.0.9    devops-assignment   <none>           <none>
+troubleshooting-app-687fb98df4-lnhcc   1/1     Running   0          30s   10.244.0.10   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 get services
+NAME                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+troubleshooting-service   ClusterIP   10.99.32.211   <none>        80/TCP    30s
+$ kubectl -n assignment-s14 describe pod troubleshooting-app-687fb98df4-dv5wr
+Name:             troubleshooting-app-687fb98df4-dv5wr
+Namespace:        assignment-s14
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:16:32 +0530
+Labels:           app=troubleshooting-app
+                  pod-template-hash=687fb98df4
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.9
+IPs:
+  IP:           10.244.0.9
+Controlled By:  ReplicaSet/troubleshooting-app-687fb98df4
+Containers:
+  nginx:
+    Container ID:   containerd://144889098b6ef80dd05f96c499c1be1e2a2114e1e411fdb2198b9d8486abf8bb
+    Image:          nginx:1.27-alpine
+    Image ID:       docker.io/library/nginx@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Running
+      Started:      Wed, 07 Oct 2026 00:16:57 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     100m
+      memory:  64Mi
+    Requests:
+      cpu:        20m
+      memory:     16Mi
+    Readiness:    http-get http://:80/ delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-h7nwg (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-h7nwg:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age              From               Message
+  ----     ------     ----             ----               -------
+  Normal   Scheduled  29s              default-scheduler  Successfully assigned assignment-s14/troubleshooting-app-687fb98df4-dv5wr to devops-assignment
+  Normal   Pulling    29s              kubelet            spec.containers{nginx}: Pulling image "nginx:1.27-alpine"
+  Normal   Pulled     5s               kubelet            spec.containers{nginx}: Successfully pulled image "nginx:1.27-alpine" in 23.427s (23.427s including waiting). Image size: 20984244 bytes.
+  Normal   Created    5s               kubelet            spec.containers{nginx}: Container created
+  Normal   Started    5s               kubelet            spec.containers{nginx}: Container started
+  Warning  Unhealthy  5s (x2 over 5s)  kubelet            spec.containers{nginx}: Readiness probe failed: Get "http://10.244.0.9:80/": dial tcp 10.244.0.9:80: connect: connection refused
+$ kubectl -n assignment-s14 exec troubleshooting-app-687fb98df4-dv5wr -- wget -q -O - http://localhost
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+$ kubectl -n assignment-s14 logs troubleshooting-app-687fb98df4-dv5wr --tail=10
+2026/10/06 18:46:58 [notice] 1#1: start worker process 39
+2026/10/06 18:46:58 [notice] 1#1: start worker process 40
+2026/10/06 18:46:58 [notice] 1#1: start worker process 41
+2026/10/06 18:46:58 [notice] 1#1: start worker process 42
+2026/10/06 18:46:58 [notice] 1#1: start worker process 43
+2026/10/06 18:46:58 [notice] 1#1: start worker process 44
+2026/10/06 18:46:58 [notice] 1#1: start worker process 45
+10.244.0.1 - - [06/Oct/2026:18:46:59 +0000] "GET / HTTP/1.1" 200 615 "-" "kube-probe/1.37" "-"
+10.244.0.1 - - [06/Oct/2026:18:47:01 +0000] "GET / HTTP/1.1" 200 615 "-" "kube-probe/1.37" "-"
+::1 - - [06/Oct/2026:18:47:02 +0000] "GET / HTTP/1.1" 200 615 "-" "Wget" "-"
+$ kubectl -n assignment-s14 events
+LAST SEEN         TYPE      REASON              OBJECT                                      MESSAGE
+30s               Normal    ScalingReplicaSet   Deployment/troubleshooting-app              Scaled up replica set troubleshooting-app-687fb98df4 from 0 to 2
+30s               Normal    SuccessfulCreate    ReplicaSet/troubleshooting-app-687fb98df4   Created pod: troubleshooting-app-687fb98df4-lnhcc
+30s               Normal    SuccessfulCreate    ReplicaSet/troubleshooting-app-687fb98df4   Created pod: troubleshooting-app-687fb98df4-dv5wr
+29s               Normal    Scheduled           Pod/troubleshooting-app-687fb98df4-dv5wr    Successfully assigned assignment-s14/troubleshooting-app-687fb98df4-dv5wr to devops-assignment
+29s               Normal    Scheduled           Pod/troubleshooting-app-687fb98df4-lnhcc    Successfully assigned assignment-s14/troubleshooting-app-687fb98df4-lnhcc to devops-assignment
+29s               Normal    Scheduled           Pod/client                                  Successfully assigned assignment-s14/client to devops-assignment
+29s               Normal    Pulling             Pod/troubleshooting-app-687fb98df4-lnhcc    Pulling image "nginx:1.27-alpine"
+29s               Normal    Pulled              Pod/client                                  Container image "busybox:1.36" already present on machine and can be accessed by the pod
+29s               Normal    Created             Pod/client                                  Container created
+29s               Normal    Started             Pod/client                                  Container started
+29s               Normal    Pulling             Pod/troubleshooting-app-687fb98df4-dv5wr    Pulling image "nginx:1.27-alpine"
+5s                Normal    Started             Pod/troubleshooting-app-687fb98df4-dv5wr    Container started
+5s (x2 over 5s)   Warning   Unhealthy           Pod/troubleshooting-app-687fb98df4-dv5wr    Readiness probe failed: Get "http://10.244.0.9:80/": dial tcp 10.244.0.9:80: connect: connection refused
+5s                Normal    Created             Pod/troubleshooting-app-687fb98df4-dv5wr    Container created
+5s                Normal    Pulled              Pod/troubleshooting-app-687fb98df4-dv5wr    Successfully pulled image "nginx:1.27-alpine" in 23.427s (23.427s including waiting). Image size: 20984244 bytes.
+3s                Normal    Pulled              Pod/troubleshooting-app-687fb98df4-lnhcc    Successfully pulled image "nginx:1.27-alpine" in 1.99s (25.377s including waiting). Image size: 20984244 bytes.
+3s                Normal    Created             Pod/troubleshooting-app-687fb98df4-lnhcc    Container created
+3s                Normal    Started             Pod/troubleshooting-app-687fb98df4-lnhcc    Container started
+3s (x2 over 3s)   Warning   Unhealthy           Pod/troubleshooting-app-687fb98df4-lnhcc    Readiness probe failed: Get "http://10.244.0.10:80/": dial tcp 10.244.0.10:80: connect: connection refused
+$ kubectl explain pod.spec.containers.resources
+KIND:       Pod
+VERSION:    v1
+
+FIELD: resources <ResourceRequirements>
+
+
+DESCRIPTION:
+    Compute Resources required by this container. Cannot be updated. More info:
+    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+    ResourceRequirements describes the compute resource requirements.
+    
+FIELDS:
+  claims	<[]ResourceClaim>
+    Claims lists the names of resources, defined in spec.resourceClaims, that
+    are used by this container.
+    
+    This field depends on the DynamicResourceAllocation feature gate.
+    
+    This field is immutable. It can only be set for containers.
+
+  limits	<map[string]Quantity>
+    Limits describes the maximum amount of compute resources allowed. More info:
+    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+
+  requests	<map[string]Quantity>
+    Requests describes the minimum amount of compute resources required. If
+    Requests is omitted for a container, it defaults to Limits if that is
+    explicitly specified, otherwise to an implementation-defined value. Requests
+    cannot exceed Limits. More info:
+    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+Waiting: metrics are available
+PASS: metrics are available (9.2s)
+$ kubectl -n assignment-s14 top pods
+NAME                                   CPU(cores)   MEMORY(bytes)   
+client                                 1m           0Mi             
+troubleshooting-app-687fb98df4-dv5wr   9m           12Mi            
+troubleshooting-app-687fb98df4-lnhcc   6m           12Mi

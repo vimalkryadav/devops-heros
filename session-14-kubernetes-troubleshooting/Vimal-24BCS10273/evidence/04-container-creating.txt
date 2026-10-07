@@ -1,0 +1,82 @@
+2026-10-06T18:47:37.249321+00:00
+$ kubectl -n assignment-s14 apply -f cases/mount-broken.yaml
+pod/mount-demo created
+Waiting: Pod waits in ContainerCreating
+PASS: Pod waits in ContainerCreating (0.0s)
+Waiting: FailedMount event identifies the missing ConfigMap
+PASS: FailedMount event identifies the missing ConfigMap (3.1s)
+$ kubectl -n assignment-s14 get pod mount-demo -o wide
+NAME         READY   STATUS              RESTARTS   AGE   IP       NODE                NOMINATED NODE   READINESS GATES
+mount-demo   0/1     ContainerCreating   0          3s    <none>   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 describe pod mount-demo
+Name:             mount-demo
+Namespace:        assignment-s14
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:17:37 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Pending
+IP:               
+IPs:              <none>
+Containers:
+  app:
+    Container ID:  
+    Image:         busybox:1.36
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      cat /config/message; sleep 3600
+    State:          Waiting
+      Reason:       ContainerCreating
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /config from config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-2sxj9 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   False 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      mount-settings
+    Optional:  false
+  kube-api-access-2sxj9:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason       Age              From               Message
+  ----     ------       ----             ----               -------
+  Normal   Scheduled    3s               default-scheduler  Successfully assigned assignment-s14/mount-demo to devops-assignment
+  Warning  FailedMount  1s (x3 over 3s)  kubelet            MountVolume.SetUp failed for volume "config" : configmap "mount-settings" not found
+$ kubectl -n assignment-s14 events --for pod/mount-demo
+LAST SEEN         TYPE      REASON        OBJECT           MESSAGE
+3s                Normal    Scheduled     Pod/mount-demo   Successfully assigned assignment-s14/mount-demo to devops-assignment
+1s (x3 over 3s)   Warning   FailedMount   Pod/mount-demo   MountVolume.SetUp failed for volume "config" : configmap "mount-settings" not found
+$ kubectl -n assignment-s14 apply -f cases/mount-fixed-config.yaml
+configmap/mount-settings created
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/mount-demo --timeout=180s
+pod/mount-demo condition met
+$ kubectl -n assignment-s14 get pod mount-demo
+NAME         READY   STATUS    RESTARTS   AGE
+mount-demo   1/1     Running   0          4s
+$ kubectl -n assignment-s14 logs mount-demo
+
+PASS: supplying the absent mounted ConfigMap allowed container creation.
