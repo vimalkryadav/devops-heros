@@ -1,0 +1,10 @@
+2026-10-06T18:52:15.755482+00:00
+$ helm uninstall notes-dev --wait --timeout 120s --namespace assignment-s15
+release "notes-dev" uninstalled
+$ helm list --namespace assignment-s15
+NAME	NAMESPACE	REVISION	UPDATED	STATUS	CHART	APP VERSION
+$ kubectl -n assignment-s15 get deployments,pods,services,configmaps -l app.kubernetes.io/instance=notes-dev
+NAME                                    READY   STATUS        RESTARTS   AGE
+pod/notes-dev-deploy-669c7d8995-6ftff   1/1     Terminating   0          4m28s
+pod/notes-dev-deploy-669c7d8995-bs5pq   1/1     Terminating   0          4m26s
+pod/notes-dev-deploy-669c7d8995-z28jl   1/1     Terminating   0          4m31s

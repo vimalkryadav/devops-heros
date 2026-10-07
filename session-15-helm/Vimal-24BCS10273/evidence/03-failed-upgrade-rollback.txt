@@ -1,0 +1,151 @@
+2026-10-06T18:47:54.384755+00:00
+$ helm upgrade notes-dev notes-chart -f notes-chart/values-prod.yaml --set image.tag=assignment-tag-does-not-exist --wait --timeout 60s --namespace assignment-s15
+Error: UPGRADE FAILED: context deadline exceeded
+$ helm status notes-dev -o json --namespace assignment-s15
+{"name":"notes-dev","info":{"first_deployed":"2026-10-07T00:17:40.998749013+05:30","last_deployed":"2026-10-07T00:17:54.423422006+05:30","deleted":"","description":"Upgrade \"notes-dev\" failed: context deadline exceeded","status":"failed","notes":"Vimal's Notes is installed in namespace assignment-s15.\nInspect it with:\n  kubectl -n assignment-s15 get pods,service,configmap -l app.kubernetes.io/instance=notes-dev\nOpen it through the Minikube node IP on port 30090.\n"},"config":{"app":{"environment":"production"},"image":{"tag":"assignment-tag-does-not-exist"},"replicaCount":3},"manifest":"---\n# Source: notes-chart/templates/configmap.yaml\napiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: notes-dev-config\n  labels:\n    app.kubernetes.io/instance: notes-dev\ndata:\n  APP_NAME: \"Vimal's Notes\"\n  ENVIRONMENT: \"production\"\n  index.html: |\n    \u003c!doctype html\u003e\n    \u003chtml lang=\"en\"\u003e\n    \u003chead\u003e\u003cmeta charset=\"utf-8\"\u003e\u003ctitle\u003eVimal\u0026#39;s Notes\u003c/title\u003e\n    \u003cstyle\u003ebody{font:18px system-ui;max-width:720px;margin:64px auto;padding:24px;color:#203047}li{margin:12px 0}\u003c/style\u003e\u003c/head\u003e\n    \u003cbody\u003e\u003ch1\u003eVimal\u0026#39;s Notes\u003c/h1\u003e\n    \u003cp\u003eEnvironment: \u003cstrong\u003eproduction\u003c/strong\u003e\u003c/p\u003e\n    \u003cp\u003eSession 15 · Vimal Kumar Yadav · 24BCS10273\u003c/p\u003e\n    \u003cul\u003e\u003cli\u003ePackage the application configuration in a chart.\u003c/li\u003e\n    \u003cli\u003eUpgrade to three replicas with production values.\u003c/li\u003e\n    \u003cli\u003eRecover from a failed image upgrade using a previous release.\u003c/li\u003e\u003c/ul\u003e\n    \u003c/body\u003e\u003c/html\u003e\n---\n# Source: notes-chart/templates/service.yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: notes-dev-svc\n  labels:\n    app.kubernetes.io/instance: notes-dev\nspec:\n  type: NodePort\n  selector:\n    app.kubernetes.io/instance: notes-dev\n  ports:\n    - name: http\n      port: 80\n      targetPort: http\n      nodePort: 30090\n---\n# Source: notes-chart/templates/deployment.yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: notes-dev-deploy\n  labels:\n    app.kubernetes.io/instance: notes-dev\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app.kubernetes.io/instance: notes-dev\n  template:\n    metadata:\n      labels:\n        app.kubernetes.io/instance: notes-dev\n      annotations:\n        checksum/config: a7080609b83493884e65d6f6d816c73330b4de5c259d1cef8bdbc0e462a57993\n    spec:\n      containers:\n        - name: notes\n          image: \"nginx:assignment-tag-does-not-exist\"\n          imagePullPolicy: IfNotPresent\n          ports:\n            - name: http\n              containerPort: 80\n          envFrom:\n            - configMapRef:\n                name: notes-dev-config\n          readinessProbe:\n            httpGet:\n              path: /\n              port: http\n            periodSeconds: 2\n          livenessProbe:\n            httpGet:\n              path: /\n              port: http\n            initialDelaySeconds: 5\n          resources:\n            limits:\n              cpu: 100m\n              memory: 64Mi\n            requests:\n              cpu: 20m\n              memory: 16Mi\n          volumeMounts:\n            - name: page\n              mountPath: /usr/share/nginx/html/index.html\n              subPath: index.html\n              readOnly: true\n      volumes:\n        - name: page\n          configMap:\n            name: notes-dev-config\n","version":3,"namespace":"assignment-s15"}
+$ kubectl -n assignment-s15 get pods -o wide
+NAME                                READY   STATUS             RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+notes-dev-deploy-669c7d8995-6ftff   1/1     Running            0          66s   10.244.0.26   devops-assignment   <none>           <none>
+notes-dev-deploy-669c7d8995-bs5pq   1/1     Running            0          64s   10.244.0.27   devops-assignment   <none>           <none>
+notes-dev-deploy-669c7d8995-z28jl   1/1     Running            0          69s   10.244.0.25   devops-assignment   <none>           <none>
+notes-dev-deploy-689586b5d6-rtv5g   0/1     ImagePullBackOff   0          60s   10.244.0.28   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s15 describe pod notes-dev-deploy-689586b5d6-rtv5g
+Name:             notes-dev-deploy-689586b5d6-rtv5g
+Namespace:        assignment-s15
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:17:54 +0530
+Labels:           app.kubernetes.io/instance=notes-dev
+                  pod-template-hash=689586b5d6
+Annotations:      checksum/config: a7080609b83493884e65d6f6d816c73330b4de5c259d1cef8bdbc0e462a57993
+Status:           Pending
+IP:               10.244.0.28
+IPs:
+  IP:           10.244.0.28
+Controlled By:  ReplicaSet/notes-dev-deploy-689586b5d6
+Containers:
+  notes:
+    Container ID:   
+    Image:          nginx:assignment-tag-does-not-exist
+    Image ID:       
+    Port:           80/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Limits:
+      cpu:     100m
+      memory:  64Mi
+    Requests:
+      cpu:      20m
+      memory:   16Mi
+    Liveness:   http-get http://:http/ delay=5s timeout=1s period=10s successThreshold=1 failureThreshold=3
+    Readiness:  http-get http://:http/ delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=3
+    Environment Variables from:
+      notes-dev-config  ConfigMap  Optional: false
+    Environment:        <none>
+    Mounts:
+      /usr/share/nginx/html/index.html from page (ro,path="index.html")
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-9bmmv (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  page:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      notes-dev-config
+    Optional:  false
+  kube-api-access-9bmmv:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                From               Message
+  ----     ------     ----               ----               -------
+  Normal   Scheduled  60s                default-scheduler  Successfully assigned assignment-s15/notes-dev-deploy-689586b5d6-rtv5g to devops-assignment
+  Normal   BackOff    27s (x2 over 56s)  kubelet            spec.containers{notes}: Back-off pulling image "nginx:assignment-tag-does-not-exist"
+  Warning  Failed     27s (x2 over 56s)  kubelet            spec.containers{notes}: Error: ImagePullBackOff
+  Normal   Pulling    14s (x3 over 59s)  kubelet            spec.containers{notes}: Pulling image "nginx:assignment-tag-does-not-exist"
+  Warning  Failed     10s (x3 over 57s)  kubelet            spec.containers{notes}: Failed to pull image "nginx:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/nginx:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/nginx:assignment-tag-does-not-exist": docker.io/library/nginx:assignment-tag-does-not-exist: not found
+  Warning  Failed     10s (x3 over 57s)  kubelet            spec.containers{notes}: Error: ErrImagePull
+$ kubectl -n assignment-s15 events --for pod/notes-dev-deploy-689586b5d6-rtv5g
+LAST SEEN           TYPE      REASON      OBJECT                                  MESSAGE
+60s                 Normal    Scheduled   Pod/notes-dev-deploy-689586b5d6-rtv5g   Successfully assigned assignment-s15/notes-dev-deploy-689586b5d6-rtv5g to devops-assignment
+27s (x2 over 56s)   Normal    BackOff     Pod/notes-dev-deploy-689586b5d6-rtv5g   Back-off pulling image "nginx:assignment-tag-does-not-exist"
+27s (x2 over 56s)   Warning   Failed      Pod/notes-dev-deploy-689586b5d6-rtv5g   Error: ImagePullBackOff
+14s (x3 over 59s)   Normal    Pulling     Pod/notes-dev-deploy-689586b5d6-rtv5g   Pulling image "nginx:assignment-tag-does-not-exist"
+10s (x3 over 57s)   Warning   Failed      Pod/notes-dev-deploy-689586b5d6-rtv5g   Failed to pull image "nginx:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/nginx:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/nginx:assignment-tag-does-not-exist": docker.io/library/nginx:assignment-tag-does-not-exist: not found
+10s (x3 over 57s)   Warning   Failed      Pod/notes-dev-deploy-689586b5d6-rtv5g   Error: ErrImagePull
+$ helm history notes-dev --namespace assignment-s15
+REVISION	UPDATED                 	STATUS    	CHART            	APP VERSION	DESCRIPTION                                          
+1       	Wed Oct  7 00:17:40 2026	superseded	notes-chart-0.1.0	1.0        	Install complete                                     
+2       	Wed Oct  7 00:17:45 2026	deployed  	notes-chart-0.1.0	1.0        	Upgrade complete                                     
+3       	Wed Oct  7 00:17:54 2026	failed    	notes-chart-0.1.0	1.0        	Upgrade "notes-dev" failed: context deadline exceeded
+$ helm rollback notes-dev 2 --wait --timeout 180s --namespace assignment-s15
+Rollback was a success! Happy Helming!
+$ kubectl -n assignment-s15 rollout status deployment/notes-dev-deploy --timeout=180s
+deployment "notes-dev-deploy" successfully rolled out
+$ kubectl -n assignment-s15 get pods -o wide
+NAME                                READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+notes-dev-deploy-669c7d8995-6ftff   1/1     Running   0          69s   10.244.0.26   devops-assignment   <none>           <none>
+notes-dev-deploy-669c7d8995-bs5pq   1/1     Running   0          67s   10.244.0.27   devops-assignment   <none>           <none>
+notes-dev-deploy-669c7d8995-z28jl   1/1     Running   0          72s   10.244.0.25   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s15 get service notes-dev-svc
+NAME            TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+notes-dev-svc   NodePort   10.97.47.82   <none>        80:30090/TCP   76s
+$ kubectl -n assignment-s15 get configmap notes-dev-config
+NAME               DATA   AGE
+notes-dev-config   3      76s
+$ kubectl -n assignment-s15 exec notes-dev-deploy-669c7d8995-6ftff -- printenv ENVIRONMENT
+production
+$ kubectl -n assignment-s15 exec notes-dev-deploy-669c7d8995-6ftff -- wget -q -O - http://notes-dev-svc
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Vimal&#39;s Notes</title>
+<style>body{font:18px system-ui;max-width:720px;margin:64px auto;padding:24px;color:#203047}li{margin:12px 0}</style></head>
+<body><h1>Vimal&#39;s Notes</h1>
+<p>Environment: <strong>production</strong></p>
+<p>Session 15 · Vimal Kumar Yadav · 24BCS10273</p>
+<ul><li>Package the application configuration in a chart.</li>
+<li>Upgrade to three replicas with production values.</li>
+<li>Recover from a failed image upgrade using a previous release.</li></ul>
+</body></html>
+PASS: 3 ready replicas serve the production page.
+$ helm history notes-dev --namespace assignment-s15
+REVISION	UPDATED                 	STATUS    	CHART            	APP VERSION	DESCRIPTION                                          
+1       	Wed Oct  7 00:17:40 2026	superseded	notes-chart-0.1.0	1.0        	Install complete                                     
+2       	Wed Oct  7 00:17:45 2026	superseded	notes-chart-0.1.0	1.0        	Upgrade complete                                     
+3       	Wed Oct  7 00:17:54 2026	failed    	notes-chart-0.1.0	1.0        	Upgrade "notes-dev" failed: context deadline exceeded
+4       	Wed Oct  7 00:18:54 2026	deployed  	notes-chart-0.1.0	1.0        	Rollback to 2
+$ helm status notes-dev --namespace assignment-s15
+NAME: notes-dev
+LAST DEPLOYED: Wed Oct  7 00:18:54 2026
+NAMESPACE: assignment-s15
+STATUS: deployed
+REVISION: 4
+TEST SUITE: None
+NOTES:
+Vimal's Notes is installed in namespace assignment-s15.
+Inspect it with:
+  kubectl -n assignment-s15 get pods,service,configmap -l app.kubernetes.io/instance=notes-dev
+Open it through the Minikube node IP on port 30090.
+$ helm get values notes-dev --namespace assignment-s15
+USER-SUPPLIED VALUES:
+app:
+  environment: production
+image:
+  tag: 1.28-alpine
+replicaCount: 3
+PASS: failed revision 3 recovered to revision 2 configuration as new revision 4.

@@ -1,0 +1,5 @@
+replicaCount: 3
+image:
+  tag: 1.28-alpine
+app:
+  environment: production
