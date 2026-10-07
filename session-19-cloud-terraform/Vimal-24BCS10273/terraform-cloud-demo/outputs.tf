@@ -1,0 +1,9 @@
+output "region" { value = var.aws_region }
+output "vpc_id" { value = aws_vpc.lab.id }
+output "vpc_cidr" { value = aws_vpc.lab.cidr_block }
+output "subnet_id" { value = aws_subnet.public.id }
+output "subnet_cidr" { value = aws_subnet.public.cidr_block }
+output "internet_gateway_id" { value = aws_internet_gateway.lab.id }
+output "route_table_id" { value = aws_route_table.public.id }
+output "route_association_id" { value = aws_route_table_association.public.id }
+output "security_group_id" { value = aws_security_group.web.id }

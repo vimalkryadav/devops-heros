@@ -1,0 +1,31 @@
+Run started: 2026-10-07T15:45:53.804726+00:00
+
+$ terraform apply -no-color -input=false assignment.tfplan
+aws_vpc.lab: Creating...
+aws_vpc.lab: Creation complete after 7s [id=vpc-014f1871eba198cbf]
+aws_internet_gateway.lab: Creating...
+aws_subnet.public: Creating...
+aws_security_group.web: Creating...
+aws_internet_gateway.lab: Creation complete after 6s [id=igw-06595473ccbc2e00f]
+aws_route_table.public: Creating...
+aws_route_table.public: Creation complete after 3s [id=rtb-035075b151c9bc39c]
+aws_subnet.public: Still creating... [00m10s elapsed]
+aws_security_group.web: Still creating... [00m10s elapsed]
+aws_security_group.web: Creation complete after 12s [id=sg-073e80459534fb5e2]
+aws_subnet.public: Creation complete after 16s [id=subnet-0d5355ca89961d200]
+aws_route_table_association.public: Creating...
+aws_route_table_association.public: Creation complete after 2s [id=rtbassoc-03229e6b5077df782]
+
+Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+internet_gateway_id = "igw-06595473ccbc2e00f"
+region = "us-east-1"
+route_association_id = "rtbassoc-03229e6b5077df782"
+route_table_id = "rtb-035075b151c9bc39c"
+security_group_id = "sg-073e80459534fb5e2"
+subnet_cidr = "10.83.1.0/24"
+subnet_id = "subnet-0d5355ca89961d200"
+vpc_cidr = "10.83.0.0/16"
+vpc_id = "vpc-014f1871eba198cbf"

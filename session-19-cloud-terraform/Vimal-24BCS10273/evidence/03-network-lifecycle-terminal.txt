@@ -1,0 +1,16 @@
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ rg 'Apply complete|Destroy complete' evidence/03-apply.txt evidence/05-destroy.txt; tail -n 9 evidence/04-verification.txt
+[?2004levidence/05-destroy.txt
+441:Destroy complete! Resources: 6 destroyed.
+
+evidence/03-apply.txt
+19:Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
+
+$ terraform state list
+data.aws_availability_zones.available
+aws_internet_gateway.lab
+aws_route_table.public
+aws_route_table_association.public
+aws_security_group.web
+aws_subnet.public
+aws_vpc.lab
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ 

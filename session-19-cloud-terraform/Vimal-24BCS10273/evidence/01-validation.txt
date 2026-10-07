@@ -1,0 +1,18 @@
+Run started: 2026-10-07T15:45:53.804726+00:00
+
+$ terraform state list
+
+$ terraform init -no-color -input=false
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of hashicorp/aws from the dependency lock file
+- Using previously-installed hashicorp/aws v6.67.0
+
+Terraform has been successfully initialized!
+
+$ terraform fmt -check
+
+$ terraform validate -no-color
+Success! The configuration is valid.
+
