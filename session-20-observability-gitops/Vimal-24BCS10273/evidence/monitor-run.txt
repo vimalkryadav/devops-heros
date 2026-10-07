@@ -1,0 +1,88 @@
+Verification started: 2026-10-06T20:12:47.280819+00:00
+$ kubectl -n assignment-s20 rollout status deployment/release-monitor --timeout=300s
+deployment "release-monitor" successfully rolled out
+PASS: release-monitor forwarding is available
+$ kubectl -n assignment-s20 rollout status deployment/prometheus --timeout=300s
+deployment "prometheus" successfully rolled out
+$ kubectl -n assignment-s20 rollout status deployment/grafana --timeout=300s
+deployment "grafana" successfully rolled out
+PASS: prometheus forwarding is available
+PASS: grafana forwarding is available
+PASS: Prometheus scrapes the application as UP
+PASS: Application CPU and request counters have rate samples
+PASS: ApplicationErrors enters firing state
+{
+  "status": "success",
+  "data": {
+    "alerts": [
+      {
+        "labels": {
+          "alertname": "ApplicationErrors",
+          "severity": "warning"
+        },
+        "annotations": {
+          "summary": "The assignment API is returning deliberate HTTP 503 responses."
+        },
+        "state": "firing",
+        "activeAt": "2026-10-06T20:13:05.644809852Z",
+        "value": "2.2508444444444445e-01"
+      }
+    ]
+  }
+}
+PASS: ApplicationErrors resolves after successful traffic
+HTTP requests per second samples: 14 max: 4.5636363636363635
+Application CPU cores samples: 16 max: 0.09723292072727271
+Resident memory samples: 17 max: 22208512
+Scrape health samples: 37 max: 1
+$ kubectl -n assignment-s20 top pods
+NAME                              CPU(cores)   MEMORY(bytes)   
+grafana-589b7996dd-hll2j          10m          226Mi           
+prometheus-b7bd74db-ljjv9         3m           64Mi            
+release-monitor-dd7cf7689-v9jd7   72m          12Mi            
+$ kubectl -n assignment-s20 logs deployment/release-monitor --tail=30
+{"timestamp": "2026-10-06T20:14:05.730019+00:00", "request_id": "9cb106ed8a7f4c74b70a1f1c8b497ec0", "path": "/work", "status": 200, "duration_seconds": 0.022197}
+{"timestamp": "2026-10-06T20:14:05.956918+00:00", "request_id": "225fd68d28614bf0a0e88dd2d8cd1705", "path": "/work", "status": 200, "duration_seconds": 0.020709}
+{"timestamp": "2026-10-06T20:14:06.188772+00:00", "request_id": "91d8d2708a62416d8e38220cdacf8351", "path": "/work", "status": 200, "duration_seconds": 0.025296}
+{"timestamp": "2026-10-06T20:14:06.409021+00:00", "request_id": "48027e7c9aa542e0908b1a62adc602f4", "path": "/work", "status": 200, "duration_seconds": 0.017294}
+{"timestamp": "2026-10-06T20:14:06.636550+00:00", "request_id": "51e02068c3944b9e98d8fb1169ff34f0", "path": "/work", "status": 200, "duration_seconds": 0.023179}
+{"timestamp": "2026-10-06T20:14:06.865005+00:00", "request_id": "70e6cda537e347b3a4be2ca6335b031d", "path": "/work", "status": 200, "duration_seconds": 0.02193}
+{"timestamp": "2026-10-06T20:14:07.089079+00:00", "request_id": "fa3e3514b4c54a318c3377180d15bdd4", "path": "/work", "status": 200, "duration_seconds": 0.019544}
+{"timestamp": "2026-10-06T20:14:07.311438+00:00", "request_id": "29c5d4a703354f3ca8636bb4c83e90b7", "path": "/work", "status": 200, "duration_seconds": 0.018845}
+{"timestamp": "2026-10-06T20:14:07.539825+00:00", "request_id": "d7d209dc980a4061949b7ec3650a20f2", "path": "/work", "status": 200, "duration_seconds": 0.02542}
+{"timestamp": "2026-10-06T20:14:07.759814+00:00", "request_id": "890e9910e71740abaa207763040a1421", "path": "/work", "status": 200, "duration_seconds": 0.017104}
+{"timestamp": "2026-10-06T20:14:07.990194+00:00", "request_id": "21146acde73644d2b5edcb58a6d8219d", "path": "/work", "status": 200, "duration_seconds": 0.022841}
+{"timestamp": "2026-10-06T20:14:08.213806+00:00", "request_id": "f45a4a5f7abe49f7b68f552641159a7b", "path": "/work", "status": 200, "duration_seconds": 0.019273}
+{"timestamp": "2026-10-06T20:14:08.435634+00:00", "request_id": "befb839ad6ba451fb86f133a6bada450", "path": "/work", "status": 200, "duration_seconds": 0.018431}
+{"timestamp": "2026-10-06T20:14:08.666520+00:00", "request_id": "34eeb38366a94aec89b5691158f474a1", "path": "/work", "status": 200, "duration_seconds": 0.024489}
+{"timestamp": "2026-10-06T20:14:08.895399+00:00", "request_id": "a6cebe2a22fe4b59be1570125f9a4f51", "path": "/work", "status": 200, "duration_seconds": 0.021807}
+{"timestamp": "2026-10-06T20:14:09.120093+00:00", "request_id": "0a21659460394046ad9a9cdfccebafbe", "path": "/work", "status": 200, "duration_seconds": 0.020953}
+{"timestamp": "2026-10-06T20:14:09.344326+00:00", "request_id": "0653f842266b4a5db01c387b2a35706e", "path": "/work", "status": 200, "duration_seconds": 0.020529}
+{"timestamp": "2026-10-06T20:14:09.564656+00:00", "request_id": "6fb330c1179c4bfda9067723e9cadd43", "path": "/work", "status": 200, "duration_seconds": 0.017498}
+{"timestamp": "2026-10-06T20:14:09.732971+00:00", "request_id": "ba76801471fd4f9a91df86f99d722514", "path": "/metrics", "status": 200, "duration_seconds": 0.000879}
+{"timestamp": "2026-10-06T20:14:09.788093+00:00", "request_id": "fac2a76bec50458c8c48a9cc32b95dad", "path": "/work", "status": 200, "duration_seconds": 0.019222}
+{"timestamp": "2026-10-06T20:14:10.012725+00:00", "request_id": "6f7331a473764465a0ccd82240c11ef0", "path": "/work", "status": 200, "duration_seconds": 0.020826}
+{"timestamp": "2026-10-06T20:14:10.234223+00:00", "request_id": "410a15f231a54541b76425c719f9a28d", "path": "/work", "status": 200, "duration_seconds": 0.018444}
+{"timestamp": "2026-10-06T20:14:10.460896+00:00", "request_id": "6730f3827f224ca99e0aae5bd54cafb5", "path": "/work", "status": 200, "duration_seconds": 0.02122}
+{"timestamp": "2026-10-06T20:14:10.686622+00:00", "request_id": "7aa183cecdea4b3982d37e991e7306f2", "path": "/work", "status": 200, "duration_seconds": 0.021269}
+{"timestamp": "2026-10-06T20:14:10.913832+00:00", "request_id": "0d7dab62a8a248bdb3cc0caabfa65f31", "path": "/work", "status": 200, "duration_seconds": 0.021773}
+{"timestamp": "2026-10-06T20:14:11.140694+00:00", "request_id": "96d6d7afe0214d0f84c35b2c83568122", "path": "/work", "status": 200, "duration_seconds": 0.022022}
+{"timestamp": "2026-10-06T20:14:11.365867+00:00", "request_id": "69b30d52b36d43c798ccbf76e52839aa", "path": "/work", "status": 200, "duration_seconds": 0.020807}
+{"timestamp": "2026-10-06T20:14:11.593573+00:00", "request_id": "a8fe3cb4b9004c3baf2946ff2476bcf2", "path": "/work", "status": 200, "duration_seconds": 0.023195}
+{"timestamp": "2026-10-06T20:14:11.764817+00:00", "request_id": "8d878ef8881140dab06cccb96dac698b", "path": "/metrics", "status": 200, "duration_seconds": 0.000245}
+{"timestamp": "2026-10-06T20:14:11.814725+00:00", "request_id": "803d7a3eeb6b401690564ef147d30397", "path": "/work", "status": 200, "duration_seconds": 0.017583}
+$ kubectl -n assignment-s20 get pods,deployments,services -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE    IP            NODE                NOMINATED NODE   READINESS GATES
+pod/grafana-589b7996dd-hll2j          1/1     Running   0          15m    10.244.0.9    devops-assignment   <none>           <none>
+pod/prometheus-b7bd74db-ljjv9         1/1     Running   0          15m    10.244.0.8    devops-assignment   <none>           <none>
+pod/release-monitor-dd7cf7689-v9jd7   1/1     Running   0          7m3s   10.244.0.13   devops-assignment   <none>           <none>
+
+NAME                              READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES                                                                                            SELECTOR
+deployment.apps/grafana           1/1     1            1           15m    grafana      grafana/grafana:13.2.3@sha256:b28bae15e219c998fb0e0424ed724930cc61b1f61fb404d47c862f9a23f9e572    app=grafana
+deployment.apps/prometheus        1/1     1            1           15m    prometheus   prom/prometheus:v3.15.0@sha256:efd719c99d83b060d9daefdcf00360461adf279f45ef5391f8d111892118753e   app=prometheus
+deployment.apps/release-monitor   1/1     1            1           7m3s   app          python:3.14.7-alpine@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01      app=release-monitor
+
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE    SELECTOR
+service/grafana           ClusterIP   10.103.149.132   <none>        3000/TCP   15m    app=grafana
+service/prometheus        ClusterIP   10.110.98.203    <none>        9090/TCP   15m    app=prometheus
+service/release-monitor   ClusterIP   10.108.195.27    <none>        8000/TCP   7m3s   app=release-monitor

@@ -1,0 +1,176 @@
+{
+    "apiVersion": "argoproj.io/v1alpha1",
+    "kind": "Application",
+    "metadata": {
+        "annotations": {
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"argoproj.io/v1alpha1\",\"kind\":\"Application\",\"metadata\":{\"annotations\":{},\"finalizers\":[\"resources-finalizer.argocd.argoproj.io\"],\"name\":\"session20\",\"namespace\":\"argocd\"},\"spec\":{\"destination\":{\"namespace\":\"assignment-s20\",\"server\":\"https://kubernetes.default.svc\"},\"project\":\"session20\",\"source\":{\"path\":\"session-20-observability-gitops/Vimal-24BCS10273/gitops/application\",\"repoURL\":\"https://github.com/vimalyad/devops-heros.git\",\"targetRevision\":\"assignment/session20-observability-gitops\"},\"syncPolicy\":{\"automated\":{\"prune\":true,\"selfHeal\":true}}}}\n"
+        },
+        "creationTimestamp": "2026-10-06T19:58:42Z",
+        "finalizers": [
+            "resources-finalizer.argocd.argoproj.io"
+        ],
+        "generation": 18,
+        "name": "session20",
+        "namespace": "argocd",
+        "resourceVersion": "7497",
+        "uid": "f8a93bc6-bdac-462d-8aea-9bcfb3764553"
+    },
+    "spec": {
+        "destination": {
+            "namespace": "assignment-s20",
+            "server": "https://kubernetes.default.svc"
+        },
+        "project": "session20",
+        "source": {
+            "path": "session-20-observability-gitops/Vimal-24BCS10273/gitops/application",
+            "repoURL": "https://github.com/vimalyad/devops-heros.git",
+            "targetRevision": "assignment/session20-observability-gitops"
+        },
+        "syncPolicy": {
+            "automated": {
+                "prune": true,
+                "selfHeal": true
+            }
+        }
+    },
+    "status": {
+        "controllerNamespace": "argocd",
+        "health": {
+            "lastTransitionTime": "2026-10-06T20:12:47Z",
+            "status": "Healthy"
+        },
+        "history": [
+            {
+                "deployStartedAt": "2026-10-06T20:07:08Z",
+                "deployedAt": "2026-10-06T20:07:08Z",
+                "id": 0,
+                "initiatedBy": {
+                    "automated": true
+                },
+                "revision": "5fbcf33addea513d6bc44a2e8405a36c7dffe5af",
+                "source": {
+                    "path": "session-20-observability-gitops/Vimal-24BCS10273/gitops/application",
+                    "repoURL": "https://github.com/vimalyad/devops-heros.git",
+                    "targetRevision": "assignment/session20-observability-gitops"
+                }
+            }
+        ],
+        "operationState": {
+            "finishedAt": "2026-10-06T20:07:08Z",
+            "message": "successfully synced (all tasks run)",
+            "operation": {
+                "initiatedBy": {
+                    "automated": true
+                },
+                "retry": {
+                    "limit": 5
+                },
+                "sync": {
+                    "prune": true,
+                    "revision": "5fbcf33addea513d6bc44a2e8405a36c7dffe5af",
+                    "source": {
+                        "path": "session-20-observability-gitops/Vimal-24BCS10273/gitops/application",
+                        "repoURL": "https://github.com/vimalyad/devops-heros.git",
+                        "targetRevision": "assignment/session20-observability-gitops"
+                    }
+                }
+            },
+            "phase": "Succeeded",
+            "startedAt": "2026-10-06T20:07:08Z",
+            "syncResult": {
+                "resources": [
+                    {
+                        "group": "",
+                        "hookPhase": "Running",
+                        "kind": "ConfigMap",
+                        "message": "configmap/release-monitor created",
+                        "name": "release-monitor",
+                        "namespace": "assignment-s20",
+                        "status": "Synced",
+                        "syncPhase": "Sync",
+                        "version": "v1"
+                    },
+                    {
+                        "group": "",
+                        "hookPhase": "Running",
+                        "kind": "Service",
+                        "message": "service/release-monitor created",
+                        "name": "release-monitor",
+                        "namespace": "assignment-s20",
+                        "status": "Synced",
+                        "syncPhase": "Sync",
+                        "version": "v1"
+                    },
+                    {
+                        "group": "apps",
+                        "hookPhase": "Running",
+                        "images": [
+                            "python:3.14.7-alpine@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01"
+                        ],
+                        "kind": "Deployment",
+                        "message": "deployment.apps/release-monitor created",
+                        "name": "release-monitor",
+                        "namespace": "assignment-s20",
+                        "status": "Synced",
+                        "syncPhase": "Sync",
+                        "version": "v1"
+                    }
+                ],
+                "revision": "5fbcf33addea513d6bc44a2e8405a36c7dffe5af",
+                "source": {
+                    "path": "session-20-observability-gitops/Vimal-24BCS10273/gitops/application",
+                    "repoURL": "https://github.com/vimalyad/devops-heros.git",
+                    "targetRevision": "assignment/session20-observability-gitops"
+                }
+            }
+        },
+        "reconciledAt": "2026-10-06T20:13:21Z",
+        "resourceHealthSource": "appTree",
+        "resources": [
+            {
+                "kind": "ConfigMap",
+                "name": "release-monitor",
+                "namespace": "assignment-s20",
+                "status": "Synced",
+                "version": "v1"
+            },
+            {
+                "kind": "Service",
+                "name": "release-monitor",
+                "namespace": "assignment-s20",
+                "status": "Synced",
+                "version": "v1"
+            },
+            {
+                "group": "apps",
+                "kind": "Deployment",
+                "name": "release-monitor",
+                "namespace": "assignment-s20",
+                "status": "Synced",
+                "version": "v1"
+            }
+        ],
+        "sourceHydrator": {},
+        "sourceType": "Directory",
+        "summary": {
+            "images": [
+                "python:3.14.7-alpine@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01"
+            ]
+        },
+        "sync": {
+            "comparedTo": {
+                "destination": {
+                    "namespace": "assignment-s20",
+                    "server": "https://kubernetes.default.svc"
+                },
+                "source": {
+                    "path": "session-20-observability-gitops/Vimal-24BCS10273/gitops/application",
+                    "repoURL": "https://github.com/vimalyad/devops-heros.git",
+                    "targetRevision": "assignment/session20-observability-gitops"
+                }
+            },
+            "revision": "5fbcf33addea513d6bc44a2e8405a36c7dffe5af",
+            "status": "Synced"
+        }
+    }
+}

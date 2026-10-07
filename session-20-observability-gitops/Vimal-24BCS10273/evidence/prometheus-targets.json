@@ -1,0 +1,37 @@
+{
+  "status": "success",
+  "data": {
+    "activeTargets": [
+      {
+        "discoveredLabels": {
+          "__address__": "release-monitor:8000",
+          "__always_scrape_classic_histograms__": "false",
+          "__convert_classic_histograms_to_nhcb__": "false",
+          "__metrics_path__": "/metrics",
+          "__scheme__": "http",
+          "__scrape_interval__": "5s",
+          "__scrape_native_histograms__": "false",
+          "__scrape_timeout__": "5s",
+          "job": "release-monitor"
+        },
+        "labels": {
+          "instance": "release-monitor:8000",
+          "job": "release-monitor"
+        },
+        "scrapePool": "release-monitor",
+        "scrapeUrl": "http://release-monitor:8000/metrics",
+        "globalUrl": "http://release-monitor:8000/metrics",
+        "lastError": "",
+        "lastScrape": "2026-10-06T20:12:54.728042419Z",
+        "lastScrapeDuration": 0.002280345,
+        "health": "up",
+        "scrapeInterval": "5s",
+        "scrapeTimeout": "5s"
+      }
+    ],
+    "droppedTargets": [],
+    "droppedTargetCounts": {
+      "release-monitor": 0
+    }
+  }
+}
