@@ -1,0 +1,390 @@
+Run started: 2026-10-07T06:09:48.319448+00:00
+
+$ terraform plan -destroy -input=false -out=destroy.tfplan -no-color
+data.aws_availability_zones.available: Reading...
+data.aws_ami.linux: Reading...
+aws_vpc.lab: Refreshing state... [id=vpc-03d141c00e523ba16]
+aws_s3_bucket.assignment: Refreshing state... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+data.aws_availability_zones.available: Read complete after 1s [id=us-east-1]
+data.aws_ami.linux: Read complete after 2s [id=ami-0ae8605ed708e3c3e]
+aws_internet_gateway.lab: Refreshing state... [id=igw-0786a9f5b30857645]
+aws_subnet.public: Refreshing state... [id=subnet-08b5629f377dc60f2]
+aws_security_group.web: Refreshing state... [id=sg-04873904686da9227]
+aws_route_table.public: Refreshing state... [id=rtb-021c2f8f5acabefcf]
+aws_vpc_security_group_egress_rule.outbound: Refreshing state... [id=sgr-068a9dbd2d8bbf472]
+aws_vpc_security_group_ingress_rule.http: Refreshing state... [id=sgr-0cb279fc92e2863f5]
+aws_route_table_association.public: Refreshing state... [id=rtbassoc-07d42d86070bdf44a]
+aws_s3_bucket_public_access_block.assignment: Refreshing state... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_s3_bucket_ownership_controls.assignment: Refreshing state... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_s3_bucket_server_side_encryption_configuration.assignment: Refreshing state... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_s3_object.record: Refreshing state... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562/assignment.txt]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # aws_internet_gateway.lab will be destroyed
+  - resource "aws_internet_gateway" "lab" {
+      - arn      = "arn:aws:ec2:us-east-1:094807033031:internet-gateway/igw-0786a9f5b30857645" -> null
+      - id       = "igw-0786a9f5b30857645" -> null
+      - owner_id = "094807033031" -> null
+      - region   = "us-east-1" -> null
+      - tags     = {} -> null
+      - tags_all = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id   = "vpc-03d141c00e523ba16" -> null
+    }
+
+  # aws_route_table.public will be destroyed
+  - resource "aws_route_table" "public" {
+      - arn              = "arn:aws:ec2:us-east-1:094807033031:route-table/rtb-021c2f8f5acabefcf" -> null
+      - id               = "rtb-021c2f8f5acabefcf" -> null
+      - owner_id         = "094807033031" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-east-1" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - gateway_id                 = "igw-0786a9f5b30857645"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {} -> null
+      - tags_all         = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id           = "vpc-03d141c00e523ba16" -> null
+    }
+
+  # aws_route_table_association.public will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-07d42d86070bdf44a" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-021c2f8f5acabefcf" -> null
+      - subnet_id      = "subnet-08b5629f377dc60f2" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # aws_s3_bucket.assignment will be destroyed
+  - resource "aws_s3_bucket" "assignment" {
+      - arn                         = "arn:aws:s3:::vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - bucket                      = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - bucket_domain_name          = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562.s3.amazonaws.com" -> null
+      - bucket_namespace            = "global" -> null
+      - bucket_prefix               = "vimal-24bcs10273-s19-" -> null
+      - bucket_region               = "us-east-1" -> null
+      - bucket_regional_domain_name = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562.s3.us-east-1.amazonaws.com" -> null
+      - force_destroy               = false -> null
+      - hosted_zone_id              = "Z3AQBSTGFYJSTF" -> null
+      - id                          = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - object_lock_enabled         = false -> null
+      - region                      = "us-east-1" -> null
+      - request_payer               = "BucketOwner" -> null
+      - tags                        = {} -> null
+      - tags_all                    = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+        # (2 unchanged attributes hidden)
+
+      - grant {
+          - id          = "d8dece651f95627e301b9f1c860c0b24c3c0456628a7798b1e8685ab64ddd7c8" -> null
+          - permissions = [
+              - "FULL_CONTROL",
+            ] -> null
+          - type        = "CanonicalUser" -> null
+            # (1 unchanged attribute hidden)
+        }
+
+      - server_side_encryption_configuration {
+          - rule {
+              - bucket_key_enabled = false -> null
+
+              - apply_server_side_encryption_by_default {
+                  - sse_algorithm     = "AES256" -> null
+                    # (1 unchanged attribute hidden)
+                }
+            }
+        }
+
+      - versioning {
+          - enabled    = false -> null
+          - mfa_delete = false -> null
+        }
+    }
+
+  # aws_s3_bucket_ownership_controls.assignment will be destroyed
+  - resource "aws_s3_bucket_ownership_controls" "assignment" {
+      - bucket = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - id     = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - region = "us-east-1" -> null
+
+      - rule {
+          - object_ownership = "BucketOwnerEnforced" -> null
+        }
+    }
+
+  # aws_s3_bucket_public_access_block.assignment will be destroyed
+  - resource "aws_s3_bucket_public_access_block" "assignment" {
+      - block_public_acls       = true -> null
+      - block_public_policy     = true -> null
+      - bucket                  = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - id                      = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - ignore_public_acls      = true -> null
+      - region                  = "us-east-1" -> null
+      - restrict_public_buckets = true -> null
+    }
+
+  # aws_s3_bucket_server_side_encryption_configuration.assignment will be destroyed
+  - resource "aws_s3_bucket_server_side_encryption_configuration" "assignment" {
+      - bucket                = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - id                    = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - region                = "us-east-1" -> null
+        # (1 unchanged attribute hidden)
+
+      - rule {
+          - blocked_encryption_types = [
+              - "SSE-C",
+            ] -> null
+          - bucket_key_enabled       = false -> null
+
+          - apply_server_side_encryption_by_default {
+              - sse_algorithm     = "AES256" -> null
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # aws_s3_object.record will be destroyed
+  - resource "aws_s3_object" "record" {
+      - arn                           = "arn:aws:s3:::vimal-24bcs10273-s19-9f76158f056665e55f70cc2562/assignment.txt" -> null
+      - bucket                        = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+      - bucket_key_enabled            = false -> null
+      - content                       = <<-EOT
+            Session 19: Vimal Kumar Yadav, 24BCS10273
+        EOT -> null
+      - content_type                  = "application/octet-stream" -> null
+      - etag                          = "8fd113611cded6cbf77f4e8d2b21d5ee" -> null
+      - force_destroy                 = false -> null
+      - id                            = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562/assignment.txt" -> null
+      - key                           = "assignment.txt" -> null
+      - metadata                      = {} -> null
+      - region                        = "us-east-1" -> null
+      - server_side_encryption        = "AES256" -> null
+      - storage_class                 = "STANDARD" -> null
+      - tags                          = {} -> null
+      - tags_all                      = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+        # (14 unchanged attributes hidden)
+    }
+
+  # aws_security_group.web will be destroyed
+  - resource "aws_security_group" "web" {
+      - arn                    = "arn:aws:ec2:us-east-1:094807033031:security-group/sg-04873904686da9227" -> null
+      - description            = "Assignment HTTP access restricted to the operator address" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - from_port        = 0
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "-1"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 0
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - id                     = "sg-04873904686da9227" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = [
+                  - "202.131.133.155/32",
+                ]
+              - from_port        = 8080
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 8080
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - name                   = "vimal-session19-a8402c65231f624aadbb3c2deb" -> null
+      - name_prefix            = "vimal-session19-" -> null
+      - owner_id               = "094807033031" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {} -> null
+      - tags_all               = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id                 = "vpc-03d141c00e523ba16" -> null
+    }
+
+  # aws_subnet.public will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-east-1:094807033031:subnet/subnet-08b5629f377dc60f2" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1a" -> null
+      - availability_zone_id                           = "use1-az1" -> null
+      - cidr_block                                     = "10.83.1.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-08b5629f377dc60f2" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = true -> null
+      - owner_id                                       = "094807033031" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {} -> null
+      - tags_all                                       = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id                                         = "vpc-03d141c00e523ba16" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # aws_vpc.lab will be destroyed
+  - resource "aws_vpc" "lab" {
+      - arn                                  = "arn:aws:ec2:us-east-1:094807033031:vpc/vpc-03d141c00e523ba16" -> null
+      - assign_generated_ipv6_cidr_block     = false -> null
+      - cidr_block                           = "10.83.0.0/16" -> null
+      - default_network_acl_id               = "acl-0c0c1ace25bba320b" -> null
+      - default_route_table_id               = "rtb-0dd7bfc409ebd2d88" -> null
+      - default_security_group_id            = "sg-0bb03995a6dafea6b" -> null
+      - dhcp_options_id                      = "dopt-0567b8842e459c898" -> null
+      - enable_dns_hostnames                 = true -> null
+      - enable_dns_support                   = true -> null
+      - enable_network_address_usage_metrics = false -> null
+      - id                                   = "vpc-03d141c00e523ba16" -> null
+      - instance_tenancy                     = "default" -> null
+      - ipv6_netmask_length                  = 0 -> null
+      - main_route_table_id                  = "rtb-0dd7bfc409ebd2d88" -> null
+      - owner_id                             = "094807033031" -> null
+      - region                               = "us-east-1" -> null
+      - tags                                 = {
+          - "Name" = "vimal-session19"
+        } -> null
+      - tags_all                             = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # aws_vpc_security_group_egress_rule.outbound will be destroyed
+  - resource "aws_vpc_security_group_egress_rule" "outbound" {
+      - arn                    = "arn:aws:ec2:us-east-1:094807033031:security-group-rule/sgr-068a9dbd2d8bbf472" -> null
+      - cidr_ipv4              = "0.0.0.0/0" -> null
+      - id                     = "sgr-068a9dbd2d8bbf472" -> null
+      - ip_protocol            = "-1" -> null
+      - region                 = "us-east-1" -> null
+      - security_group_id      = "sg-04873904686da9227" -> null
+      - security_group_rule_id = "sgr-068a9dbd2d8bbf472" -> null
+      - tags_all               = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+    }
+
+  # aws_vpc_security_group_ingress_rule.http will be destroyed
+  - resource "aws_vpc_security_group_ingress_rule" "http" {
+      - arn                    = "arn:aws:ec2:us-east-1:094807033031:security-group-rule/sgr-0cb279fc92e2863f5" -> null
+      - cidr_ipv4              = "202.131.133.155/32" -> null
+      - from_port              = 8080 -> null
+      - id                     = "sgr-0cb279fc92e2863f5" -> null
+      - ip_protocol            = "tcp" -> null
+      - region                 = "us-east-1" -> null
+      - security_group_id      = "sg-04873904686da9227" -> null
+      - security_group_rule_id = "sgr-0cb279fc92e2863f5" -> null
+      - tags_all               = {
+          - "ManagedBy" = "Terraform"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - to_port                = 8080 -> null
+    }
+
+Plan: 0 to add, 0 to change, 13 to destroy.
+
+Changes to Outputs:
+  - bucket_arn        = "arn:aws:s3:::vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+  - bucket_name       = "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562" -> null
+  - image_id          = "ami-0ae8605ed708e3c3e" -> null
+  - region            = "us-east-1" -> null
+  - security_group_id = "sg-04873904686da9227" -> null
+  - subnet_id         = "subnet-08b5629f377dc60f2" -> null
+  - vpc_id            = "vpc-03d141c00e523ba16" -> null
+
+$ terraform apply -input=false destroy.tfplan -no-color
+aws_s3_bucket_ownership_controls.assignment: Destroying... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_s3_bucket_server_side_encryption_configuration.assignment: Destroying... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_s3_bucket_public_access_block.assignment: Destroying... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_s3_object.record: Destroying... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562/assignment.txt]
+aws_vpc_security_group_ingress_rule.http: Destroying... [id=sgr-0cb279fc92e2863f5]
+aws_route_table_association.public: Destroying... [id=rtbassoc-07d42d86070bdf44a]
+aws_vpc_security_group_egress_rule.outbound: Destroying... [id=sgr-068a9dbd2d8bbf472]
+aws_s3_object.record: Destruction complete after 1s
+aws_s3_bucket_public_access_block.assignment: Destruction complete after 2s
+aws_vpc_security_group_ingress_rule.http: Destruction complete after 2s
+aws_s3_bucket_server_side_encryption_configuration.assignment: Destruction complete after 2s
+aws_vpc_security_group_egress_rule.outbound: Destruction complete after 2s
+aws_security_group.web: Destroying... [id=sg-04873904686da9227]
+aws_route_table_association.public: Destruction complete after 2s
+aws_subnet.public: Destroying... [id=subnet-08b5629f377dc60f2]
+aws_route_table.public: Destroying... [id=rtb-021c2f8f5acabefcf]
+aws_s3_bucket_ownership_controls.assignment: Destruction complete after 3s
+aws_s3_bucket.assignment: Destroying... [id=vimal-24bcs10273-s19-9f76158f056665e55f70cc2562]
+aws_subnet.public: Destruction complete after 1s
+aws_security_group.web: Destruction complete after 1s
+aws_s3_bucket.assignment: Destruction complete after 1s
+aws_route_table.public: Destruction complete after 2s
+aws_internet_gateway.lab: Destroying... [id=igw-0786a9f5b30857645]
+aws_internet_gateway.lab: Destruction complete after 2s
+aws_vpc.lab: Destroying... [id=vpc-03d141c00e523ba16]
+aws_vpc.lab: Destruction complete after 1s
+
+Apply complete! Resources: 0 added, 0 changed, 13 destroyed.
+
+$ terraform destroy -auto-approve -input=false -no-color
+
+No changes. No objects need to be destroyed.
+
+Either you have not created any objects yet or the existing objects were
+already deleted outside of Terraform.
+
+Destroy complete! Resources: 0 destroyed.

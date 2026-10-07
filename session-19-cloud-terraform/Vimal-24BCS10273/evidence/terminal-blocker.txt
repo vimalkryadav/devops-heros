@@ -1,0 +1,22 @@
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ cat evidence/attempts/02-free-tier-restriction/00-access-check.txt; tail -n 8 evidence/attempts/02-free-tier-restriction/03-apply.txt; cat evidence/attempts/02-free-tier-restriction/aws-cleanup-check.json
+[?2004lRun started: 2026-10-07T06:09:48.319448+00:00
+ec2:DescribeInstanceTypes: DryRunOperation
+ec2:DescribeVolumes: DryRunOperation
+ec2:DescribeInstanceCreditSpecifications: DryRunOperation
+aws_instance.web: Creating...
+
+Error: creating EC2 Instance: operation error EC2: RunInstances, https response error StatusCode: 400, RequestID: d84d0503-540e-418b-bfde-a55381160ada, api error InvalidParameterCombination: The specified instance type is not eligible for Free Tier. For a list of Free Tier instance types, run 'describe-instance-types' with the filter 'free-tier-eligible=true'.
+
+  with aws_instance.web,
+  on compute.tf line 71, in resource "aws_instance" "web":
+  71: resource "aws_instance" "web" {
+
+{
+  "checked_at": "2026-10-07T06:11:30.613820+00:00",
+  "vpc": "vpc-03d141c00e523ba16",
+  "bucket": "vimal-24bcs10273-s19-9f76158f056665e55f70cc2562",
+  "bucket_deleted": true,
+  "vpc_deleted": true,
+  "no_session19_instances": true
+}
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ 
