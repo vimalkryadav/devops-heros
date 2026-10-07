@@ -1,0 +1,22 @@
+Actual output excerpts from 04-final-and-cleanup.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:52:57.475950+00:00
+[...]
+  4 | PASS: only two application Pods remain (0.1s)
+  5 | $ kubectl -n assignment-s13 get hpa
+  6 | NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+  7 | web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          7m56s
+  8 | $ kubectl -n assignment-s13 get pods -l app=web-app -o wide
+  9 | NAME                       READY   STATUS    RESTARTS        AGE     IP           NODE                NOMINATED NODE   READINESS GATES
+ 10 | web-app-6b6f5dcbff-j4whv   1/1     Running   1 (5m51s ago)   7m17s   10.244.0.6   devops-assignment   <none>           <none>
+ 11 | web-app-6b6f5dcbff-ths8x   1/1     Running   0               7m56s   10.244.0.5   devops-assignment   <none>           <none>
+ 12 | $ kubectl -n assignment-s13 top pods -l app=web-app
+ 13 | NAME                       CPU(cores)   MEMORY(bytes)   
+ 14 | web-app-6b6f5dcbff-j4whv   1m           13Mi            
+ 15 | web-app-6b6f5dcbff-ths8x   2m           11Mi
+ 16 | $ kubectl -n assignment-s13 delete namespace assignment-s13 --wait=true
+ 17 | Warning: deleting cluster-scoped resources, not scoped to the provided namespace
+ 18 | namespace "assignment-s13" deleted
+ 19 | $ kubectl wait --for=delete pv/pvc-e726b844-35d5-444f-86a0-b030f2ea510c --timeout=120s
+ 20 | 
+ 21 | PASS: the namespace and its dynamically provisioned PV were removed.

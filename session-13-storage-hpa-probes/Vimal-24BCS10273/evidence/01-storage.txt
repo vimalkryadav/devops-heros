@@ -1,0 +1,74 @@
+2026-10-06T18:45:00.843811+00:00
+$ kubectl version
+Client Version: v1.37.1
+Kustomize Version: v5.8.1
+Server Version: v1.37.1
+$ kubectl config current-context
+devops-assignment
+$ kubectl -n assignment-s13 apply -f mini-project/namespace.yaml
+namespace/assignment-s13 created
+$ kubectl -n assignment-s13 apply -f mini-project/
+configmap/web-code created
+deployment.apps/web-app created
+horizontalpodautoscaler.autoscaling/web-app-hpa created
+namespace/assignment-s13 unchanged
+persistentvolumeclaim/web-data created
+service/web-service created
+$ kubectl -n assignment-s13 rollout status deployment/web-app --timeout=180s
+Waiting for deployment "web-app" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "web-app" rollout to finish: 1 of 2 updated replicas are available...
+deployment "web-app" successfully rolled out
+$ kubectl -n assignment-s13 get pvc
+NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+web-data   Bound    pvc-e726b844-35d5-444f-86a0-b030f2ea510c   500Mi      RWO            standard       <unset>                 38s
+$ kubectl get storageclass standard -o yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"storage.k8s.io/v1","kind":"StorageClass","metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"},"labels":{"addonmanager.kubernetes.io/mode":"EnsureExists"},"name":"standard"},"provisioner":"k8s.io/minikube-hostpath"}
+    storageclass.kubernetes.io/is-default-class: "true"
+  creationTimestamp: "2026-10-06T17:43:51Z"
+  labels:
+    addonmanager.kubernetes.io/mode: EnsureExists
+  name: standard
+  resourceVersion: "331"
+  uid: 5815ba7f-586e-4e49-bb77-931309a6e5f3
+provisioner: k8s.io/minikube-hostpath
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+$ kubectl get pv pvc-e726b844-35d5-444f-86a0-b030f2ea510c
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                     STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+pvc-e726b844-35d5-444f-86a0-b030f2ea510c   500Mi      RWO            Delete           Bound    assignment-s13/web-data   standard       <unset>                          39s
+Original Pod UID: 17437236-47e8-493a-8082-21ae63e35d4c
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-jpn8z -- sh -c 'printf "Vimal Kumar Yadav | 24BCS10273
+" > /data/student.txt'
+
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-jpn8z -- cat /data/student.txt
+Vimal Kumar Yadav | 24BCS10273
+$ kubectl -n assignment-s13 delete pod web-app-6b6f5dcbff-jpn8z
+pod "web-app-6b6f5dcbff-jpn8z" deleted from assignment-s13 namespace
+Waiting: a new Pod becomes Ready
+PASS: a new Pod becomes Ready (0.1s)
+Replacement Pod UID: ac32d205-b330-486d-b80c-ec5218d797e6
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-j4whv -- cat /data/student.txt
+Vimal Kumar Yadav | 24BCS10273
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-j4whv -- python -c 'import urllib.request; print(urllib.request.urlopen("http://web-service/").read().decode())'
+<!doctype html><title>Storage lab</title><h1>Session 13 storage lab</h1><p>Vimal Kumar Yadav | 24BCS10273
+</p><p>Pod: web-app-6b6f5dcbff-ths8x</p>
+$ kubectl -n assignment-s13 apply -f 01-kubernetes-volumes/emptydir.yaml -f 01-kubernetes-volumes/hostpath.yaml
+pod/emptydir-demo created
+pod/hostpath-demo created
+$ kubectl -n assignment-s13 wait --for=condition=Ready pod/emptydir-demo pod/hostpath-demo --timeout=90s
+pod/emptydir-demo condition met
+pod/hostpath-demo condition met
+$ kubectl -n assignment-s13 logs emptydir-demo -c reader
+shared-by-containers
+$ kubectl -n assignment-s13 logs hostpath-demo
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
+PASS: dynamically provisioned PVC retained the record across Pod replacement.

@@ -1,0 +1,173 @@
+2026-10-06T18:46:22.246422+00:00
+$ kubectl -n assignment-s13 get pod web-app-6b6f5dcbff-j4whv -o wide
+NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE                NOMINATED NODE   READINESS GATES
+web-app-6b6f5dcbff-j4whv   1/1     Running   0          42s   10.244.0.6   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-j4whv -- touch /tmp/unready
+
+Waiting: readiness failure removes the selected Pod from ready traffic
+PASS: readiness failure removes the selected Pod from ready traffic (6.1s)
+$ kubectl -n assignment-s13 get pod web-app-6b6f5dcbff-j4whv
+NAME                       READY   STATUS    RESTARTS   AGE
+web-app-6b6f5dcbff-j4whv   0/1     Running   0          48s
+$ kubectl -n assignment-s13 get endpointslices -l kubernetes.io/service-name=web-service -o yaml
+apiVersion: v1
+items:
+- addressType: IPv4
+  apiVersion: discovery.k8s.io/v1
+  endpoints:
+  - addresses:
+    - 10.244.0.5
+    conditions:
+      ready: true
+      serving: true
+      terminating: false
+    nodeName: devops-assignment
+    targetRef:
+      kind: Pod
+      name: web-app-6b6f5dcbff-ths8x
+      namespace: assignment-s13
+      uid: 3f37c175-e415-461e-b003-34068de55b19
+  - addresses:
+    - 10.244.0.6
+    conditions:
+      ready: false
+      serving: false
+      terminating: false
+    nodeName: devops-assignment
+    targetRef:
+      kind: Pod
+      name: web-app-6b6f5dcbff-j4whv
+      namespace: assignment-s13
+      uid: ac32d205-b330-486d-b80c-ec5218d797e6
+  kind: EndpointSlice
+  metadata:
+    annotations:
+      endpoints.kubernetes.io/last-change-trigger-time: "2026-10-06T18:46:26Z"
+    creationTimestamp: "2026-10-06T18:45:01Z"
+    generateName: web-service-
+    generation: 10
+    labels:
+      endpointslice.kubernetes.io/managed-by: endpointslice-controller.k8s.io
+      kubernetes.io/service-name: web-service
+    name: web-service-9bb7d
+    namespace: assignment-s13
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Service
+      name: web-service
+      uid: fd171286-e2dc-44e6-89cd-66abd7683287
+    resourceVersion: "3922"
+    uid: 0ebb53e6-2088-4513-9008-2a766abc5bc7
+  ports:
+  - name: ""
+    port: 8080
+    protocol: TCP
+kind: List
+metadata:
+  resourceVersion: ""
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-j4whv -- rm /tmp/unready
+
+$ kubectl -n assignment-s13 wait --for=condition=Ready pod/web-app-6b6f5dcbff-j4whv --timeout=60s
+pod/web-app-6b6f5dcbff-j4whv condition met
+$ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-j4whv -- touch /tmp/unhealthy
+
+Waiting: liveness failure restarts the container
+PASS: liveness failure restarts the container (36.7s)
+$ kubectl -n assignment-s13 wait --for=condition=Ready pod/web-app-6b6f5dcbff-j4whv --timeout=90s
+pod/web-app-6b6f5dcbff-j4whv condition met
+$ kubectl -n assignment-s13 get pod web-app-6b6f5dcbff-j4whv
+NAME                       READY   STATUS    RESTARTS      AGE
+web-app-6b6f5dcbff-j4whv   1/1     Running   1 (10s ago)   96s
+$ kubectl -n assignment-s13 describe pod web-app-6b6f5dcbff-j4whv
+Name:             web-app-6b6f5dcbff-j4whv
+Namespace:        assignment-s13
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:15:40 +0530
+Labels:           app=web-app
+                  pod-template-hash=6b6f5dcbff
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.6
+IPs:
+  IP:           10.244.0.6
+Controlled By:  ReplicaSet/web-app-6b6f5dcbff
+Containers:
+  web:
+    Container ID:  containerd://104acf330fd6130fd19f9da504f649f6768fc1672b7efd8f4ec81e72d20d7376
+    Image:         python:3.12-alpine
+    Image ID:      docker.io/library/python@sha256:1b668429b3511ab407d8e00648891631b0b1a4d7e15e3ca70f38ab5b91ad4ab4
+    Port:          8080/TCP (http)
+    Host Port:     0/TCP (http)
+    Command:
+      python
+      -u
+      /app/app.py
+    State:          Running
+      Started:      Wed, 07 Oct 2026 00:17:06 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Wed, 07 Oct 2026 00:15:41 +0530
+      Finished:     Wed, 07 Oct 2026 00:17:06 +0530
+    Ready:          True
+    Restart Count:  1
+    Limits:
+      cpu:     250m
+      memory:  96Mi
+    Requests:
+      cpu:        100m
+      memory:     32Mi
+    Liveness:     http-get http://:http/healthz delay=0s timeout=2s period=2s successThreshold=1 failureThreshold=3
+    Readiness:    http-get http://:http/readyz delay=0s timeout=2s period=2s successThreshold=1 failureThreshold=3
+    Startup:      http-get http://:http/healthz delay=0s timeout=2s period=2s successThreshold=1 failureThreshold=30
+    Environment:  <none>
+    Mounts:
+      /app from code (ro)
+      /data from data (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-7zfvs (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  code:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      web-code
+    Optional:  false
+  data:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  web-data
+    ReadOnly:   false
+  kube-api-access-7zfvs:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age                From               Message
+  ----     ------     ----               ----               -------
+  Normal   Scheduled  96s                default-scheduler  Successfully assigned assignment-s13/web-app-6b6f5dcbff-j4whv to devops-assignment
+  Warning  Unhealthy  48s (x5 over 54s)  kubelet            spec.containers{web}: Readiness probe failed: HTTP probe failed with statuscode: 503
+  Warning  Unhealthy  40s (x3 over 44s)  kubelet            spec.containers{web}: Liveness probe failed: HTTP probe failed with statuscode: 503
+  Normal   Killing    40s                kubelet            spec.containers{web}: Container web failed liveness probe, will be restarted
+  Normal   Pulled     10s (x2 over 96s)  kubelet            spec.containers{web}: Container image "python:3.12-alpine" already present on machine and can be accessed by the pod
+  Normal   Created    10s (x2 over 95s)  kubelet            spec.containers{web}: Container created
+  Normal   Started    10s (x2 over 95s)  kubelet            spec.containers{web}: Container started
+  Warning  Unhealthy  9s (x2 over 10s)   kubelet            spec.containers{web}: Readiness probe failed: Get "http://10.244.0.6:8080/readyz": dial tcp 10.244.0.6:8080: connect: connection refused
+  Warning  Unhealthy  8s                 kubelet            spec.containers{web}: Liveness probe failed: Get "http://10.244.0.6:8080/healthz": dial tcp 10.244.0.6:8080: connect: connection refused
+  Warning  Unhealthy  2s (x7 over 94s)   kubelet            spec.containers{web}: Startup probe failed: Get "http://10.244.0.6:8080/healthz": dial tcp 10.244.0.6:8080: connect: connection refused
+$ kubectl -n assignment-s13 logs web-app-6b6f5dcbff-j4whv
+Listening on 0.0.0.0:8080 after initialization
+PASS: readiness changed traffic eligibility without a restart; liveness caused a restart and recovery.

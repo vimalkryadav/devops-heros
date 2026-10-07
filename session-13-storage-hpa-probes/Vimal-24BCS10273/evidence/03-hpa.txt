@@ -1,0 +1,197 @@
+2026-10-06T18:47:16.891155+00:00
+Waiting: CPU metrics are available
+PASS: CPU metrics are available (0.0s)
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m15s
+$ kubectl -n assignment-s13 top pods
+NAME                       CPU(cores)   MEMORY(bytes)   
+emptydir-demo              1m           0Mi             
+hostpath-demo              1m           0Mi             
+web-app-6b6f5dcbff-ths8x   1m           12Mi
+$ kubectl -n assignment-s13 apply -f load-generator.yaml
+deployment.apps/load-generator created
+$ kubectl -n assignment-s13 rollout status deployment/load-generator --timeout=120s
+Waiting for deployment "load-generator" rollout to finish: 0 out of 4 new replicas have been updated...
+Waiting for deployment "load-generator" rollout to finish: 0 of 4 updated replicas are available...
+Waiting for deployment "load-generator" rollout to finish: 1 of 4 updated replicas are available...
+Waiting for deployment "load-generator" rollout to finish: 2 of 4 updated replicas are available...
+Waiting for deployment "load-generator" rollout to finish: 3 of 4 updated replicas are available...
+deployment "load-generator" successfully rolled out
+Waiting: load scales the web Deployment from 2 to 5 ready replicas
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m17s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-ths8x   1m           12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m33s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-ths8x   1m           12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          2m48s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-ths8x   1m           12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          3m3s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-ths8x   1m           12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         2          3m18s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   175m         12Mi            
+web-app-6b6f5dcbff-ths8x   142m         12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         3          3m33s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   175m         12Mi            
+web-app-6b6f5dcbff-ths8x   142m         12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         3          3m48s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   175m         12Mi            
+web-app-6b6f5dcbff-ths8x   142m         12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 142%/50%   2         5         3          4m3s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   175m         12Mi            
+web-app-6b6f5dcbff-ths8x   142m         12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         3          4m18s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   194m         12Mi            
+web-app-6b6f5dcbff-ths8x   166m         13Mi            
+web-app-6b6f5dcbff-vqzsl   128m         12Mi
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          4m33s
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   194m         12Mi            
+web-app-6b6f5dcbff-ths8x   166m         13Mi            
+web-app-6b6f5dcbff-vqzsl   128m         12Mi
+PASS: load scales the web Deployment from 2 to 5 ready replicas (136.2s)
+$ kubectl -n assignment-s13 get pods -o wide
+NAME                              READY   STATUS    RESTARTS        AGE     IP            NODE                NOMINATED NODE   READINESS GATES
+emptydir-demo                     1/1     Running   0               3m24s   10.244.0.7    devops-assignment   <none>           <none>
+hostpath-demo                     1/1     Running   0               3m24s   10.244.0.8    devops-assignment   <none>           <none>
+load-generator-56d4cb965c-76rjx   1/1     Running   0               2m18s   10.244.0.15   devops-assignment   <none>           <none>
+load-generator-56d4cb965c-kppbl   1/1     Running   0               2m18s   10.244.0.13   devops-assignment   <none>           <none>
+load-generator-56d4cb965c-r9dbk   1/1     Running   0               2m18s   10.244.0.14   devops-assignment   <none>           <none>
+load-generator-56d4cb965c-zpx45   1/1     Running   0               2m18s   10.244.0.16   devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-j4whv          1/1     Running   1 (2m29s ago)   3m55s   10.244.0.6    devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-pnwm9          1/1     Running   0               19s     10.244.0.31   devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-ths8x          1/1     Running   0               4m34s   10.244.0.5    devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-tsnnh          1/1     Running   0               19s     10.244.0.32   devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-vqzsl          1/1     Running   0               79s     10.244.0.29   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s13 describe hpa web-app-hpa
+Name:                                                  web-app-hpa
+Namespace:                                             assignment-s13
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Wed, 07 Oct 2026 00:15:01 +0530
+Reference:                                             Deployment/web-app
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  180% (180m) / 50%
+Min replicas:                                          2
+Max replicas:                                          5
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods     Value: 4    Period: 15 seconds
+      - Type: Percent  Value: 100  Period: 15 seconds
+  Scale Down:
+    Stabilization Window: 60 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Percent  Value: 100  Period: 15 seconds
+Deployment pods:       5 current / 5 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooManyReplicas   the desired replica count is more than the maximum replica count
+  ScaledToZero    False   NotScaledToZero   the HPA controller did not scale the workload to zero
+Events:
+  Type     Reason                        Age                    From                       Message
+  ----     ------                        ----                   ----                       -------
+  Warning  FailedGetResourceMetric       3m19s (x6 over 4m34s)  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedComputeMetricsReplicas  3m19s (x6 over 4m34s)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedGetResourceMetric       2m34s (x3 over 3m4s)   horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  2m34s (x3 over 3m4s)   horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Normal   SuccessfulRescale             79s                    horizontal-pod-autoscaler  New size: 3; reason: cpu resource utilization (percentage of request) above target
+  Normal   SuccessfulRescale             19s                    horizontal-pod-autoscaler  New size: 5; reason: cpu resource utilization (percentage of request) above target
+$ kubectl -n assignment-s13 delete -f load-generator.yaml
+deployment.apps "load-generator" deleted from assignment-s13 namespace
+Waiting: removing load scales the Deployment back to 2 replicas
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          4m34s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          4m49s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 180%/50%   2         5         5          5m4s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          5m19s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          5m34s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          5m49s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 168%/50%   2         5         5          6m4s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          6m19s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          6m35s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          6m50s
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 9%/50%   2         5         5          7m5s
+PASS: removing load scales the Deployment back to 2 replicas (151.1s)
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   8m           13Mi            
+web-app-6b6f5dcbff-pnwm9   2m           13Mi            
+web-app-6b6f5dcbff-ths8x   8m           11Mi            
+web-app-6b6f5dcbff-tsnnh   7m           11Mi            
+web-app-6b6f5dcbff-vqzsl   23m          13Mi
+$ kubectl -n assignment-s13 get pods -o wide
+NAME                       READY   STATUS        RESTARTS     AGE     IP            NODE                NOMINATED NODE   READINESS GATES
+emptydir-demo              1/1     Running       0            5m55s   10.244.0.7    devops-assignment   <none>           <none>
+hostpath-demo              1/1     Running       0            5m55s   10.244.0.8    devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-j4whv   1/1     Running       1 (5m ago)   6m26s   10.244.0.6    devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-pnwm9   1/1     Terminating   0            2m50s   10.244.0.31   devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-ths8x   1/1     Running       0            7m5s    10.244.0.5    devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-tsnnh   1/1     Terminating   0            2m50s   10.244.0.32   devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-vqzsl   1/1     Terminating   0            3m50s   10.244.0.29   devops-assignment   <none>           <none>
+PASS: observed 2 -> 5 -> 2 replicas; CPU target 50%, scale-down window 60 seconds for this lab.

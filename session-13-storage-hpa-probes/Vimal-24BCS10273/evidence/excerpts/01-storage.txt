@@ -1,0 +1,27 @@
+Actual output excerpts from 01-storage.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:45:00.843811+00:00
+[...]
+ 21 | $ kubectl -n assignment-s13 get pvc
+ 22 | NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+ 23 | web-data   Bound    pvc-e726b844-35d5-444f-86a0-b030f2ea510c   500Mi      RWO            standard       <unset>                 38s
+[...]
+ 44 | Original Pod UID: 17437236-47e8-493a-8082-21ae63e35d4c
+[...]
+ 48 | $ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-jpn8z -- cat /data/student.txt
+ 49 | Vimal Kumar Yadav | 24BCS10273
+[...]
+ 53 | PASS: a new Pod becomes Ready (0.1s)
+ 54 | Replacement Pod UID: ac32d205-b330-486d-b80c-ec5218d797e6
+ 55 | $ kubectl -n assignment-s13 exec web-app-6b6f5dcbff-j4whv -- cat /data/student.txt
+ 56 | Vimal Kumar Yadav | 24BCS10273
+[...]
+ 66 | $ kubectl -n assignment-s13 logs emptydir-demo -c reader
+ 67 | shared-by-containers
+ 68 | $ kubectl -n assignment-s13 logs hostpath-demo
+ 69 | PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+ 70 | NAME="Debian GNU/Linux"
+ 71 | VERSION_ID="12"
+ 72 | VERSION="12 (bookworm)"
+ 73 | VERSION_CODENAME=bookworm
+ 74 | PASS: dynamically provisioned PVC retained the record across Pod replacement.
