@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "data": {
+    "alerts": [
+      {
+        "labels": {
+          "alertname": "ApplicationErrors",
+          "severity": "warning"
+        },
+        "annotations": {
+          "summary": "The assignment API is returning deliberate HTTP 503 responses."
+        },
+        "state": "firing",
+        "activeAt": "2026-10-06T20:13:05.644809852Z",
+        "value": "2.2508444444444445e-01"
+      }
+    ]
+  }
+}

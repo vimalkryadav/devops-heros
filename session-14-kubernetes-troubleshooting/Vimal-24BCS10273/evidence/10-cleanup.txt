@@ -1,0 +1,17 @@
+2026-10-06T18:52:58.619993+00:00
+$ kubectl -n assignment-s14 get pods -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE     IP            NODE                NOMINATED NODE   READINESS GATES
+client                                 1/1     Running   0          6m26s   10.244.0.11   devops-assignment   <none>           <none>
+config-demo                            1/1     Running   0          5m16s   10.244.0.22   devops-assignment   <none>           <none>
+crash-demo                             1/1     Running   0          5m23s   10.244.0.18   devops-assignment   <none>           <none>
+dns-demo                               1/1     Running   0          3m13s   10.244.0.33   devops-assignment   <none>           <none>
+mount-demo                             1/1     Running   0          5m21s   10.244.0.20   devops-assignment   <none>           <none>
+network-demo                           1/1     Running   0          2m38s   10.244.0.35   devops-assignment   <none>           <none>
+pending-demo                           1/1     Running   0          5m22s   10.244.0.19   devops-assignment   <none>           <none>
+project-broken-pod                     1/1     Running   0          5m47s   10.244.0.12   devops-assignment   <none>           <none>
+troubleshooting-app-687fb98df4-dv5wr   1/1     Running   0          6m26s   10.244.0.9    devops-assignment   <none>           <none>
+troubleshooting-app-687fb98df4-lnhcc   1/1     Running   0          6m26s   10.244.0.10   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 delete namespace assignment-s14 --wait=true
+Warning: deleting cluster-scoped resources, not scoped to the provided namespace
+namespace "assignment-s14" deleted
+PASS: all troubleshooting workloads were removed with their namespace.

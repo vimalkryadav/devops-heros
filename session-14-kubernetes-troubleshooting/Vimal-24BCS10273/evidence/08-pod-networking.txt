@@ -1,0 +1,33 @@
+2026-10-06T18:49:46.647276+00:00
+$ kubectl -n assignment-s14 apply -f cases/network-broken.yaml
+pod/network-demo created
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/network-demo --timeout=90s
+pod/network-demo condition met
+$ kubectl -n assignment-s14 get pod network-demo -o wide
+NAME           READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+network-demo   1/1     Running   0          1s    10.244.0.34   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 exec network-demo -- wget -q -O - http://127.0.0.1:8080
+Pod network recovered
+$ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://10.244.0.34:8080
+wget: can't connect to remote host (10.244.0.34): Connection refused
+command terminated with exit code 1
+$ kubectl -n assignment-s14 exec network-demo -- netstat -lnt
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       
+tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN
+$ kubectl -n assignment-s14 delete pod network-demo --wait=true
+pod "network-demo" deleted from assignment-s14 namespace
+$ kubectl -n assignment-s14 apply -f cases/network-fixed.yaml
+pod/network-demo created
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/network-demo --timeout=120s
+pod/network-demo condition met
+$ kubectl -n assignment-s14 get pod network-demo
+NAME           READY   STATUS    RESTARTS   AGE
+network-demo   1/1     Running   0          1s
+$ kubectl -n assignment-s14 exec network-demo -- netstat -lnt
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       
+tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN
+$ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://10.244.0.35:8080
+Pod network recovered
+PASS: binding to all interfaces made the application reachable at the Pod IP.

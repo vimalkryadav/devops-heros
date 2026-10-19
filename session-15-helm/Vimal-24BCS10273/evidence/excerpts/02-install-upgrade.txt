@@ -1,0 +1,41 @@
+Actual output excerpts from 02-install-upgrade.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:40.905292+00:00
+[...]
+  4 | $ helm install notes-dev notes-chart --wait --timeout 180s --namespace assignment-s15
+  5 | NAME: notes-dev
+  6 | LAST DEPLOYED: Wed Oct  7 00:17:40 2026
+  7 | NAMESPACE: assignment-s15
+  8 | STATUS: deployed
+  9 | REVISION: 1
+ 10 | TEST SUITE: None
+ 11 | NOTES:
+ 12 | Vimal's Notes is installed in namespace assignment-s15.
+[...]
+ 18 | $ kubectl -n assignment-s15 get pods -o wide
+ 19 | NAME                                READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+ 20 | notes-dev-deploy-5fbf7dbfcc-m92mg   1/1     Running   0          4s    10.244.0.21   devops-assignment   <none>           <none>
+[...]
+ 41 | PASS: 1 ready replicas serve the development page.
+[...]
+174 | $ helm upgrade notes-dev notes-chart -f notes-chart/values-prod.yaml --wait --timeout 180s --namespace assignment-s15
+175 | Release "notes-dev" has been upgraded. Happy Helming!
+176 | NAME: notes-dev
+177 | LAST DEPLOYED: Wed Oct  7 00:17:45 2026
+178 | NAMESPACE: assignment-s15
+179 | STATUS: deployed
+180 | REVISION: 2
+181 | TEST SUITE: None
+182 | NOTES:
+[...]
+189 | $ kubectl -n assignment-s15 get pods -o wide
+190 | NAME                                READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+191 | notes-dev-deploy-669c7d8995-6ftff   1/1     Running   0          6s    10.244.0.26   devops-assignment   <none>           <none>
+192 | notes-dev-deploy-669c7d8995-bs5pq   1/1     Running   0          4s    10.244.0.27   devops-assignment   <none>           <none>
+193 | notes-dev-deploy-669c7d8995-z28jl   1/1     Running   0          9s    10.244.0.25   devops-assignment   <none>           <none>
+[...]
+214 | PASS: 3 ready replicas serve the production page.
+215 | $ helm history notes-dev --namespace assignment-s15
+216 | REVISION	UPDATED                 	STATUS    	CHART            	APP VERSION	DESCRIPTION     
+217 | 1       	Wed Oct  7 00:17:40 2026	superseded	notes-chart-0.1.0	1.0        	Install complete
+218 | 2       	Wed Oct  7 00:17:45 2026	deployed  	notes-chart-0.1.0	1.0        	Upgrade complete

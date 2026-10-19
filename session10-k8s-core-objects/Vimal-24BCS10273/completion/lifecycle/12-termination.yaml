@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lc-termination
+spec:
+  restartPolicy: Always
+  containers:
+  - name: app
+    image: busybox:1.37
+    command:
+    - sh
+    - -c
+    - trap 'echo SIGTERM-received; sleep 3; echo cleanup-complete; exit 0' TERM; echo
+      application-running; while true; do sleep 1; done
+    resources:
+      requests:
+        cpu: 5m
+        memory: 8Mi
+      limits:
+        cpu: 100m
+        memory: 32Mi
+  terminationGracePeriodSeconds: 12

@@ -1,0 +1,4 @@
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ terraform -chdir=terraform-cloud-demo validate && terraform -chdir=terraform-cloud-demo state list
+[?2004l[32m[1mSuccess![0m The configuration is valid.
+[0m
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ 

@@ -1,0 +1,21 @@
+2026-10-06T18:52:57.475950+00:00
+After scale-down and the termination grace period:
+Waiting: only two application Pods remain
+PASS: only two application Pods remain (0.1s)
+$ kubectl -n assignment-s13 get hpa
+NAME          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+web-app-hpa   Deployment/web-app   cpu: 1%/50%   2         5         2          7m56s
+$ kubectl -n assignment-s13 get pods -l app=web-app -o wide
+NAME                       READY   STATUS    RESTARTS        AGE     IP           NODE                NOMINATED NODE   READINESS GATES
+web-app-6b6f5dcbff-j4whv   1/1     Running   1 (5m51s ago)   7m17s   10.244.0.6   devops-assignment   <none>           <none>
+web-app-6b6f5dcbff-ths8x   1/1     Running   0               7m56s   10.244.0.5   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s13 top pods -l app=web-app
+NAME                       CPU(cores)   MEMORY(bytes)   
+web-app-6b6f5dcbff-j4whv   1m           13Mi            
+web-app-6b6f5dcbff-ths8x   2m           11Mi
+$ kubectl -n assignment-s13 delete namespace assignment-s13 --wait=true
+Warning: deleting cluster-scoped resources, not scoped to the provided namespace
+namespace "assignment-s13" deleted
+$ kubectl wait --for=delete pv/pvc-e726b844-35d5-444f-86a0-b030f2ea510c --timeout=120s
+
+PASS: the namespace and its dynamically provisioned PV were removed.

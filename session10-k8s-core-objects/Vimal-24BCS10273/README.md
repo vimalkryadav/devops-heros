@@ -3,7 +3,7 @@
 **Name:** Vimal Kumar Yadav
 **Enrollment Number:** 24BCS10273
 
-Everything below was run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
+The original tasks below were run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
 containerd 2.3.4, docker driver, on macOS (Apple silicon). Every code block is the real output from
 that run, and the screenshots are of the same session.
 
@@ -389,12 +389,12 @@ request had to be raised to `64Gi` to exceed it.
 | Admission-time validation | Task 6 — selector mismatch rejected before creation |
 | Scheduling failure | Task 6 — `Pending` with `FailedScheduling`, distinct from kubelet errors |
 
-### Scope note
+### Completion of the remaining homework
 
-Blue-green and canary deployments, and the full twelve-scenario Pod lifecycle lab, are not covered
-here. The four lifecycle states that appear above were captured as they occurred — `Running`,
-`Pending`, `ImagePullBackOff` and `Terminating` — but probes, init containers and graceful termination
-are not demonstrated. Those are the outstanding items for this session.
+[Blue-green, canary and all twelve lifecycle cases](completion/README.md) are covered
+in a separate Linux Minikube run. It includes runnable manifests, per-case command
+output, screenshots and the observed phase/container-state distinction. The
+rolling and recreate demonstrations above retain their original evidence.
 
 ### Cleanup
 

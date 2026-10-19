@@ -1,0 +1,22 @@
+Actual output excerpts from 05-configuration.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:41.917919+00:00
+[...]
+  6 | PASS: CreateContainerConfigError is observed (3.1s)
+  7 | $ kubectl -n assignment-s14 get pod config-demo -o wide
+  8 | NAME          READY   STATUS                       RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+  9 | config-demo   0/1     CreateContainerConfigError   0          3s    10.244.0.22   devops-assignment   <none>           <none>
+[...]
+ 65 |   Warning  Failed     2s (x2 over 3s)  kubelet            spec.containers{app}: Error: couldn't find key APP_MODE in ConfigMap assignment-s14/app-settings
+[...]
+ 70 | 2s (x2 over 3s)   Warning   Failed      Pod/config-demo   Error: couldn't find key APP_MODE in ConfigMap assignment-s14/app-settings
+[...]
+ 85 | $ kubectl -n assignment-s14 apply -f cases/config-fixed.yaml
+ 86 | configmap/app-settings configured
+[...]
+ 89 | $ kubectl -n assignment-s14 get pod config-demo
+ 90 | NAME          READY   STATUS    RESTARTS   AGE
+ 91 | config-demo   1/1     Running   0          16s
+ 92 | $ kubectl -n assignment-s14 logs config-demo
+ 93 | APP_MODE=development
+ 94 | PASS: adding the missing APP_MODE key fixed environment configuration.

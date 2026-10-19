@@ -1,0 +1,441 @@
+Run started: 2026-10-07T15:45:53.804726+00:00
+
+$ terraform plan -no-color -destroy -input=false -out=destroy.tfplan
+data.aws_availability_zones.available: Reading...
+aws_vpc.lab: Refreshing state... [id=vpc-014f1871eba198cbf]
+data.aws_availability_zones.available: Read complete after 3s [id=us-east-1]
+aws_internet_gateway.lab: Refreshing state... [id=igw-06595473ccbc2e00f]
+aws_subnet.public: Refreshing state... [id=subnet-0d5355ca89961d200]
+aws_security_group.web: Refreshing state... [id=sg-073e80459534fb5e2]
+aws_route_table.public: Refreshing state... [id=rtb-035075b151c9bc39c]
+aws_route_table_association.public: Refreshing state... [id=rtbassoc-03229e6b5077df782]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # aws_internet_gateway.lab will be destroyed
+  - resource "aws_internet_gateway" "lab" {
+      - arn      = "arn:aws:ec2:us-east-1:094807033031:internet-gateway/igw-06595473ccbc2e00f" -> null
+      - id       = "igw-06595473ccbc2e00f" -> null
+      - owner_id = "094807033031" -> null
+      - region   = "us-east-1" -> null
+      - tags     = {
+          - "Name" = "vimal-session19-gateway"
+        } -> null
+      - tags_all = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-gateway"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id   = "vpc-014f1871eba198cbf" -> null
+    }
+
+  # aws_route_table.public will be destroyed
+  - resource "aws_route_table" "public" {
+      - arn              = "arn:aws:ec2:us-east-1:094807033031:route-table/rtb-035075b151c9bc39c" -> null
+      - id               = "rtb-035075b151c9bc39c" -> null
+      - owner_id         = "094807033031" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-east-1" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - gateway_id                 = "igw-06595473ccbc2e00f"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "vimal-session19-public"
+        } -> null
+      - tags_all         = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-public"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id           = "vpc-014f1871eba198cbf" -> null
+    }
+
+  # aws_route_table_association.public will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-03229e6b5077df782" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-035075b151c9bc39c" -> null
+      - subnet_id      = "subnet-0d5355ca89961d200" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # aws_security_group.web will be destroyed
+  - resource "aws_security_group" "web" {
+      - arn                    = "arn:aws:ec2:us-east-1:094807033031:security-group/sg-073e80459534fb5e2" -> null
+      - description            = "Assignment web ports limited to the operator address" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - from_port        = 0
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "-1"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 0
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - id                     = "sg-073e80459534fb5e2" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = [
+                  - "202.131.146.146/32",
+                ]
+              - description      = "HTTP from the operator"
+              - from_port        = 80
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 80
+            },
+          - {
+              - cidr_blocks      = [
+                  - "202.131.146.146/32",
+                ]
+              - description      = "HTTPS from the operator"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 443
+            },
+        ] -> null
+      - name                   = "vimal-session19-web-49e3e68dc7c2530454b172f0ac" -> null
+      - name_prefix            = "vimal-session19-web-" -> null
+      - owner_id               = "094807033031" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "vimal-session19-web"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-web"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id                 = "vpc-014f1871eba198cbf" -> null
+    }
+
+  # aws_subnet.public will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-east-1:094807033031:subnet/subnet-0d5355ca89961d200" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1a" -> null
+      - availability_zone_id                           = "use1-az1" -> null
+      - cidr_block                                     = "10.83.1.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-0d5355ca89961d200" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = true -> null
+      - owner_id                                       = "094807033031" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {
+          - "Name" = "vimal-session19-public"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-public"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id                                         = "vpc-014f1871eba198cbf" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # aws_vpc.lab will be destroyed
+  - resource "aws_vpc" "lab" {
+      - arn                                  = "arn:aws:ec2:us-east-1:094807033031:vpc/vpc-014f1871eba198cbf" -> null
+      - assign_generated_ipv6_cidr_block     = false -> null
+      - cidr_block                           = "10.83.0.0/16" -> null
+      - default_network_acl_id               = "acl-048020e1b95ead14b" -> null
+      - default_route_table_id               = "rtb-03fc0dedd4422e75b" -> null
+      - default_security_group_id            = "sg-0d99422ef81c29a03" -> null
+      - dhcp_options_id                      = "dopt-0567b8842e459c898" -> null
+      - enable_dns_hostnames                 = true -> null
+      - enable_dns_support                   = true -> null
+      - enable_network_address_usage_metrics = false -> null
+      - id                                   = "vpc-014f1871eba198cbf" -> null
+      - instance_tenancy                     = "default" -> null
+      - ipv6_netmask_length                  = 0 -> null
+      - main_route_table_id                  = "rtb-03fc0dedd4422e75b" -> null
+      - owner_id                             = "094807033031" -> null
+      - region                               = "us-east-1" -> null
+      - tags                                 = {
+          - "Name" = "vimal-session19-network"
+        } -> null
+      - tags_all                             = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-network"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+        # (4 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 0 to change, 6 to destroy.
+
+Changes to Outputs:
+  - internet_gateway_id  = "igw-06595473ccbc2e00f" -> null
+  - region               = "us-east-1" -> null
+  - route_association_id = "rtbassoc-03229e6b5077df782" -> null
+  - route_table_id       = "rtb-035075b151c9bc39c" -> null
+  - security_group_id    = "sg-073e80459534fb5e2" -> null
+  - subnet_cidr          = "10.83.1.0/24" -> null
+  - subnet_id            = "subnet-0d5355ca89961d200" -> null
+  - vpc_cidr             = "10.83.0.0/16" -> null
+  - vpc_id               = "vpc-014f1871eba198cbf" -> null
+
+$ terraform destroy -no-color -auto-approve -input=false
+data.aws_availability_zones.available: Reading...
+aws_vpc.lab: Refreshing state... [id=vpc-014f1871eba198cbf]
+data.aws_availability_zones.available: Read complete after 2s [id=us-east-1]
+aws_internet_gateway.lab: Refreshing state... [id=igw-06595473ccbc2e00f]
+aws_subnet.public: Refreshing state... [id=subnet-0d5355ca89961d200]
+aws_security_group.web: Refreshing state... [id=sg-073e80459534fb5e2]
+aws_route_table.public: Refreshing state... [id=rtb-035075b151c9bc39c]
+aws_route_table_association.public: Refreshing state... [id=rtbassoc-03229e6b5077df782]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # aws_internet_gateway.lab will be destroyed
+  - resource "aws_internet_gateway" "lab" {
+      - arn      = "arn:aws:ec2:us-east-1:094807033031:internet-gateway/igw-06595473ccbc2e00f" -> null
+      - id       = "igw-06595473ccbc2e00f" -> null
+      - owner_id = "094807033031" -> null
+      - region   = "us-east-1" -> null
+      - tags     = {
+          - "Name" = "vimal-session19-gateway"
+        } -> null
+      - tags_all = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-gateway"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id   = "vpc-014f1871eba198cbf" -> null
+    }
+
+  # aws_route_table.public will be destroyed
+  - resource "aws_route_table" "public" {
+      - arn              = "arn:aws:ec2:us-east-1:094807033031:route-table/rtb-035075b151c9bc39c" -> null
+      - id               = "rtb-035075b151c9bc39c" -> null
+      - owner_id         = "094807033031" -> null
+      - propagating_vgws = [] -> null
+      - region           = "us-east-1" -> null
+      - route            = [
+          - {
+              - cidr_block                 = "0.0.0.0/0"
+              - gateway_id                 = "igw-06595473ccbc2e00f"
+                # (12 unchanged attributes hidden)
+            },
+        ] -> null
+      - tags             = {
+          - "Name" = "vimal-session19-public"
+        } -> null
+      - tags_all         = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-public"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id           = "vpc-014f1871eba198cbf" -> null
+    }
+
+  # aws_route_table_association.public will be destroyed
+  - resource "aws_route_table_association" "public" {
+      - id             = "rtbassoc-03229e6b5077df782" -> null
+      - region         = "us-east-1" -> null
+      - route_table_id = "rtb-035075b151c9bc39c" -> null
+      - subnet_id      = "subnet-0d5355ca89961d200" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # aws_security_group.web will be destroyed
+  - resource "aws_security_group" "web" {
+      - arn                    = "arn:aws:ec2:us-east-1:094807033031:security-group/sg-073e80459534fb5e2" -> null
+      - description            = "Assignment web ports limited to the operator address" -> null
+      - egress                 = [
+          - {
+              - cidr_blocks      = [
+                  - "0.0.0.0/0",
+                ]
+              - from_port        = 0
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "-1"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 0
+                # (1 unchanged attribute hidden)
+            },
+        ] -> null
+      - id                     = "sg-073e80459534fb5e2" -> null
+      - ingress                = [
+          - {
+              - cidr_blocks      = [
+                  - "202.131.146.146/32",
+                ]
+              - description      = "HTTP from the operator"
+              - from_port        = 80
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 80
+            },
+          - {
+              - cidr_blocks      = [
+                  - "202.131.146.146/32",
+                ]
+              - description      = "HTTPS from the operator"
+              - from_port        = 443
+              - ipv6_cidr_blocks = []
+              - prefix_list_ids  = []
+              - protocol         = "tcp"
+              - security_groups  = []
+              - self             = false
+              - to_port          = 443
+            },
+        ] -> null
+      - name                   = "vimal-session19-web-49e3e68dc7c2530454b172f0ac" -> null
+      - name_prefix            = "vimal-session19-web-" -> null
+      - owner_id               = "094807033031" -> null
+      - region                 = "us-east-1" -> null
+      - revoke_rules_on_delete = false -> null
+      - tags                   = {
+          - "Name" = "vimal-session19-web"
+        } -> null
+      - tags_all               = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-web"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id                 = "vpc-014f1871eba198cbf" -> null
+    }
+
+  # aws_subnet.public will be destroyed
+  - resource "aws_subnet" "public" {
+      - arn                                            = "arn:aws:ec2:us-east-1:094807033031:subnet/subnet-0d5355ca89961d200" -> null
+      - assign_ipv6_address_on_creation                = false -> null
+      - availability_zone                              = "us-east-1a" -> null
+      - availability_zone_id                           = "use1-az1" -> null
+      - cidr_block                                     = "10.83.1.0/24" -> null
+      - enable_dns64                                   = false -> null
+      - enable_lni_at_device_index                     = 0 -> null
+      - enable_resource_name_dns_a_record_on_launch    = false -> null
+      - enable_resource_name_dns_aaaa_record_on_launch = false -> null
+      - id                                             = "subnet-0d5355ca89961d200" -> null
+      - ipv6_native                                    = false -> null
+      - map_customer_owned_ip_on_launch                = false -> null
+      - map_public_ip_on_launch                        = true -> null
+      - owner_id                                       = "094807033031" -> null
+      - private_dns_hostname_type_on_launch            = "ip-name" -> null
+      - region                                         = "us-east-1" -> null
+      - tags                                           = {
+          - "Name" = "vimal-session19-public"
+        } -> null
+      - tags_all                                       = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-public"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+      - vpc_id                                         = "vpc-014f1871eba198cbf" -> null
+        # (4 unchanged attributes hidden)
+    }
+
+  # aws_vpc.lab will be destroyed
+  - resource "aws_vpc" "lab" {
+      - arn                                  = "arn:aws:ec2:us-east-1:094807033031:vpc/vpc-014f1871eba198cbf" -> null
+      - assign_generated_ipv6_cidr_block     = false -> null
+      - cidr_block                           = "10.83.0.0/16" -> null
+      - default_network_acl_id               = "acl-048020e1b95ead14b" -> null
+      - default_route_table_id               = "rtb-03fc0dedd4422e75b" -> null
+      - default_security_group_id            = "sg-0d99422ef81c29a03" -> null
+      - dhcp_options_id                      = "dopt-0567b8842e459c898" -> null
+      - enable_dns_hostnames                 = true -> null
+      - enable_dns_support                   = true -> null
+      - enable_network_address_usage_metrics = false -> null
+      - id                                   = "vpc-014f1871eba198cbf" -> null
+      - instance_tenancy                     = "default" -> null
+      - ipv6_netmask_length                  = 0 -> null
+      - main_route_table_id                  = "rtb-03fc0dedd4422e75b" -> null
+      - owner_id                             = "094807033031" -> null
+      - region                               = "us-east-1" -> null
+      - tags                                 = {
+          - "Name" = "vimal-session19-network"
+        } -> null
+      - tags_all                             = {
+          - "ManagedBy" = "Terraform"
+          - "Name"      = "vimal-session19-network"
+          - "Owner"     = "Vimal-24BCS10273"
+          - "Project"   = "devops-assignment"
+          - "Session"   = "19"
+        } -> null
+        # (4 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 0 to change, 6 to destroy.
+
+Changes to Outputs:
+  - internet_gateway_id  = "igw-06595473ccbc2e00f" -> null
+  - region               = "us-east-1" -> null
+  - route_association_id = "rtbassoc-03229e6b5077df782" -> null
+  - route_table_id       = "rtb-035075b151c9bc39c" -> null
+  - security_group_id    = "sg-073e80459534fb5e2" -> null
+  - subnet_cidr          = "10.83.1.0/24" -> null
+  - subnet_id            = "subnet-0d5355ca89961d200" -> null
+  - vpc_cidr             = "10.83.0.0/16" -> null
+  - vpc_id               = "vpc-014f1871eba198cbf" -> null
+aws_route_table_association.public: Destroying... [id=rtbassoc-03229e6b5077df782]
+aws_security_group.web: Destroying... [id=sg-073e80459534fb5e2]
+aws_route_table_association.public: Destruction complete after 3s
+aws_subnet.public: Destroying... [id=subnet-0d5355ca89961d200]
+aws_route_table.public: Destroying... [id=rtb-035075b151c9bc39c]
+aws_security_group.web: Destruction complete after 4s
+aws_route_table.public: Destruction complete after 3s
+aws_subnet.public: Destruction complete after 3s
+aws_internet_gateway.lab: Destroying... [id=igw-06595473ccbc2e00f]
+aws_internet_gateway.lab: Destruction complete after 2s
+aws_vpc.lab: Destroying... [id=vpc-014f1871eba198cbf]
+aws_vpc.lab: Destruction complete after 1s
+
+Destroy complete! Resources: 6 destroyed.

@@ -1,0 +1,26 @@
+Actual output excerpts from 01-image.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:11.683359+00:00
+[...]
+  5 | PASS: ErrImagePull is observed (4.2s)
+  6 | $ kubectl -n assignment-s14 get pod project-broken-pod
+  7 | NAME                 READY   STATUS         RESTARTS   AGE
+  8 | project-broken-pod   0/1     ErrImagePull   0          5s
+[...]
+ 10 | PASS: image retries enter ImagePullBackOff (10.5s)
+ 11 | $ kubectl -n assignment-s14 get pod project-broken-pod -o wide
+ 12 | NAME                 READY   STATUS             RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+ 13 | project-broken-pod   0/1     ImagePullBackOff   0          15s   10.244.0.12   devops-assignment   <none>           <none>
+[...]
+ 63 |   Warning  Failed     12s               kubelet            spec.containers{app}: Failed to pull image "nginx:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/nginx:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/nginx:assignment-tag-does-not-exist": docker.io/library/nginx:assignment-tag-does-not-exist: not found
+[...]
+ 71 | 12s                Warning   Failed      Pod/project-broken-pod   Failed to pull image "nginx:assignment-tag-does-not-exist": rpc error: code = NotFound desc = failed to pull and unpack image "docker.io/library/nginx:assignment-tag-does-not-exist": failed to resolve reference "docker.io/library/nginx:assignment-tag-does-not-exist": docker.io/library/nginx:assignment-tag-does-not-exist: not found
+[...]
+ 76 | $ kubectl -n assignment-s14 apply -f cases/image-fixed.yaml
+ 77 | pod/project-broken-pod configured
+[...]
+ 80 | $ kubectl -n assignment-s14 get pod project-broken-pod
+ 81 | NAME                 READY   STATUS    RESTARTS   AGE
+ 82 | project-broken-pod   1/1     Running   0          18s
+[...]
+107 | PASS: an unavailable image tag caused ErrImagePull and ImagePullBackOff; a valid tag recovered the Pod.

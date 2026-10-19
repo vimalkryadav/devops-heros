@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mount-settings
+  namespace: assignment-s14
+data:
+  message: Volume mounted successfully

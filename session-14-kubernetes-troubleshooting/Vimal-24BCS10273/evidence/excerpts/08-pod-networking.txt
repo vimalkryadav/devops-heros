@@ -1,0 +1,35 @@
+Actual output excerpts from 08-pod-networking.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:49:46.647276+00:00
+  2 | $ kubectl -n assignment-s14 apply -f cases/network-broken.yaml
+  3 | pod/network-demo created
+  4 | $ kubectl -n assignment-s14 wait --for=condition=Ready pod/network-demo --timeout=90s
+  5 | pod/network-demo condition met
+  6 | $ kubectl -n assignment-s14 get pod network-demo -o wide
+  7 | NAME           READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+  8 | network-demo   1/1     Running   0          1s    10.244.0.34   devops-assignment   <none>           <none>
+  9 | $ kubectl -n assignment-s14 exec network-demo -- wget -q -O - http://127.0.0.1:8080
+ 10 | Pod network recovered
+ 11 | $ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://10.244.0.34:8080
+ 12 | wget: can't connect to remote host (10.244.0.34): Connection refused
+ 13 | command terminated with exit code 1
+ 14 | $ kubectl -n assignment-s14 exec network-demo -- netstat -lnt
+ 15 | Active Internet connections (only servers)
+ 16 | Proto Recv-Q Send-Q Local Address           Foreign Address         State       
+ 17 | tcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN
+ 18 | $ kubectl -n assignment-s14 delete pod network-demo --wait=true
+ 19 | pod "network-demo" deleted from assignment-s14 namespace
+ 20 | $ kubectl -n assignment-s14 apply -f cases/network-fixed.yaml
+ 21 | pod/network-demo created
+ 22 | $ kubectl -n assignment-s14 wait --for=condition=Ready pod/network-demo --timeout=120s
+ 23 | pod/network-demo condition met
+ 24 | $ kubectl -n assignment-s14 get pod network-demo
+ 25 | NAME           READY   STATUS    RESTARTS   AGE
+ 26 | network-demo   1/1     Running   0          1s
+ 27 | $ kubectl -n assignment-s14 exec network-demo -- netstat -lnt
+ 28 | Active Internet connections (only servers)
+ 29 | Proto Recv-Q Send-Q Local Address           Foreign Address         State       
+ 30 | tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN
+ 31 | $ kubectl -n assignment-s14 exec client -- wget -q -O - -T 3 http://10.244.0.35:8080
+ 32 | Pod network recovered
+ 33 | PASS: binding to all interfaces made the application reachable at the Pod IP.

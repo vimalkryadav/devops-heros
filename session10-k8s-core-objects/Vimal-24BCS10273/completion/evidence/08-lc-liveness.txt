@@ -1,0 +1,91 @@
+2026-10-06T17:49:27.802411+00:00
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl -n assignment-s10-lifecycle apply -f /var/home/vimal2907/assignment/devops-assignment/worktrees/session10/session10-k8s-core-objects/Vimal-24BCS10273/completion/lifecycle/08-liveness.yaml
+pod/lc-liveness created
+
+$ kubectl -n assignment-s10-lifecycle exec lc-liveness -- rm /tmp/healthy
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-liveness -o wide
+NAME          READY   STATUS    RESTARTS     AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+lc-liveness   1/1     Running   1 (2s ago)   9s    10.244.0.41   devops-assignment   <none>           <none>
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-liveness -o 'jsonpath={.status.phase}{"\n"}{.status.containerStatuses}{"\n"}'
+Running
+[{"allocatedResources":{"cpu":"5m","memory":"8Mi"},"containerID":"containerd://af6a1563e917bf700bbdb00dde11c226936381fc71a579a1e9b183b8620aece1","image":"docker.io/library/busybox:1.37","imageID":"docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e","lastState":{"terminated":{"containerID":"containerd://e797af01af55d62c15449ce12aaa33a50a3a7a919d174b5ac6ab6f75694da73f","exitCode":137,"finishedAt":"2026-10-06T17:49:34Z","reason":"Error","startedAt":"2026-10-06T17:49:28Z"}},"name":"app","ready":true,"resources":{"limits":{"cpu":"100m","memory":"32Mi"},"requests":{"cpu":"5m","memory":"8Mi"}},"restartCount":1,"started":true,"state":{"running":{"startedAt":"2026-10-06T17:49:34Z"}},"user":{"linux":{"gid":0,"supplementalGroups":[0,10],"uid":0}},"volumeMounts":[{"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount","name":"kube-api-access-cdvkp","readOnly":true,"recursiveReadOnly":"Disabled"}]}]
+
+$ kubectl -n assignment-s10-lifecycle describe pod lc-liveness
+Name:             lc-liveness
+Namespace:        assignment-s10-lifecycle
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:19:27 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.41
+IPs:
+  IP:  10.244.0.41
+Containers:
+  app:
+    Container ID:  containerd://af6a1563e917bf700bbdb00dde11c226936381fc71a579a1e9b183b8620aece1
+    Image:         busybox:1.37
+    Image ID:      docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      touch /tmp/healthy; echo "process started"; sleep 7200
+    State:          Running
+      Started:      Tue, 06 Oct 2026 23:19:34 +0530
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    137
+      Started:      Tue, 06 Oct 2026 23:19:28 +0530
+      Finished:     Tue, 06 Oct 2026 23:19:34 +0530
+    Ready:          True
+    Restart Count:  1
+    Limits:
+      cpu:     100m
+      memory:  32Mi
+    Requests:
+      cpu:        5m
+      memory:     8Mi
+    Liveness:     exec [test -f /tmp/healthy] delay=0s timeout=1s period=2s successThreshold=1 failureThreshold=2
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-cdvkp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-cdvkp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age              From               Message
+  ----     ------     ----             ----               -------
+  Normal   Scheduled  9s               default-scheduler  Successfully assigned assignment-s10-lifecycle/lc-liveness to devops-assignment
+  Warning  Unhealthy  4s (x2 over 6s)  kubelet            spec.containers{app}: Liveness probe failed:
+  Normal   Killing    4s               kubelet            spec.containers{app}: Container app failed liveness probe, will be restarted
+  Normal   Pulled     2s (x2 over 8s)  kubelet            spec.containers{app}: Container image "busybox:1.37" already present on machine and can be accessed by the pod
+  Normal   Created    2s (x2 over 8s)  kubelet            spec.containers{app}: Container created
+  Normal   Started    2s (x2 over 8s)  kubelet            spec.containers{app}: Container started
+
+$ kubectl -n assignment-s10-lifecycle logs lc-liveness
+process started

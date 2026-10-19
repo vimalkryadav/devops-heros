@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: troubleshooting-app
+  namespace: assignment-s14
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: troubleshooting-app
+  template:
+    metadata:
+      labels:
+        app: troubleshooting-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.27-alpine
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 20m
+            memory: 16Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: troubleshooting-service
+  namespace: assignment-s14
+spec:
+  selector:
+    app: troubleshooting-app
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client
+  namespace: assignment-s14
+spec:
+  containers:
+  - name: app
+    image: busybox:1.36
+    command:
+    - sh
+    - -c
+    - sleep 3600

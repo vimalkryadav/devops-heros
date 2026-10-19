@@ -1,0 +1,124 @@
+2026-10-06T17:49:59.188687+00:00
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl -n assignment-s10-lifecycle apply -f /var/home/vimal2907/assignment/devops-assignment/worktrees/session10/session10-k8s-core-objects/Vimal-24BCS10273/completion/lifecycle/10-init.yaml
+pod/lc-init created
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-init
+NAME      READY   STATUS     RESTARTS   AGE
+lc-init   0/1     Init:0/1   0          0s
+
+$ kubectl -n assignment-s10-lifecycle logs lc-init -c seed
+preparing seed
+
+$ kubectl -n assignment-s10-lifecycle logs lc-init -c app
+seed ready
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-init -o wide
+NAME      READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+lc-init   1/1     Running   0          10s   10.244.0.43   devops-assignment   <none>           <none>
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-init -o 'jsonpath={.status.phase}{"\n"}{.status.containerStatuses}{"\n"}'
+Running
+[{"allocatedResources":{"cpu":"5m","memory":"8Mi"},"containerID":"containerd://05826c1cafbaa9cc238329c02cc76839bf3d9a41010e315e63746d0fa40366be","image":"docker.io/library/busybox:1.37","imageID":"docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e","lastState":{},"name":"app","ready":true,"resources":{"limits":{"cpu":"100m","memory":"32Mi"},"requests":{"cpu":"5m","memory":"8Mi"}},"restartCount":0,"started":true,"state":{"running":{"startedAt":"2026-10-06T17:50:08Z"}},"user":{"linux":{"gid":0,"supplementalGroups":[0,10],"uid":0}},"volumeMounts":[{"mountPath":"/shared","name":"shared"},{"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount","name":"kube-api-access-l9jsp","readOnly":true,"recursiveReadOnly":"Disabled"}]}]
+
+$ kubectl -n assignment-s10-lifecycle describe pod lc-init
+Name:             lc-init
+Namespace:        assignment-s10-lifecycle
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Tue, 06 Oct 2026 23:19:59 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Running
+IP:               10.244.0.43
+IPs:
+  IP:  10.244.0.43
+Init Containers:
+  seed:
+    Container ID:  containerd://73dd8e682595140082bc2d65a5188bb7a507f6739951b6e1c761ec21fb51ff27
+    Image:         busybox:1.37
+    Image ID:      docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo "preparing seed"; sleep 8; echo "seed ready" > /shared/seed.txt
+    State:          Terminated
+      Reason:       Completed
+      Exit Code:    0
+      Started:      Tue, 06 Oct 2026 23:20:00 +0530
+      Finished:     Tue, 06 Oct 2026 23:20:08 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     100m
+      memory:  32Mi
+    Requests:
+      cpu:        5m
+      memory:     8Mi
+    Environment:  <none>
+    Mounts:
+      /shared from shared (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-l9jsp (ro)
+Containers:
+  app:
+    Container ID:  containerd://05826c1cafbaa9cc238329c02cc76839bf3d9a41010e315e63746d0fa40366be
+    Image:         busybox:1.37
+    Image ID:      docker.io/library/busybox@sha256:bdf57e528e45e4433820e045b29b4597825a1c9e38353532d90a01445013f82e
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      cat /shared/seed.txt; sleep 7200
+    State:          Running
+      Started:      Tue, 06 Oct 2026 23:20:08 +0530
+    Ready:          True
+    Restart Count:  0
+    Limits:
+      cpu:     100m
+      memory:  32Mi
+    Requests:
+      cpu:        5m
+      memory:     8Mi
+    Environment:  <none>
+    Mounts:
+      /shared from shared (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-l9jsp (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  shared:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+  kube-api-access-l9jsp:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  10s   default-scheduler  Successfully assigned assignment-s10-lifecycle/lc-init to devops-assignment
+  Normal  Pulled     9s    kubelet            spec.initContainers{seed}: Container image "busybox:1.37" already present on machine and can be accessed by the pod
+  Normal  Created    9s    kubelet            spec.initContainers{seed}: Container created
+  Normal  Started    9s    kubelet            spec.initContainers{seed}: Container started
+  Normal  Pulled     1s    kubelet            spec.containers{app}: Container image "busybox:1.37" already present on machine and can be accessed by the pod
+  Normal  Created    1s    kubelet            spec.containers{app}: Container created
+  Normal  Started    1s    kubelet            spec.containers{app}: Container started

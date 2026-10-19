@@ -1,0 +1,13 @@
+{
+  "frontend": [
+    "devops-s08-backend",
+    "devops-s08-frontend"
+  ],
+  "backend": [
+    "devops-s08-backend",
+    "devops-s08-database"
+  ],
+  "database": [
+    "devops-s08-database"
+  ]
+}

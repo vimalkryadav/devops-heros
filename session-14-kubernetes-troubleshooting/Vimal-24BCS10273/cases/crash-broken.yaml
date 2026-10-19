@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crash-demo
+  namespace: assignment-s14
+spec:
+  containers:
+  - name: app
+    image: busybox:1.36
+    command:
+    - sh
+    - -c
+    - echo "START_MODE=$START_MODE"; if [ "$START_MODE" != serve ]; then echo "invalid
+      start mode"; exit 7; fi; exec sleep 3600
+    env:
+    - name: START_MODE
+      value: fail

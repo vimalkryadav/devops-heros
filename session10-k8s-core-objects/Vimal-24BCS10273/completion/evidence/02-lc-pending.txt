@@ -1,0 +1,60 @@
+2026-10-06T17:46:20.245160+00:00
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl -n assignment-s10-lifecycle apply -f /var/home/vimal2907/assignment/devops-assignment/worktrees/session10/session10-k8s-core-objects/Vimal-24BCS10273/completion/lifecycle/02-pending.yaml
+pod/lc-pending created
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-pending -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+lc-pending   0/1     Pending   0          0s    <none>   <none>   <none>           <none>
+
+$ kubectl -n assignment-s10-lifecycle get pod lc-pending -o 'jsonpath={.status.phase}{"\n"}{.status.containerStatuses}{"\n"}'
+Pending
+
+
+$ kubectl -n assignment-s10-lifecycle describe pod lc-pending
+Name:             lc-pending
+Namespace:        assignment-s10-lifecycle
+Priority:         0
+Service Account:  default
+Node:             <none>
+Labels:           <none>
+Annotations:      <none>
+Status:           Pending
+IP:               
+IPs:              <none>
+Containers:
+  app:
+    Image:      busybox:1.37
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      sh
+      -c
+      sleep 7200
+    Requests:
+      cpu:        1k
+      memory:     1Ti
+    Environment:  <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-zldgk (ro)
+Conditions:
+  Type           Status
+  PodScheduled   False 
+Volumes:
+  kube-api-access-zldgk:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason            Age   From               Message
+  ----     ------            ----  ----               -------
+  Warning  FailedScheduling  0s    default-scheduler  0/1 nodes are available: 1 Insufficient cpu, 1 Insufficient memory. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.

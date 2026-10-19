@@ -1,0 +1,13 @@
+# TYPE lab_http_requests_total counter
+lab_http_requests_total{path="/healthz",status="200"} 39
+lab_http_requests_total{path="/metrics",status="200"} 17
+lab_http_requests_total{path="/fail",status="503"} 15
+lab_http_requests_total{path="/work",status="200"} 335
+# TYPE lab_process_cpu_seconds_total counter
+lab_process_cpu_seconds_total 7.674943898
+# TYPE lab_process_resident_memory_bytes gauge
+lab_process_resident_memory_bytes 22188032
+# TYPE lab_application_up gauge
+lab_application_up 1
+# TYPE lab_build_info gauge
+lab_build_info{version="v1"} 1

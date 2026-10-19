@@ -1,0 +1,11 @@
+{
+  "terraform_state_empty": true,
+  "finished_at": "2026-10-07T15:47:37.454037+00:00",
+  "vpc_deleted": true,
+  "subnet_deleted": true,
+  "internet_gateway_deleted": true,
+  "route_table_deleted": true,
+  "security_group_deleted": true,
+  "no_session19_vpcs": true,
+  "result": "PASS"
+}

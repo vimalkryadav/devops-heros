@@ -1,0 +1,12 @@
+2026-10-06T18:52:56.294910+00:00
+The uninstall transcript showed dependent Pods still terminating; this check confirms garbage collection completed.
+Waiting: all release Pods are gone
+PASS: all release Pods are gone (0.0s)
+$ kubectl -n assignment-s15 get deployments,pods,services,configmaps -l app.kubernetes.io/instance=notes-dev
+No resources found in assignment-s15 namespace.
+$ kubectl -n assignment-s15 delete namespace assignment-s15 --wait=true
+Warning: deleting cluster-scoped resources, not scoped to the provided namespace
+namespace "assignment-s15" deleted
+$ helm repo remove examples
+"examples" has been removed from your repositories
+PASS: release resources, namespace and the isolated repository entry were removed.

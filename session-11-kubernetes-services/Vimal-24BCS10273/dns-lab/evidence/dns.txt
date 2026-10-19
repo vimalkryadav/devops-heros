@@ -1,0 +1,221 @@
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-06T17:48:23Z
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl create namespace assignment-s11
+namespace/assignment-s11 created
+
+$ kubectl create namespace assignment-s11-client
+namespace/assignment-s11-client created
+
+$ kubectl -n assignment-s11 apply -f catalog.yaml -f client.yaml
+deployment.apps/catalog created
+service/catalog created
+pod/dns-client created
+
+$ kubectl -n assignment-s11-client apply -f client.yaml
+pod/dns-client created
+
+$ kubectl -n assignment-s11 rollout status deployment/catalog --timeout=180s
+Waiting for deployment "catalog" rollout to finish: 0 of 1 updated replicas are available...
+deployment "catalog" successfully rolled out
+
+$ kubectl -n assignment-s11 wait --for=condition=Ready pod/dns-client --timeout=180s
+pod/dns-client condition met
+
+$ kubectl -n assignment-s11-client wait --for=condition=Ready pod/dns-client --timeout=180s
+pod/dns-client condition met
+
+$ kubectl -n assignment-s11 exec dns-client -- cat /etc/resolv.conf
+search assignment-s11.svc.cluster.local svc.cluster.local cluster.local
+nameserver 10.96.0.10
+options ndots:5
+
+$ kubectl -n assignment-s11 exec dns-client -- nslookup catalog.assignment-s11.svc.cluster.local.
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+
+Name:	catalog.assignment-s11.svc.cluster.local
+Address: 10.100.73.162
+
+
+$ kubectl -n assignment-s11 exec dns-client -- wget -qO- http://catalog
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+$ kubectl -n assignment-s11-client exec dns-client -- wget -T 5 -qO- http://catalog
+wget: bad address 'catalog'
+command terminated with exit code 1
+Expected: no catalog Service in assignment-s11-client.
+
+$ kubectl -n assignment-s11-client exec dns-client -- wget -qO- http://catalog.assignment-s11
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+$ kubectl -n assignment-s11-client exec dns-client -- nslookup catalog.assignment-s11.svc.cluster.local.
+Server:		10.96.0.10
+Address:	10.96.0.10:53
+
+
+Name:	catalog.assignment-s11.svc.cluster.local
+Address: 10.100.73.162
+
+
+$ kubectl -n assignment-s11-client exec dns-client -- wget -qO- http://catalog.assignment-s11.svc.cluster.local.
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+$ kubectl -n assignment-s11 get service catalog -o wide
+NAME      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+catalog   ClusterIP   10.100.73.162   <none>        80/TCP    5s    app=catalog
+
+$ kubectl -n assignment-s11 get endpointslices -l kubernetes.io/service-name=catalog
+NAME            ADDRESSTYPE   PORTS   ENDPOINTS     AGE
+catalog-xp8mt   IPv4          80      10.244.0.34   5s
+
+$ kubectl -n kube-system get configmap coredns -o jsonpath=\{.data.Corefile\}
+.:53 {
+    log
+    errors
+    health {
+       lameduck 5s
+    }
+    ready
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    prometheus :9153
+    hosts {
+       192.168.49.1 host.minikube.internal
+       fallthrough
+    }
+    forward . /etc/resolv.conf {
+       max_concurrent 1000
+    }
+    cache 30 {
+       disable success cluster.local
+       disable denial cluster.local
+    }
+    loop
+    reload
+    loadbalance
+}
+
+$ kubectl -n kube-system get deployment coredns
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+coredns   1/1     1            1           4m38s
+
+$ kubectl -n kube-system get pods -l k8s-app=kube-dns -o wide
+NAME                       READY   STATUS    RESTARTS   AGE     IP           NODE                NOMINATED NODE   READINESS GATES
+coredns-559f6c778d-lnmcz   1/1     Running   0          4m32s   10.244.0.2   devops-assignment   <none>           <none>
+
+$ kubectl -n kube-system get service kube-dns
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   4m38s
+
+$ kubectl -n kube-system get endpointslices -l kubernetes.io/service-name=kube-dns
+NAME             ADDRESSTYPE   PORTS        ENDPOINTS    AGE
+kube-dns-trxv7   IPv4          53,53,9153   10.244.0.2   4m32s
+
+$ kubectl -n kube-system logs deployment/coredns --tail=30
+[INFO] 10.244.0.21:44250 - 27888 "A IN catalog.cluster.local. udp 39 false 512" NXDOMAIN qr,aa,rd 132 0.000136631s
+[INFO] 10.244.0.21:44250 - 27886 "A IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 114 0.000176881s
+[INFO] 10.244.0.21:44250 - 27887 "A IN catalog.svc.cluster.local. udp 43 false 512" NXDOMAIN qr,aa,rd 136 0.00019724s
+[INFO] 10.244.0.22:38404 - 14787 "A IN catalog.assignment-s11. udp 40 false 512" NXDOMAIN qr,rd,ra 40 0.067455068s
+[INFO] 10.244.0.24:45435 - 12797 "AAAA IN password-db.assignment-s12.svc.cluster.local. udp 62 false 512" NOERROR qr,aa,rd 155 0.00041494s
+[INFO] 10.244.0.24:45435 - 12015 "A IN password-db.assignment-s12.svc.cluster.local. udp 62 false 512" NOERROR qr,aa,rd 122 0.000543346s
+[INFO] 10.244.0.24:36191 - 57378 "AAAA IN password-db.assignment-s12.svc.cluster.local. udp 62 false 512" NOERROR qr,aa,rd 155 0.000166927s
+[INFO] 10.244.0.24:36191 - 56901 "A IN password-db.assignment-s12.svc.cluster.local. udp 62 false 512" NOERROR qr,aa,rd 122 0.000183454s
+[INFO] 10.244.0.28:43661 - 25217 "AAAA IN password-db.assignment-s12.svc.cluster.local. udp 62 false 512" NOERROR qr,aa,rd 155 0.000152625s
+[INFO] 10.244.0.28:43661 - 25008 "A IN password-db.assignment-s12.svc.cluster.local. udp 62 false 512" NOERROR qr,aa,rd 122 0.000177841s
+[INFO] 10.244.0.35:59726 - 34 "AAAA IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 151 0.000146462s
+[INFO] 10.244.0.35:59726 - 33 "A IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 114 0.000173346s
+[INFO] 10.244.0.35:35149 - 27140 "AAAA IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 151 0.000172728s
+[INFO] 10.244.0.35:35149 - 43267 "A IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 114 0.000171061s
+[INFO] 10.244.0.36:34159 - 26789 "AAAA IN catalog.assignment-s11-client.svc.cluster.local. udp 65 false 512" NXDOMAIN qr,aa,rd 158 0.000165841s
+[INFO] 10.244.0.36:34159 - 1696 "A IN catalog.assignment-s11-client.svc.cluster.local. udp 65 false 512" NXDOMAIN qr,aa,rd 158 0.000163212s
+[INFO] 10.244.0.36:39336 - 60935 "A IN catalog.svc.cluster.local. udp 43 false 512" NXDOMAIN qr,aa,rd 136 0.00004812s
+[INFO] 10.244.0.36:39336 - 52481 "AAAA IN catalog.svc.cluster.local. udp 43 false 512" NXDOMAIN qr,aa,rd 136 0.000074538s
+[INFO] 10.244.0.36:43586 - 33765 "AAAA IN catalog.cluster.local. udp 39 false 512" NXDOMAIN qr,aa,rd 132 0.000060776s
+[INFO] 10.244.0.36:43586 - 17891 "A IN catalog.cluster.local. udp 39 false 512" NXDOMAIN qr,aa,rd 132 0.000074263s
+[INFO] 10.244.0.36:37863 - 39606 "A IN catalog. udp 25 false 512" NXDOMAIN qr,aa,rd,ra 25 1.237108792s
+[INFO] 10.244.0.36:37863 - 33205 "AAAA IN catalog. udp 25 false 512" NXDOMAIN qr,aa,rd,ra 25 1.237659429s
+[INFO] 10.244.0.36:35287 - 14884 "AAAA IN catalog.assignment-s11.assignment-s11-client.svc.cluster.local. udp 80 false 512" NXDOMAIN qr,aa,rd 173 0.000171701s
+[INFO] 10.244.0.36:35287 - 15906 "A IN catalog.assignment-s11.assignment-s11-client.svc.cluster.local. udp 80 false 512" NXDOMAIN qr,aa,rd 173 0.000170941s
+[INFO] 10.244.0.36:44328 - 35979 "A IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 114 0.000085069s
+[INFO] 10.244.0.36:44328 - 55428 "AAAA IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 151 0.000102444s
+[INFO] 10.244.0.36:37167 - 45844 "AAAA IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 151 0.000147918s
+[INFO] 10.244.0.36:37167 - 45843 "A IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 114 0.000175738s
+[INFO] 10.244.0.36:46742 - 64907 "AAAA IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 151 0.000195291s
+[INFO] 10.244.0.36:46742 - 51350 "A IN catalog.assignment-s11.svc.cluster.local. udp 58 false 512" NOERROR qr,aa,rd 114 0.000231465s
+
+DNS checks passed. Cleanup: kubectl delete namespace assignment-s11 assignment-s11-client

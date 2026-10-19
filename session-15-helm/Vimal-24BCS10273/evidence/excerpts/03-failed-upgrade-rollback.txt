@@ -1,0 +1,36 @@
+Actual output excerpts from 03-failed-upgrade-rollback.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:54.384755+00:00
+[...]
+  3 | Error: UPGRADE FAILED: context deadline exceeded
+[...]
+  6 | $ kubectl -n assignment-s15 get pods -o wide
+  7 | NAME                                READY   STATUS             RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+  8 | notes-dev-deploy-669c7d8995-6ftff   1/1     Running            0          66s   10.244.0.26   devops-assignment   <none>           <none>
+  9 | notes-dev-deploy-669c7d8995-bs5pq   1/1     Running            0          64s   10.244.0.27   devops-assignment   <none>           <none>
+ 10 | notes-dev-deploy-669c7d8995-z28jl   1/1     Running            0          69s   10.244.0.25   devops-assignment   <none>           <none>
+ 11 | notes-dev-deploy-689586b5d6-rtv5g   0/1     ImagePullBackOff   0          60s   10.244.0.28   devops-assignment   <none>           <none>
+[...]
+ 91 | $ helm history notes-dev --namespace assignment-s15
+ 92 | REVISION	UPDATED                 	STATUS    	CHART            	APP VERSION	DESCRIPTION                                          
+ 93 | 1       	Wed Oct  7 00:17:40 2026	superseded	notes-chart-0.1.0	1.0        	Install complete                                     
+ 94 | 2       	Wed Oct  7 00:17:45 2026	deployed  	notes-chart-0.1.0	1.0        	Upgrade complete                                     
+ 95 | 3       	Wed Oct  7 00:17:54 2026	failed    	notes-chart-0.1.0	1.0        	Upgrade "notes-dev" failed: context deadline exceeded
+ 96 | $ helm rollback notes-dev 2 --wait --timeout 180s --namespace assignment-s15
+ 97 | Rollback was a success! Happy Helming!
+[...]
+100 | $ kubectl -n assignment-s15 get pods -o wide
+101 | NAME                                READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+102 | notes-dev-deploy-669c7d8995-6ftff   1/1     Running   0          69s   10.244.0.26   devops-assignment   <none>           <none>
+103 | notes-dev-deploy-669c7d8995-bs5pq   1/1     Running   0          67s   10.244.0.27   devops-assignment   <none>           <none>
+104 | notes-dev-deploy-669c7d8995-z28jl   1/1     Running   0          72s   10.244.0.25   devops-assignment   <none>           <none>
+[...]
+125 | PASS: 3 ready replicas serve the production page.
+126 | $ helm history notes-dev --namespace assignment-s15
+127 | REVISION	UPDATED                 	STATUS    	CHART            	APP VERSION	DESCRIPTION                                          
+128 | 1       	Wed Oct  7 00:17:40 2026	superseded	notes-chart-0.1.0	1.0        	Install complete                                     
+129 | 2       	Wed Oct  7 00:17:45 2026	superseded	notes-chart-0.1.0	1.0        	Upgrade complete                                     
+130 | 3       	Wed Oct  7 00:17:54 2026	failed    	notes-chart-0.1.0	1.0        	Upgrade "notes-dev" failed: context deadline exceeded
+131 | 4       	Wed Oct  7 00:18:54 2026	deployed  	notes-chart-0.1.0	1.0        	Rollback to 2
+[...]
+151 | PASS: failed revision 3 recovered to revision 2 configuration as new revision 4.

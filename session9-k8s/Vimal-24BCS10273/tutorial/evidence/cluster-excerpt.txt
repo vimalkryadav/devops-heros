@@ -1,0 +1,32 @@
+Selected complete command blocks from tutorial.txt
+
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-06T17:48:13Z
+
+$ kubectl config current-context
+devops-assignment
+
+$ kubectl version
+Client Version: v1.37.1
+Kustomize Version: v5.8.1
+Server Version: v1.37.1
+
+$ kubectl cluster-info
+Kubernetes control plane is running at https://192.168.49.2:8443
+CoreDNS is running at https://192.168.49.2:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+$ kubectl get nodes -o wide
+NAME                STATUS   ROLES           AGE     VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION                   CONTAINER-RUNTIME
+devops-assignment   Ready    control-plane   4m28s   v1.37.1   192.168.49.2   <none>        Debian GNU/Linux 12 (bookworm)   7.1.10-200.fc44.x86_64 (amd64)   containerd://2.3.4
+
+$ k get deployment\,replicaset\,pods -o wide
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS            IMAGES                                         SELECTOR
+deployment.apps/kubernetes-bootcamp   1/1     1            1           2s    kubernetes-bootcamp   gcr.io/google-samples/kubernetes-bootcamp:v1   app=kubernetes-bootcamp
+
+NAME                                             DESIRED   CURRENT   READY   AGE   CONTAINERS            IMAGES                                         SELECTOR
+replicaset.apps/kubernetes-bootcamp-7d9fd8c7b5   1         1         1       2s    kubernetes-bootcamp   gcr.io/google-samples/kubernetes-bootcamp:v1   app=kubernetes-bootcamp,pod-template-hash=7d9fd8c7b5
+
+NAME                                       READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+pod/kubernetes-bootcamp-7d9fd8c7b5-pnm55   1/1     Running   0          2s    10.244.0.29   devops-assignment   <none>           <none>

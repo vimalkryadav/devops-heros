@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lc-liveness
+spec:
+  restartPolicy: Always
+  containers:
+  - name: app
+    image: busybox:1.37
+    command:
+    - sh
+    - -c
+    - touch /tmp/healthy; echo "process started"; sleep 7200
+    resources:
+      requests:
+        cpu: 5m
+        memory: 8Mi
+      limits:
+        cpu: 100m
+        memory: 32Mi
+    livenessProbe:
+      exec:
+        command:
+        - test
+        - -f
+        - /tmp/healthy
+      periodSeconds: 2
+      failureThreshold: 2
+  terminationGracePeriodSeconds: 1

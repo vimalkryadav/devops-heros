@@ -1,0 +1,94 @@
+2026-10-06T18:47:41.917919+00:00
+$ kubectl -n assignment-s14 apply -f cases/config-broken.yaml
+configmap/app-settings created
+pod/config-demo created
+Waiting: CreateContainerConfigError is observed
+PASS: CreateContainerConfigError is observed (3.1s)
+$ kubectl -n assignment-s14 get pod config-demo -o wide
+NAME          READY   STATUS                       RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+config-demo   0/1     CreateContainerConfigError   0          3s    10.244.0.22   devops-assignment   <none>           <none>
+$ kubectl -n assignment-s14 describe pod config-demo
+Name:             config-demo
+Namespace:        assignment-s14
+Priority:         0
+Service Account:  default
+Node:             devops-assignment/192.168.49.2
+Start Time:       Wed, 07 Oct 2026 00:17:42 +0530
+Labels:           <none>
+Annotations:      <none>
+Status:           Pending
+IP:               10.244.0.22
+IPs:
+  IP:  10.244.0.22
+Containers:
+  app:
+    Container ID:  
+    Image:         busybox:1.36
+    Image ID:      
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      echo "APP_MODE=$APP_MODE"; sleep 3600
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      APP_MODE:  <set to the key 'APP_MODE' of config map 'app-settings'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-f2j7s (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       False 
+  ContainersReady             False 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-f2j7s:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason     Age              From               Message
+  ----     ------     ----             ----               -------
+  Normal   Scheduled  3s               default-scheduler  Successfully assigned assignment-s14/config-demo to devops-assignment
+  Normal   Pulled     2s (x2 over 3s)  kubelet            spec.containers{app}: Container image "busybox:1.36" already present on machine and can be accessed by the pod
+  Warning  Failed     2s (x2 over 3s)  kubelet            spec.containers{app}: Error: couldn't find key APP_MODE in ConfigMap assignment-s14/app-settings
+$ kubectl -n assignment-s14 events --for pod/config-demo
+LAST SEEN         TYPE      REASON      OBJECT            MESSAGE
+3s                Normal    Scheduled   Pod/config-demo   Successfully assigned assignment-s14/config-demo to devops-assignment
+2s (x2 over 3s)   Normal    Pulled      Pod/config-demo   Container image "busybox:1.36" already present on machine and can be accessed by the pod
+2s (x2 over 3s)   Warning   Failed      Pod/config-demo   Error: couldn't find key APP_MODE in ConfigMap assignment-s14/app-settings
+$ kubectl -n assignment-s14 get configmap app-settings -o yaml
+apiVersion: v1
+data:
+  OTHER_KEY: present
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"OTHER_KEY":"present"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"app-settings","namespace":"assignment-s14"}}
+  creationTimestamp: "2026-10-06T18:47:42Z"
+  name: app-settings
+  namespace: assignment-s14
+  resourceVersion: "4261"
+  uid: df2c3666-3729-4c47-9cdd-58e016890900
+$ kubectl -n assignment-s14 apply -f cases/config-fixed.yaml
+configmap/app-settings configured
+$ kubectl -n assignment-s14 wait --for=condition=Ready pod/config-demo --timeout=120s
+pod/config-demo condition met
+$ kubectl -n assignment-s14 get pod config-demo
+NAME          READY   STATUS    RESTARTS   AGE
+config-demo   1/1     Running   0          16s
+$ kubectl -n assignment-s14 logs config-demo
+APP_MODE=development
+PASS: adding the missing APP_MODE key fixed environment configuration.

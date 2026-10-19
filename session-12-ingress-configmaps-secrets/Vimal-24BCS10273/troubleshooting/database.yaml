@@ -1,0 +1,37 @@
+# Disposable classroom database. This password is public dummy data.
+# emptyDir intentionally discards the database when this Pod is deleted.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: password-db
+  labels: {app: password-db}
+spec:
+  containers:
+    - name: postgres
+      image: postgres:17-alpine
+      env:
+        - {name: POSTGRES_USER, value: assignment_user}
+        - {name: POSTGRES_PASSWORD, value: lab-password-only}
+        - {name: POSTGRES_DB, value: assignment}
+      readinessProbe:
+        exec:
+          command: [pg_isready, -U, assignment_user, -d, assignment]
+        initialDelaySeconds: 3
+        periodSeconds: 2
+      resources:
+        requests: {cpu: 50m, memory: 64Mi}
+        limits: {cpu: 500m, memory: 256Mi}
+      volumeMounts:
+        - {name: data, mountPath: /var/lib/postgresql/data}
+  volumes:
+    - name: data
+      emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: password-db
+spec:
+  selector: {app: password-db}
+  ports:
+    - {port: 5432, targetPort: 5432}

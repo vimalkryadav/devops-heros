@@ -1,0 +1,44 @@
+application.argoproj.io "session20" deleted from argocd namespace
+namespace "assignment-s20" deleted
+/tmp/tmp.cIxNYVcfCn: OK
+Warning: deleting cluster-scoped resources, not scoped to the provided namespace
+customresourcedefinition.apiextensions.k8s.io "applications.argoproj.io" deleted
+customresourcedefinition.apiextensions.k8s.io "applicationsets.argoproj.io" deleted
+customresourcedefinition.apiextensions.k8s.io "appprojects.argoproj.io" deleted
+serviceaccount "argocd-application-controller" deleted from argocd namespace
+serviceaccount "argocd-applicationset-controller" deleted from argocd namespace
+serviceaccount "argocd-redis" deleted from argocd namespace
+serviceaccount "argocd-repo-server" deleted from argocd namespace
+role.rbac.authorization.k8s.io "argocd-application-controller" deleted from argocd namespace
+role.rbac.authorization.k8s.io "argocd-applicationset-controller" deleted from argocd namespace
+role.rbac.authorization.k8s.io "argocd-redis" deleted from argocd namespace
+clusterrole.rbac.authorization.k8s.io "argocd-application-controller" deleted
+rolebinding.rbac.authorization.k8s.io "argocd-application-controller" deleted from argocd namespace
+rolebinding.rbac.authorization.k8s.io "argocd-applicationset-controller" deleted from argocd namespace
+rolebinding.rbac.authorization.k8s.io "argocd-redis" deleted from argocd namespace
+clusterrolebinding.rbac.authorization.k8s.io "argocd-application-controller" deleted
+configmap "argocd-cm" deleted from argocd namespace
+configmap "argocd-cmd-params-cm" deleted from argocd namespace
+configmap "argocd-gpg-keys-cm" deleted from argocd namespace
+configmap "argocd-rbac-cm" deleted from argocd namespace
+configmap "argocd-ssh-known-hosts-cm" deleted from argocd namespace
+configmap "argocd-tls-certs-cm" deleted from argocd namespace
+secret "argocd-secret" deleted from argocd namespace
+service "argocd-applicationset-controller" deleted from argocd namespace
+service "argocd-metrics" deleted from argocd namespace
+service "argocd-redis" deleted from argocd namespace
+service "argocd-repo-server" deleted from argocd namespace
+deployment.apps "argocd-applicationset-controller" deleted from argocd namespace
+deployment.apps "argocd-redis" deleted from argocd namespace
+deployment.apps "argocd-repo-server" deleted from argocd namespace
+statefulset.apps "argocd-application-controller" deleted from argocd namespace
+networkpolicy.networking.k8s.io "argocd-application-controller-network-policy" deleted from argocd namespace
+networkpolicy.networking.k8s.io "argocd-applicationset-controller-network-policy" deleted from argocd namespace
+networkpolicy.networking.k8s.io "argocd-redis-network-policy" deleted from argocd namespace
+networkpolicy.networking.k8s.io "argocd-repo-server-network-policy" deleted from argocd namespace
+namespace "argocd" deleted
+NAME              STATUS   AGE
+default           Active   154m
+kube-node-lease   Active   154m
+kube-public       Active   154m
+kube-system       Active   154m

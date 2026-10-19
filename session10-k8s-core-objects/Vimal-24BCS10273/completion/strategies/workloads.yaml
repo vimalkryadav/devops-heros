@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels: &id001
+      app: portal-switch
+      version: blue-v1
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      containers:
+      - name: web
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - mkdir -p /www; echo blue-v1 > /www/index.html; httpd -f -p 8080 -h /www
+        resources:
+          requests:
+            cpu: 5m
+            memory: 8Mi
+          limits:
+            cpu: 100m
+            memory: 32Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 2
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-green
+spec:
+  replicas: 2
+  selector:
+    matchLabels: &id001
+      app: portal-switch
+      version: green-v2
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      containers:
+      - name: web
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - mkdir -p /www; echo green-v2 > /www/index.html; httpd -f -p 8080 -h /www
+        resources:
+          requests:
+            cpu: 5m
+            memory: 8Mi
+          limits:
+            cpu: 100m
+            memory: 32Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 2
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-stable
+spec:
+  replicas: 4
+  selector:
+    matchLabels: &id001
+      app: portal-canary
+      version: stable-v1
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      containers:
+      - name: web
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - mkdir -p /www; echo stable-v1 > /www/index.html; httpd -f -p 8080 -h /www
+        resources:
+          requests:
+            cpu: 5m
+            memory: 8Mi
+          limits:
+            cpu: 100m
+            memory: 32Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 2
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels: &id001
+      app: portal-canary
+      version: canary-v2
+  template:
+    metadata:
+      labels: *id001
+    spec:
+      containers:
+      - name: web
+        image: busybox:1.37
+        command:
+        - sh
+        - -c
+        - mkdir -p /www; echo canary-v2 > /www/index.html; httpd -f -p 8080 -h /www
+        resources:
+          requests:
+            cpu: 5m
+            memory: 8Mi
+          limits:
+            cpu: 100m
+            memory: 32Mi
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 2
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portal-active
+spec:
+  selector:
+    app: portal-switch
+    version: blue-v1
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portal-release
+spec:
+  selector:
+    app: portal-canary
+  ports:
+  - port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: traffic-client
+spec:
+  restartPolicy: Always
+  containers:
+  - name: app
+    image: busybox:1.37
+    command:
+    - sh
+    - -c
+    - sleep 7200
+    resources:
+      requests:
+        cpu: 5m
+        memory: 8Mi
+      limits:
+        cpu: 100m
+        memory: 32Mi

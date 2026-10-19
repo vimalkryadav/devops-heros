@@ -1,0 +1,4 @@
+{{ .Values.app.name }} is installed in namespace {{ .Release.Namespace }}.
+Inspect it with:
+  kubectl -n {{ .Release.Namespace }} get pods,service,configmap -l app.kubernetes.io/instance={{ .Release.Name }}
+Open it through the Minikube node IP on port {{ .Values.service.nodePort }}.

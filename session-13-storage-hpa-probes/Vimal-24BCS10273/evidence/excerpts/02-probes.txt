@@ -1,0 +1,23 @@
+Actual output excerpts from 02-probes.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:46:22.246422+00:00
+  2 | $ kubectl -n assignment-s13 get pod web-app-6b6f5dcbff-j4whv -o wide
+  3 | NAME                       READY   STATUS    RESTARTS   AGE   IP           NODE                NOMINATED NODE   READINESS GATES
+  4 | web-app-6b6f5dcbff-j4whv   1/1     Running   0          42s   10.244.0.6   devops-assignment   <none>           <none>
+[...]
+  8 | PASS: readiness failure removes the selected Pod from ready traffic (6.1s)
+  9 | $ kubectl -n assignment-s13 get pod web-app-6b6f5dcbff-j4whv
+ 10 | NAME                       READY   STATUS    RESTARTS   AGE
+ 11 | web-app-6b6f5dcbff-j4whv   0/1     Running   0          48s
+[...]
+ 77 | PASS: liveness failure restarts the container (36.7s)
+[...]
+ 80 | $ kubectl -n assignment-s13 get pod web-app-6b6f5dcbff-j4whv
+ 81 | NAME                       READY   STATUS    RESTARTS      AGE
+ 82 | web-app-6b6f5dcbff-j4whv   1/1     Running   1 (10s ago)   96s
+[...]
+162 |   Warning  Unhealthy  48s (x5 over 54s)  kubelet            spec.containers{web}: Readiness probe failed: HTTP probe failed with statuscode: 503
+163 |   Warning  Unhealthy  40s (x3 over 44s)  kubelet            spec.containers{web}: Liveness probe failed: HTTP probe failed with statuscode: 503
+164 |   Normal   Killing    40s                kubelet            spec.containers{web}: Container web failed liveness probe, will be restarted
+[...]
+173 | PASS: readiness changed traffic eligibility without a restart; liveness caused a restart and recovery.

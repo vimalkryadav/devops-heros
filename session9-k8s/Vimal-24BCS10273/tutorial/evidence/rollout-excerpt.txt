@@ -1,0 +1,93 @@
+Selected complete command blocks from tutorial.txt
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment spec update to be observed...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 out of 1 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ curl --fail --silent --show-error --retry 5 --retry-connrefused --retry-delay 1 --max-time 10 http://192.168.49.2:30513
+curl: (7) Failed to connect to 192.168.49.2 port 30513 after 0 ms: Could not connect to server
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-7d9fd8c7b5-pnm55 | v=1
+
+$ k scale deployment kubernetes-bootcamp --replicas=4
+deployment.apps/kubernetes-bootcamp scaled
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 4 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 4 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 of 4 updated replicas are available...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 2 of 4 updated replicas are available...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 3 of 4 updated replicas are available...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ k get pods -l app=kubernetes-bootcamp -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE   IP            NODE                NOMINATED NODE   READINESS GATES
+kubernetes-bootcamp-7d9fd8c7b5-8b24s   1/1     Running   0          2s    10.244.0.32   devops-assignment   <none>           <none>
+kubernetes-bootcamp-7d9fd8c7b5-gv7tb   1/1     Running   0          2s    10.244.0.30   devops-assignment   <none>           <none>
+kubernetes-bootcamp-7d9fd8c7b5-pnbxf   1/1     Running   0          2s    10.244.0.31   devops-assignment   <none>           <none>
+kubernetes-bootcamp-7d9fd8c7b5-pnm55   1/1     Running   0          5s    10.244.0.29   devops-assignment   <none>           <none>
+
+$ k scale deployment kubernetes-bootcamp --replicas=2
+deployment.apps/kubernetes-bootcamp scaled
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ k set image deployment/kubernetes-bootcamp kubernetes-bootcamp=docker.io/jocatalin/kubernetes-bootcamp:v2
+deployment.apps/kubernetes-bootcamp image updated
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 old replicas are pending termination...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ curl --fail --silent --show-error --retry 5 --retry-connrefused --retry-delay 1 --max-time 10 http://192.168.49.2:30513
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-7d9fd8c7b5-pnm55 | v=1
+
+$ k rollout history deployment/kubernetes-bootcamp
+deployment.apps/kubernetes-bootcamp 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+
+$ k set image deployment/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v10
+deployment.apps/kubernetes-bootcamp image updated
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=45s
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 out of 2 new replicas have been updated...
+error: timed out waiting for the condition
+
+$ k get pods -l app=kubernetes-bootcamp
+NAME                                   READY   STATUS             RESTARTS   AGE
+kubernetes-bootcamp-65bb94b4f7-qs6r9   0/1     ImagePullBackOff   0          45s
+kubernetes-bootcamp-7c78c6bc96-p28rs   1/1     Running            0          48s
+kubernetes-bootcamp-7c78c6bc96-zllsp   1/1     Running            0          55s
+
+$ k rollout undo deployment/kubernetes-bootcamp
+Warning: resource deployments/kubernetes-bootcamp was previously managed with 'kubectl apply'. Rolling back will not update the kubectl.kubernetes.io/last-applied-configuration annotation, which may cause unexpected behavior on future 'kubectl apply' operations. Consider using 'kubectl apply' with your previous configuration file instead.
+deployment.apps/kubernetes-bootcamp rolled back
+
+$ k rollout status deployment/kubernetes-bootcamp --timeout=180s
+Waiting for deployment spec update to be observed...
+Waiting for deployment "kubernetes-bootcamp" rollout to finish: 1 old replicas are pending termination...
+deployment "kubernetes-bootcamp" successfully rolled out
+
+$ curl --fail --silent --show-error --retry 5 --retry-connrefused --retry-delay 1 --max-time 10 http://192.168.49.2:30513
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-7c78c6bc96-p28rs | v=2
+
+$ k get deployment kubernetes-bootcamp -o wide
+NAME                  READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS            IMAGES                                       SELECTOR
+kubernetes-bootcamp   2/2     2            2           60s   kubernetes-bootcamp   docker.io/jocatalin/kubernetes-bootcamp:v2   app=kubernetes-bootcamp
+
+All six tutorial modules completed. Cleanup: kubectl delete namespace assignment-s09

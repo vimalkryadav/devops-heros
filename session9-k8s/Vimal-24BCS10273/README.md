@@ -3,9 +3,13 @@
 **Name:** Vimal Kumar Yadav
 **Enrollment Number:** 24BCS10273
 
-Everything below was run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
+The original Tasks 1–5 below were run on a local Minikube cluster — minikube v1.39.0, Kubernetes v1.37.0,
 containerd 2.3.4, docker driver, on macOS (Apple silicon). Every code block is the real output from
 that run, and the screenshots are of the same session.
+
+The [Kubernetes Basics tutorial completion](tutorial/README.md) adds a separate
+Linux run covering all six modules, including Service access, scaling, updating
+and rollback. Its evidence records the actual environment and run time.
 
 ---
 

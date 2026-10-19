@@ -1,0 +1,156 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": false,
+    "canDelete": false,
+    "slug": "release-monitor-e28094-session-20",
+    "url": "/d/session20/release-monitor-e28094-session-20",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2026-10-06T20:06:55Z",
+    "updated": "2026-10-06T20:06:55Z",
+    "updatedBy": "Anonymous",
+    "createdBy": "Anonymous",
+    "version": 1,
+    "hasAcl": false,
+    "isFolder": false,
+    "apiVersion": "v0alpha1",
+    "folderId": 4382245853265920,
+    "folderUid": "ag0fwtswpik8wd",
+    "folderTitle": "Assignment",
+    "folderUrl": "/dashboards/f/ag0fwtswpik8wd/assignment",
+    "provisioned": true,
+    "provisionedExternalId": "dashboard.json",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "id": 4382246284288000,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "targets": [
+          {
+            "expr": "sum(rate(lab_http_requests_total{path!=\"/metrics\",path!=\"/healthz\"}[1m]))",
+            "refId": "A"
+          }
+        ],
+        "title": "HTTP requests per second",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 2,
+        "targets": [
+          {
+            "expr": "rate(lab_process_cpu_seconds_total[1m])",
+            "refId": "A"
+          }
+        ],
+        "title": "Application CPU cores",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 3,
+        "targets": [
+          {
+            "expr": "lab_process_resident_memory_bytes",
+            "refId": "A"
+          }
+        ],
+        "title": "Resident memory",
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "id": 4,
+        "targets": [
+          {
+            "expr": "up{job=\"release-monitor\"}",
+            "refId": "A"
+          }
+        ],
+        "title": "Scrape health",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 39,
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "title": "Release Monitor \u2014 Session 20",
+    "uid": "session20",
+    "version": 1
+  }
+}

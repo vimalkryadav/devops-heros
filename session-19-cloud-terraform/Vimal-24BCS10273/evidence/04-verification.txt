@@ -1,0 +1,300 @@
+Run started: 2026-10-07T15:45:53.804726+00:00
+
+$ terraform show -no-color
+# data.aws_availability_zones.available:
+data "aws_availability_zones" "available" {
+    group_names = [
+        "us-east-1-zg-1",
+    ]
+    id          = "us-east-1"
+    names       = [
+        "us-east-1a",
+        "us-east-1b",
+        "us-east-1c",
+        "us-east-1d",
+        "us-east-1e",
+        "us-east-1f",
+    ]
+    region      = "us-east-1"
+    state       = "available"
+    zone_ids    = [
+        "use1-az1",
+        "use1-az2",
+        "use1-az4",
+        "use1-az6",
+        "use1-az3",
+        "use1-az5",
+    ]
+}
+
+# aws_internet_gateway.lab:
+resource "aws_internet_gateway" "lab" {
+    arn      = "arn:aws:ec2:us-east-1:094807033031:internet-gateway/igw-06595473ccbc2e00f"
+    id       = "igw-06595473ccbc2e00f"
+    owner_id = "094807033031"
+    region   = "us-east-1"
+    tags     = {
+        "Name" = "vimal-session19-gateway"
+    }
+    tags_all = {
+        "ManagedBy" = "Terraform"
+        "Name"      = "vimal-session19-gateway"
+        "Owner"     = "Vimal-24BCS10273"
+        "Project"   = "devops-assignment"
+        "Session"   = "19"
+    }
+    vpc_id   = "vpc-014f1871eba198cbf"
+}
+
+# aws_route_table.public:
+resource "aws_route_table" "public" {
+    arn              = "arn:aws:ec2:us-east-1:094807033031:route-table/rtb-035075b151c9bc39c"
+    id               = "rtb-035075b151c9bc39c"
+    owner_id         = "094807033031"
+    propagating_vgws = []
+    region           = "us-east-1"
+    route            = [
+        {
+            carrier_gateway_id         = null
+            cidr_block                 = "0.0.0.0/0"
+            core_network_arn           = null
+            destination_prefix_list_id = null
+            egress_only_gateway_id     = null
+            gateway_id                 = "igw-06595473ccbc2e00f"
+            ipv6_cidr_block            = null
+            local_gateway_id           = null
+            nat_gateway_id             = null
+            network_interface_id       = null
+            odb_network_arn            = null
+            transit_gateway_id         = null
+            vpc_endpoint_id            = null
+            vpc_peering_connection_id  = null
+        },
+    ]
+    tags             = {
+        "Name" = "vimal-session19-public"
+    }
+    tags_all         = {
+        "ManagedBy" = "Terraform"
+        "Name"      = "vimal-session19-public"
+        "Owner"     = "Vimal-24BCS10273"
+        "Project"   = "devops-assignment"
+        "Session"   = "19"
+    }
+    vpc_id           = "vpc-014f1871eba198cbf"
+}
+
+# aws_route_table_association.public:
+resource "aws_route_table_association" "public" {
+    gateway_id     = null
+    id             = "rtbassoc-03229e6b5077df782"
+    region         = "us-east-1"
+    route_table_id = "rtb-035075b151c9bc39c"
+    subnet_id      = "subnet-0d5355ca89961d200"
+}
+
+# aws_security_group.web:
+resource "aws_security_group" "web" {
+    arn                    = "arn:aws:ec2:us-east-1:094807033031:security-group/sg-073e80459534fb5e2"
+    description            = "Assignment web ports limited to the operator address"
+    egress                 = [
+        {
+            cidr_blocks      = [
+                "0.0.0.0/0",
+            ]
+            description      = null
+            from_port        = 0
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "-1"
+            security_groups  = []
+            self             = false
+            to_port          = 0
+        },
+    ]
+    id                     = "sg-073e80459534fb5e2"
+    ingress                = [
+        {
+            cidr_blocks      = [
+                "202.131.146.146/32",
+            ]
+            description      = "HTTP from the operator"
+            from_port        = 80
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "tcp"
+            security_groups  = []
+            self             = false
+            to_port          = 80
+        },
+        {
+            cidr_blocks      = [
+                "202.131.146.146/32",
+            ]
+            description      = "HTTPS from the operator"
+            from_port        = 443
+            ipv6_cidr_blocks = []
+            prefix_list_ids  = []
+            protocol         = "tcp"
+            security_groups  = []
+            self             = false
+            to_port          = 443
+        },
+    ]
+    name                   = "vimal-session19-web-49e3e68dc7c2530454b172f0ac"
+    name_prefix            = "vimal-session19-web-"
+    owner_id               = "094807033031"
+    region                 = "us-east-1"
+    revoke_rules_on_delete = false
+    tags                   = {
+        "Name" = "vimal-session19-web"
+    }
+    tags_all               = {
+        "ManagedBy" = "Terraform"
+        "Name"      = "vimal-session19-web"
+        "Owner"     = "Vimal-24BCS10273"
+        "Project"   = "devops-assignment"
+        "Session"   = "19"
+    }
+    vpc_id                 = "vpc-014f1871eba198cbf"
+}
+
+# aws_subnet.public:
+resource "aws_subnet" "public" {
+    arn                                            = "arn:aws:ec2:us-east-1:094807033031:subnet/subnet-0d5355ca89961d200"
+    assign_ipv6_address_on_creation                = false
+    availability_zone                              = "us-east-1a"
+    availability_zone_id                           = "use1-az1"
+    cidr_block                                     = "10.83.1.0/24"
+    customer_owned_ipv4_pool                       = null
+    enable_dns64                                   = false
+    enable_lni_at_device_index                     = 0
+    enable_resource_name_dns_a_record_on_launch    = false
+    enable_resource_name_dns_aaaa_record_on_launch = false
+    id                                             = "subnet-0d5355ca89961d200"
+    ipv6_cidr_block                                = null
+    ipv6_cidr_block_association_id                 = null
+    ipv6_native                                    = false
+    map_customer_owned_ip_on_launch                = false
+    map_public_ip_on_launch                        = true
+    outpost_arn                                    = null
+    owner_id                                       = "094807033031"
+    private_dns_hostname_type_on_launch            = "ip-name"
+    region                                         = "us-east-1"
+    tags                                           = {
+        "Name" = "vimal-session19-public"
+    }
+    tags_all                                       = {
+        "ManagedBy" = "Terraform"
+        "Name"      = "vimal-session19-public"
+        "Owner"     = "Vimal-24BCS10273"
+        "Project"   = "devops-assignment"
+        "Session"   = "19"
+    }
+    vpc_id                                         = "vpc-014f1871eba198cbf"
+}
+
+# aws_vpc.lab:
+resource "aws_vpc" "lab" {
+    arn                                  = "arn:aws:ec2:us-east-1:094807033031:vpc/vpc-014f1871eba198cbf"
+    assign_generated_ipv6_cidr_block     = false
+    cidr_block                           = "10.83.0.0/16"
+    default_network_acl_id               = "acl-048020e1b95ead14b"
+    default_route_table_id               = "rtb-03fc0dedd4422e75b"
+    default_security_group_id            = "sg-0d99422ef81c29a03"
+    dhcp_options_id                      = "dopt-0567b8842e459c898"
+    enable_dns_hostnames                 = true
+    enable_dns_support                   = true
+    enable_network_address_usage_metrics = false
+    id                                   = "vpc-014f1871eba198cbf"
+    instance_tenancy                     = "default"
+    ipv6_association_id                  = null
+    ipv6_cidr_block                      = null
+    ipv6_cidr_block_network_border_group = null
+    ipv6_ipam_pool_id                    = null
+    ipv6_netmask_length                  = 0
+    main_route_table_id                  = "rtb-03fc0dedd4422e75b"
+    owner_id                             = "094807033031"
+    region                               = "us-east-1"
+    tags                                 = {
+        "Name" = "vimal-session19-network"
+    }
+    tags_all                             = {
+        "ManagedBy" = "Terraform"
+        "Name"      = "vimal-session19-network"
+        "Owner"     = "Vimal-24BCS10273"
+        "Project"   = "devops-assignment"
+        "Session"   = "19"
+    }
+}
+
+
+Outputs:
+
+internet_gateway_id = "igw-06595473ccbc2e00f"
+region = "us-east-1"
+route_association_id = "rtbassoc-03229e6b5077df782"
+route_table_id = "rtb-035075b151c9bc39c"
+security_group_id = "sg-073e80459534fb5e2"
+subnet_cidr = "10.83.1.0/24"
+subnet_id = "subnet-0d5355ca89961d200"
+vpc_cidr = "10.83.0.0/16"
+vpc_id = "vpc-014f1871eba198cbf"
+
+$ terraform output -json
+{
+  "internet_gateway_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "igw-06595473ccbc2e00f"
+  },
+  "region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "us-east-1"
+  },
+  "route_association_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "rtbassoc-03229e6b5077df782"
+  },
+  "route_table_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "rtb-035075b151c9bc39c"
+  },
+  "security_group_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-073e80459534fb5e2"
+  },
+  "subnet_cidr": {
+    "sensitive": false,
+    "type": "string",
+    "value": "10.83.1.0/24"
+  },
+  "subnet_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "subnet-0d5355ca89961d200"
+  },
+  "vpc_cidr": {
+    "sensitive": false,
+    "type": "string",
+    "value": "10.83.0.0/16"
+  },
+  "vpc_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vpc-014f1871eba198cbf"
+  }
+}
+
+$ terraform state list
+data.aws_availability_zones.available
+aws_internet_gateway.lab
+aws_route_table.public
+aws_route_table_association.public
+aws_security_group.web
+aws_subnet.public
+aws_vpc.lab

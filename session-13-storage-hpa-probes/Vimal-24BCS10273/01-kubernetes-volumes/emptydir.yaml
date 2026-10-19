@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: emptydir-demo
+  namespace: assignment-s13
+spec:
+  restartPolicy: Never
+  initContainers:
+  - name: writer
+    image: busybox:1.36
+    command:
+    - sh
+    - -c
+    - echo shared-by-containers > /cache/message
+    volumeMounts:
+    - name: scratch
+      mountPath: /cache
+  containers:
+  - name: reader
+    image: busybox:1.36
+    command:
+    - sh
+    - -c
+    - cat /cache/message; sleep 3600
+    volumeMounts:
+    - name: scratch
+      mountPath: /cache
+  volumes:
+  - name: scratch
+    emptyDir: {}

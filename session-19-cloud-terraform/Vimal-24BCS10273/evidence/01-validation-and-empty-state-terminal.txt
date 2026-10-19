@@ -1,0 +1,8 @@
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ rg 'initialized|Success|Plan:' evidence/01-validation.txt evidence/02-plan.txt; terraform -chdir=terraform-cloud-demo state list
+[?2004levidence/02-plan.txt
+195:Plan: 6 to add, 0 to change, 0 to destroy.
+
+evidence/01-validation.txt
+12:Terraform has been successfully initialized!
+17:Success! The configuration is valid.
+]133;A[?2004hvimal2907@vimalaura:Vimal-24BCS10273$ 

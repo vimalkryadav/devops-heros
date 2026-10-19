@@ -1,0 +1,20 @@
+Actual output excerpts from 03-pending.txt; original line numbers are shown.
+[...]
+  1 | 2026-10-06T18:47:35.989249+00:00
+[...]
+  5 | PASS: scheduler reports Unschedulable (0.0s)
+  6 | $ kubectl -n assignment-s14 get pod pending-demo -o wide
+  7 | NAME           READY   STATUS    RESTARTS   AGE   IP       NODE     NOMINATED NODE   READINESS GATES
+  8 | pending-demo   0/1     Pending   0          0s    <none>   <none>   <none>           <none>
+[...]
+ 49 |   Warning  FailedScheduling  0s    default-scheduler  0/1 nodes are available: 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+[...]
+ 52 | 0s          Warning   FailedScheduling   Pod/pending-demo   0/1 nodes are available: 1 node(s) didn't match Pod's node affinity/selector. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+[...]
+ 58 | $ kubectl -n assignment-s14 apply -f cases/pending-fixed.yaml
+ 59 | pod/pending-demo created
+[...]
+ 62 | $ kubectl -n assignment-s14 get pod pending-demo
+ 63 | NAME           READY   STATUS    RESTARTS   AGE
+ 64 | pending-demo   1/1     Running   0          1s
+ 65 | PASS: no node matched the selector; removing the invalid constraint allowed scheduling.

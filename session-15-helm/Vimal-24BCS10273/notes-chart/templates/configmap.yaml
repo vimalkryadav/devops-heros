@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  labels:
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+  APP_NAME: {{ .Values.app.name | quote }}
+  ENVIRONMENT: {{ .Values.app.environment | quote }}
+  index.html: |
+    <!doctype html>
+    <html lang="en">
+    <head><meta charset="utf-8"><title>{{ .Values.app.name | html }}</title>
+    <style>body{font:18px system-ui;max-width:720px;margin:64px auto;padding:24px;color:#203047}li{margin:12px 0}</style></head>
+    <body><h1>{{ .Values.app.name | html }}</h1>
+    <p>Environment: <strong>{{ .Values.app.environment | html }}</strong></p>
+    <p>Session 15 · Vimal Kumar Yadav · 24BCS10273</p>
+    <ul><li>Package the application configuration in a chart.</li>
+    <li>Upgrade to three replicas with production values.</li>
+    <li>Recover from a failed image upgrade using a previous release.</li></ul>
+    </body></html>

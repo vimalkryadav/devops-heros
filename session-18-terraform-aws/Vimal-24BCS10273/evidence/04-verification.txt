@@ -1,0 +1,126 @@
+Run started: 2026-10-06T19:50:03.902516+00:00
+
+$ terraform show -no-color
+# aws_s3_bucket.assignment:
+resource "aws_s3_bucket" "assignment" {
+    acceleration_status         = null
+    arn                         = "arn:aws:s3:::vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    bucket                      = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    bucket_domain_name          = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9.s3.amazonaws.com"
+    bucket_namespace            = "global"
+    bucket_prefix               = "vimal-24bcs10273-s18-"
+    bucket_region               = "us-east-1"
+    bucket_regional_domain_name = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9.s3.us-east-1.amazonaws.com"
+    force_destroy               = false
+    hosted_zone_id              = "Z3AQBSTGFYJSTF"
+    id                          = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    object_lock_enabled         = false
+    policy                      = null
+    region                      = "us-east-1"
+    request_payer               = "BucketOwner"
+    tags_all                    = {
+        "ManagedBy" = "Terraform"
+        "Owner"     = "Vimal-24BCS10273"
+        "Project"   = "devops-assignment"
+        "Session"   = "18"
+    }
+
+    grant {
+        id          = "d8dece651f95627e301b9f1c860c0b24c3c0456628a7798b1e8685ab64ddd7c8"
+        permissions = [
+            "FULL_CONTROL",
+        ]
+        type        = "CanonicalUser"
+        uri         = null
+    }
+
+    server_side_encryption_configuration {
+        rule {
+            bucket_key_enabled = false
+
+            apply_server_side_encryption_by_default {
+                kms_master_key_id = null
+                sse_algorithm     = "AES256"
+            }
+        }
+    }
+
+    versioning {
+        enabled    = false
+        mfa_delete = false
+    }
+}
+
+# aws_s3_bucket_ownership_controls.assignment:
+resource "aws_s3_bucket_ownership_controls" "assignment" {
+    bucket = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    id     = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    region = "us-east-1"
+
+    rule {
+        object_ownership = "BucketOwnerEnforced"
+    }
+}
+
+# aws_s3_bucket_public_access_block.assignment:
+resource "aws_s3_bucket_public_access_block" "assignment" {
+    block_public_acls       = true
+    block_public_policy     = true
+    bucket                  = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    id                      = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    ignore_public_acls      = true
+    region                  = "us-east-1"
+    restrict_public_buckets = true
+}
+
+# aws_s3_bucket_server_side_encryption_configuration.assignment:
+resource "aws_s3_bucket_server_side_encryption_configuration" "assignment" {
+    bucket                = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    expected_bucket_owner = null
+    id                    = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+    region                = "us-east-1"
+
+    rule {
+        blocked_encryption_types = [
+            "SSE-C",
+        ]
+        bucket_key_enabled       = false
+
+        apply_server_side_encryption_by_default {
+            kms_master_key_id = null
+            sse_algorithm     = "AES256"
+        }
+    }
+}
+
+
+Outputs:
+
+bucket_arn = "arn:aws:s3:::vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+bucket_name = "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+region = "us-east-1"
+
+$ terraform output -json
+{
+  "bucket_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:s3:::vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+  },
+  "bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vimal-24bcs10273-s18-d6cdb30a8d5ded810c29171ec9"
+  },
+  "region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "us-east-1"
+  }
+}
+
+$ terraform state list
+aws_s3_bucket.assignment
+aws_s3_bucket_ownership_controls.assignment
+aws_s3_bucket_public_access_block.assignment
+aws_s3_bucket_server_side_encryption_configuration.assignment
